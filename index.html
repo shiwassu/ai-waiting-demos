@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桌面办公机器人 · 任务推理中</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2129;
+    --primary: #58a6ff;
+    --primary-glow: #79c0ff;
+    --accent-green: #3fb950;
+    --accent-orange: #d2991d;
+    --accent-purple: #a371f7;
+    --accent-pink: #db61a2;
+    --danger: #f85149;
+    --text: #c9d1d9;
+    --text-dim: #6e7681;
+    --text-bright: #e6edf3;
+    --border: #21262d;
+    --border-active: #30363d;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden; overflow-y: auto;
+    user-select: none;
+  }
+
+  .layout {
+    display: flex;
+    gap: 22px;
+    padding: 28px;
+    max-width: 1160px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  /* ═══ LEFT: DESK SCENE ═══ */
+  .desk-panel {
+    flex: 1 1 580px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    min-height: 600px;
+    cursor: default;
+  }
+  .desk-panel canvas { display:block; width:100%; height:100%; }
+  .desk-tooltip {
+    position: absolute; padding:5px 10px; background:rgba(0,0,0,0.85);
+    color:var(--text-bright); font-size:11px; border-radius:6px;
+    pointer-events: none; opacity:0; transition:opacity 0.15s;
+    border:1px solid var(--border-active); white-space:nowrap;
+  }
+  .desk-badge {
+    position: absolute; top:12px; left:14px;
+    font-size:11px; color: var(--text-dim); background: rgba(0,0,0,0.55);
+    padding:5px 10px; border-radius:6px; pointer-events: none;
+  }
+
+  /* ═══ RIGHT: THINKING PANEL ═══ */
+  .think-panel {
+    flex: 0 0 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* intent card */
+  .intent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .intent-label { font-size:10px; color: var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:6px; }
+  .intent-text { font-size:15px; font-weight:600; color: var(--text-bright); }
+  .intent-sub  { font-size:12px; color: var(--text-dim); margin-top:4px; }
+
+  /* strategy compare cards */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .strategy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .strategy-card:hover {
+    border-color: var(--border-active);
+    background: var(--surface2);
+  }
+  .strategy-card.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 16px rgba(88,166,255,0.12);
+  }
+  .strategy-card.rejected {
+    opacity: 0.5;
+    border-color: rgba(248,81,73,0.25);
+  }
+  .strategy-badge {
+    font-size:10px; font-weight:600; padding:3px 8px; border-radius:4px;
+    display:inline-block; margin-bottom:8px;
+  }
+  .badge-a { background:rgba(88,166,255,0.15); color:var(--primary); }
+  .badge-b { background:rgba(163,113,247,0.15); color:var(--accent-purple); }
+  .strategy-title { font-size:13px; font-weight:600; color:var(--text-bright); margin-bottom:4px; }
+  .strategy-desc { font-size:11px; color:var(--text-dim); line-height:1.5; }
+  .strategy-metrics { display:flex; gap:14px; margin-top:8px; font-size:10px; color:var(--text-dim); }
+  .strategy-metrics .val { font-weight:600; }
+  .metric-good { color:var(--accent-green); }
+  .metric-warn { color:var(--accent-orange); }
+  .metric-bad  { color:var(--danger); }
+  .strategy-vote {
+    position: absolute; top:8px; right:8px;
+    font-size:10px; padding:3px 10px; border-radius:10px;
+    border:1px solid var(--border-active); background:var(--bg);
+    color:var(--text-dim); cursor:pointer; transition:all 0.15s;
+  }
+  .strategy-vote:hover { border-color:var(--primary); color:var(--primary); }
+
+  /* reasoning chain */
+  .reason-chain {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .chain-title { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:10px; }
+  .chain-item {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:7px 0; font-size:12px; color:var(--text-dim);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s ease;
+  }
+  .chain-item:last-child { border-bottom:none; }
+  .chain-item.active { color:var(--text-bright); }
+  .chain-item.done { color:var(--accent-green); }
+  .chain-icon {
+    width:20px; height:20px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; background:var(--border); color:var(--text-dim);
+    transition: all 0.3s;
+  }
+  .chain-item.active .chain-icon { background:rgba(88,166,255,0.15); color:var(--primary); }
+  .chain-item.done .chain-icon { background:rgba(63,185,80,0.12); color:var(--accent-green); }
+
+  /* log */
+  .log-line {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'Cascadia Code','Fira Code','JetBrains Mono',monospace;
+    font-size:10.5px; color: var(--text-dim); line-height:1.5;
+    min-height:44px; max-height:66px; overflow-y:auto;
+  }
+  .log-cursor { display:inline-block; width:7px; height:11px; background:var(--primary); vertical-align:middle; margin-left:1px; animation:blink 0.8s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* controls */
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn {
+    padding:8px 16px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text); font-size:12px;
+    cursor:pointer; transition:all 0.15s; font-family:inherit;
+  }
+  .btn:hover { border-color:var(--border-active); background:var(--surface2); }
+  .btn.on { border-color:var(--primary); color:var(--primary); background:rgba(88,166,255,0.08); }
+  .btn.warn:hover { border-color:var(--danger); color:var(--danger); }
+  .confidence-row { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-dim); }
+  .conf-bar-outer { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .conf-bar-inner { height:100%; background:var(--primary); border-radius:2px; transition:width 0.8s ease; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ═══ DESK SCENE ═══ -->
+  <div class="desk-panel" id="deskPanel">
+    <canvas id="deskCanvas"></canvas>
+    <div class="desk-tooltip" id="tooltip"></div>
+    <div class="desk-badge" id="deskBadge">桌面办公机器人 · 视觉观测中</div>
+  </div>
+
+  <!-- ═══ THINKING PANEL ═══ -->
+  <div class="think-panel">
+
+    <!-- user intent -->
+    <div class="intent-card">
+      <div class="intent-label">用户指令</div>
+      <div class="intent-text" id="intentText">"帮我把桌面收拾整齐，文件归类，然后给我递一支笔"</div>
+      <div class="intent-sub" id="intentSub">解析: 多步骤任务 · 3 个子目标 · 依赖关系待建立</div>
+    </div>
+
+    <!-- strategy compare -->
+    <div class="compare-row" id="compareRow"></div>
+
+    <!-- reasoning chain -->
+    <div class="reason-chain">
+      <div class="chain-title">推理链</div>
+      <div id="chainContainer"></div>
+    </div>
+
+    <!-- log -->
+    <div class="log-line" id="logLine"><span id="logMsg"></span><span class="log-cursor"></span></div>
+
+    <!-- confidence -->
+    <div class="confidence-row">
+      置信度 <span id="confPct">--</span>
+      <div class="conf-bar-outer"><div class="conf-bar-inner" id="confBar" style="width:0%"></div></div>
+    </div>
+
+    <!-- controls -->
+    <div class="btn-row">
+      <button class="btn on" id="btnAuto">▶ 自动推演</button>
+      <button class="btn" id="btnStep">⏭ 单步</button>
+      <button class="btn" id="btnReprioritize">🔀 重排优先级</button>
+      <button class="btn warn" id="btnReset">↺ 新任务</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════
+  //  DESK CANVAS
+  // ═══════════════════════════════════════════════
+  const deskCanvas = document.getElementById('deskCanvas');
+  const dctx = deskCanvas.getContext('2d');
+  const deskPanel = document.getElementById('deskPanel');
+  const tooltip = document.getElementById('tooltip');
+  const deskBadge = document.getElementById('deskBadge');
+
+  let dw, dh;
+  function resizeDesk(){
+    dw = deskCanvas.width = deskPanel.clientWidth;
+    dh = deskCanvas.height = deskPanel.clientHeight;
+  }
+  resizeDesk(); window.addEventListener('resize', resizeDesk);
+
+  // ── desk objects ──
+  const deskColor = '#3a3028';
+  const deskWood = '#4a3d32';
+
+  // Object types on the desk
+  const objectDefs = [
+    { id:'paper1',   type:'paper',   label:'报告文档',   w:52,h:38, color:'#f0ead6', textColor:'#333' },
+    { id:'paper2',   type:'paper',   label:'合同文件',   w:48,h:42, color:'#f5f0e0', textColor:'#333' },
+    { id:'paper3',   type:'paper',   label:'便签',       w:30,h:30, color:'#ffeaa7', textColor:'#333' },
+    { id:'pen1',     type:'pen',     label:'签字笔',     w:6, h:50, color:'#2d3436', textColor:'#fff' },
+    { id:'pen2',     type:'pen',     label:'红色记号笔', w:6, h:48, color:'#d63031', textColor:'#fff' },
+    { id:'cup',      type:'cup',     label:'咖啡杯',     w:36,h:40, color:'#dfe6e9', textColor:'#333' },
+    { id:'stapler',  type:'stapler', label:'订书机',     w:40,h:22, color:'#636e72', textColor:'#fff' },
+    { id:'phone',    type:'phone',   label:'手机',       w:24,h:46, color:'#2d3436', textColor:'#fff' },
+    { id:'keys',     type:'keys',    label:'钥匙',       w:28,h:18, color:'#fdcb6e', textColor:'#333' },
+    { id:'book',     type:'book',    label:'笔记本',     w:44,h:56, color:'#6c5ce7', textColor:'#fff' },
+  ];
+
+  let deskObjects = [];
+  let robotArm = null;
+  let attentionTarget = null;
+  let graspCandidates = [];
+  let plannedTrajectory = [];
+  let gripperState = 'open';
+  let highlightObjects = [];
+
+  function initDesk(){
+    deskObjects = objectDefs.map(def=>{
+      // place objects naturally on the desk
+      let x,y;
+      if(def.type==='paper'){
+        x = 80 + Math.random()*280; y = 60 + Math.random()*160;
+      } else if(def.type==='pen'){
+        x = 100 + Math.random()*300; y = 130 + Math.random()*200;
+      } else if(def.type==='cup'){
+        x = 360 + Math.random()*140; y = 280 + Math.random()*100;
+      } else if(def.type==='stapler'){
+        x = 140 + Math.random()*200; y = 280 + Math.random()*120;
+      } else if(def.type==='phone'){
+        x = 380 + Math.random()*100; y = 80 + Math.random()*120;
+      } else if(def.type==='keys'){
+        x = 240 + Math.random()*120; y = 320 + Math.random()*80;
+      } else if(def.type==='book'){
+        x = 320 + Math.random()*80; y = 150 + Math.random()*100;
+      } else {
+        x = 120 + Math.random()*320; y = 80 + Math.random()*280;
+      }
+      return {
+        ...def,
+        x, y,
+        angle: (Math.random()-0.5)*0.3,
+        sorted: false,
+        held: false,
+        destX: null, destY: null,
+      };
+    });
+
+    robotArm = {
+      baseX: dw*0.82, baseY: dh*0.48,
+      seg1Len: 70, seg2Len: 60,
+      seg1Angle: -0.6, seg2Angle: 1.2,
+      gripperOpen: 16,
+      targetSeg1: -0.6, targetSeg2: 1.2,
+    };
+
+    attentionTarget = null;
+    graspCandidates = [];
+    plannedTrajectory = [];
+    highlightObjects = [];
+    gripperState = 'open';
+  }
+
+  // ── forward kinematics ──
+  function fk(baseX, baseY, a1, a2, l1, l2){
+    const j1x = baseX + Math.cos(a1)*l1;
+    const j1y = baseY + Math.sin(a1)*l1;
+    const j2x = j1x + Math.cos(a1+a2)*l2;
+    const j2y = j1y + Math.sin(a1+a2)*l2;
+    return { j1x, j1y, j2x, j2y };
+  }
+
+  // ── draw helpers ──
+  function drawRoundedRect(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+    ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+    ctx.closePath();
+  }
+
+  function drawDesk(){
+    dctx.clearRect(0,0,dw,dh);
+
+    // desk surface
+    const deskPad = 20;
+    const deskX = deskPad, deskY = deskPad;
+    const deskW = dw*0.72, deskH = dh*0.88;
+    const woodGrad = dctx.createLinearGradient(deskX, deskY, deskX, deskY+deskH);
+    woodGrad.addColorStop(0, '#5a4a38'); woodGrad.addColorStop(0.5, '#4a3a2a'); woodGrad.addColorStop(1, '#3d3024');
+    dctx.fillStyle = woodGrad;
+    drawRoundedRect(dctx, deskX, deskY, deskW, deskH, 8);
+    dctx.fill();
+    dctx.strokeStyle = '#5e4e3c'; dctx.lineWidth = 2;
+    drawRoundedRect(dctx, deskX, deskY, deskW, deskH, 8);
+    dctx.stroke();
+
+    // wood grain lines
+    dctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    for(let gy=deskY+30; gy<deskY+deskH; gy+=35){
+      dctx.beginPath(); dctx.moveTo(deskX+5, gy); dctx.lineTo(deskX+deskW-5, gy+Math.sin(gy*0.1)*4); dctx.stroke();
+    }
+
+    // objects
+    deskObjects.forEach(obj=>{
+      dctx.save();
+      dctx.translate(obj.x, obj.y);
+      dctx.rotate(obj.angle);
+
+      if(obj.type==='paper'){
+        dctx.fillStyle = obj.color;
+        dctx.shadowColor = 'rgba(0,0,0,0.2)'; dctx.shadowBlur = 4; dctx.shadowOffsetY = 2;
+        drawRoundedRect(dctx, -obj.w/2, -obj.h/2, obj.w, obj.h, 3);
+        dctx.fill();
+        dctx.shadowColor = 'transparent'; dctx.shadowBlur = 0; dctx.shadowOffsetY = 0;
+        dctx.strokeStyle = 'rgba(0,0,0,0.1)'; dctx.lineWidth = 0.5;
+        drawRoundedRect(dctx, -obj.w/2, -obj.h/2, obj.w, obj.h, 3);
+        dctx.stroke();
+        // text lines
+        dctx.fillStyle = 'rgba(0,0,0,0.15)';
+        for(let l=0;l<4;l++){ dctx.fillRect(-obj.w/2+8, -obj.h/2+10+l*7, obj.w-16, 2); }
+      } else if(obj.type==='pen'){
+        dctx.fillStyle = obj.color;
+        dctx.fillRect(-obj.w/2, -obj.h/2, obj.w, obj.h);
+        dctx.fillStyle = '#fdcb6e'; // tip
+        dctx.beginPath(); dctx.arc(0, obj.h/2, obj.w/2+1, 0, Math.PI); dctx.fill();
+        // clip
+        dctx.fillStyle = '#b2bec3'; dctx.fillRect(obj.w/2-1, -obj.h/2+8, 3, 8);
+      } else if(obj.type==='cup'){
+        dctx.fillStyle = obj.color;
+        dctx.fillRect(-obj.w/2, -obj.h/2+5, obj.w, obj.h-5);
+        dctx.beginPath(); dctx.arc(0, -obj.h/2+5, obj.w/2, Math.PI, 0); dctx.fill();
+        // coffee inside
+        dctx.fillStyle = '#3E2723'; dctx.beginPath(); dctx.arc(0, -obj.h/2+7, obj.w/2-3, Math.PI, 0); dctx.fill();
+        // handle
+        dctx.strokeStyle = obj.color; dctx.lineWidth = 3;
+        dctx.beginPath(); dctx.arc(obj.w/2-2, 0, 8, -0.6, 1.8); dctx.stroke();
+      } else if(obj.type==='stapler'){
+        dctx.fillStyle = obj.color;
+        drawRoundedRect(dctx, -obj.w/2, -obj.h/2, obj.w, obj.h*0.55, 3); dctx.fill();
+        dctx.fillStyle = '#2d3436';
+        drawRoundedRect(dctx, -obj.w/2+6, -obj.h/2, obj.w-12, obj.h*0.7, 2); dctx.fill();
+      } else if(obj.type==='phone'){
+        dctx.fillStyle = obj.color;
+        drawRoundedRect(dctx, -obj.w/2, -obj.h/2, obj.w, obj.h, 6); dctx.fill();
+        dctx.fillStyle = '#0984e3'; dctx.fillRect(-obj.w/2+4, -obj.h/2+8, obj.w-8, obj.h-16);
+      } else if(obj.type==='keys'){
+        dctx.fillStyle = obj.color;
+        dctx.beginPath(); dctx.arc(0, -4, obj.w/2, 0, Math.PI*2); dctx.fill();
+        dctx.fillRect(-3, -2, 6, obj.h-6);
+        dctx.fillRect(-obj.w/2+2, obj.h-12, obj.w-4, 4);
+      } else if(obj.type==='book'){
+        dctx.fillStyle = obj.color;
+        drawRoundedRect(dctx, -obj.w/2, -obj.h/2, obj.w, obj.h, 3); dctx.fill();
+        dctx.fillStyle = 'rgba(255,255,255,0.15)'; dctx.fillRect(-obj.w/2+4, -obj.h/2+5, 2, obj.h-10);
+        dctx.fillStyle = 'rgba(255,255,255,0.2)'; dctx.fillRect(-obj.w/2+10, -obj.h/2+8, obj.w-18, 2);
+        dctx.fillRect(-obj.w/2+10, -obj.h/2+15, obj.w-22, 2);
+      }
+
+      // highlight
+      if(highlightObjects.includes(obj)){
+        dctx.strokeStyle = 'rgba(88,166,255,0.7)';
+        dctx.lineWidth = 2;
+        dctx.setLineDash([4,3]);
+        drawRoundedRect(dctx, -obj.w/2-5, -obj.h/2-5, obj.w+10, obj.h+10, 6);
+        dctx.stroke();
+        dctx.setLineDash([]);
+      }
+
+      // sorted checkmark
+      if(obj.sorted){
+        dctx.fillStyle = 'rgba(63,185,80,0.8)';
+        dctx.beginPath(); dctx.arc(obj.w/2+6, -obj.h/2-4, 7, 0, Math.PI*2); dctx.fill();
+        dctx.fillStyle = '#fff'; dctx.font = 'bold 9px sans-serif'; dctx.fillText('✓', obj.w/2+3, -obj.h/2-1);
+      }
+
+      dctx.restore();
+    });
+
+    // grasp candidates (dotted circles at object edges)
+    graspCandidates.forEach(gc=>{
+      dctx.beginPath(); dctx.arc(gc.x, gc.y, 5, 0, Math.PI*2);
+      dctx.fillStyle = gc.best ? 'rgba(63,185,80,0.6)' : 'rgba(210,153,29,0.4)';
+      dctx.fill();
+      dctx.strokeStyle = gc.best ? 'rgba(63,185,80,0.8)' : 'rgba(210,153,29,0.5)';
+      dctx.lineWidth = 1.5; dctx.setLineDash([3,2]); dctx.stroke(); dctx.setLineDash([]);
+    });
+
+    // planned trajectory
+    if(plannedTrajectory.length>1){
+      dctx.beginPath();
+      dctx.moveTo(plannedTrajectory[0].x, plannedTrajectory[0].y);
+      for(let i=1;i<plannedTrajectory.length;i++) dctx.lineTo(plannedTrajectory[i].x, plannedTrajectory[i].y);
+      dctx.strokeStyle = 'rgba(88,166,255,0.5)'; dctx.lineWidth = 2;
+      dctx.setLineDash([6,4]); dctx.stroke(); dctx.setLineDash([]);
+      // waypoints
+      plannedTrajectory.forEach((wp,i)=>{
+        dctx.beginPath(); dctx.arc(wp.x, wp.y, i===0||i===plannedTrajectory.length-1?4:2.5, 0, Math.PI*2);
+        dctx.fillStyle = 'rgba(88,166,255,0.7)'; dctx.fill();
+      });
+    }
+
+    // ── robot arm ──
+    if(robotArm){
+      const { baseX, baseY, seg1Len, seg2Len, seg1Angle, seg2Angle } = robotArm;
+      const fkRes = fk(baseX, baseY, seg1Angle, seg2Angle, seg1Len, seg2Len);
+
+      // base
+      dctx.fillStyle = '#4a4d52';
+      dctx.beginPath(); dctx.arc(baseX, baseY, 22, 0, Math.PI*2); dctx.fill();
+      dctx.strokeStyle = '#5a5d62'; dctx.lineWidth = 2;
+      dctx.beginPath(); dctx.arc(baseX, baseY, 22, 0, Math.PI*2); dctx.stroke();
+      dctx.fillStyle = '#3a3d42';
+      dctx.beginPath(); dctx.arc(baseX, baseY, 14, 0, Math.PI*2); dctx.fill();
+      // base ring
+      dctx.strokeStyle = 'rgba(88,166,255,0.2)';
+      dctx.beginPath(); dctx.arc(baseX, baseY, 18, 0, Math.PI*2); dctx.setLineDash([3,5]); dctx.stroke(); dctx.setLineDash([]);
+
+      // segment 1
+      dctx.strokeStyle = '#7a7d82'; dctx.lineWidth = 8;
+      dctx.lineCap = 'round';
+      dctx.beginPath(); dctx.moveTo(baseX, baseY); dctx.lineTo(fkRes.j1x, fkRes.j1y); dctx.stroke();
+      // joint 1
+      dctx.fillStyle = '#9a9da2';
+      dctx.beginPath(); dctx.arc(fkRes.j1x, fkRes.j1y, 8, 0, Math.PI*2); dctx.fill();
+      dctx.strokeStyle = '#5a5d62'; dctx.lineWidth = 1.5;
+      dctx.beginPath(); dctx.arc(fkRes.j1x, fkRes.j1y, 8, 0, Math.PI*2); dctx.stroke();
+
+      // segment 2
+      dctx.strokeStyle = '#8a8d92'; dctx.lineWidth = 6;
+      dctx.beginPath(); dctx.moveTo(fkRes.j1x, fkRes.j1y); dctx.lineTo(fkRes.j2x, fkRes.j2y); dctx.stroke();
+      // joint 2
+      dctx.fillStyle = '#aaaeb3';
+      dctx.beginPath(); dctx.arc(fkRes.j2x, fkRes.j2y, 6, 0, Math.PI*2); dctx.fill();
+
+      // gripper
+      const gripAngle = seg1Angle + seg2Angle;
+      const gripOpen = robotArm.gripperOpen;
+      const gripPerp = gripAngle + Math.PI/2;
+      dctx.strokeStyle = '#ccc'; dctx.lineWidth = 3; dctx.lineCap = 'butt';
+      dctx.beginPath();
+      dctx.moveTo(fkRes.j2x+Math.cos(gripPerp)*gripOpen/2, fkRes.j2y+Math.sin(gripPerp)*gripOpen/2);
+      dctx.lineTo(fkRes.j2x+Math.cos(gripAngle)*16+Math.cos(gripPerp)*gripOpen/2, fkRes.j2y+Math.sin(gripAngle)*16+Math.sin(gripPerp)*gripOpen/2);
+      dctx.stroke();
+      dctx.beginPath();
+      dctx.moveTo(fkRes.j2x-Math.cos(gripPerp)*gripOpen/2, fkRes.j2y-Math.sin(gripPerp)*gripOpen/2);
+      dctx.lineTo(fkRes.j2x+Math.cos(gripAngle)*16-Math.cos(gripPerp)*gripOpen/2, fkRes.j2y+Math.sin(gripAngle)*16-Math.sin(gripPerp)*gripOpen/2);
+      dctx.stroke();
+    }
+
+    // attention ring on focus object
+    if(attentionTarget){
+      const obj = attentionTarget;
+      dctx.save(); dctx.translate(obj.x, obj.y); dctx.rotate(obj.angle);
+      dctx.beginPath();
+      dctx.arc(0, 0, Math.max(obj.w,obj.h)/2+14, 0, Math.PI*2);
+      dctx.strokeStyle = 'rgba(88,166,255,0.5)';
+      dctx.lineWidth = 2;
+      dctx.setLineDash([4,4]);
+      dctx.stroke();
+      dctx.setLineDash([]);
+      dctx.restore();
+    }
+
+    // coordinate readout
+    dctx.fillStyle = 'rgba(110,118,129,0.6)'; dctx.font = '10px monospace';
+    dctx.fillText('桌面坐标系 · 机器人基座 ('+(robotArm?.baseX||0).toFixed(0)+', '+(robotArm?.baseY||0).toFixed(0)+')', 16, dh-12);
+  }
+
+  // ── mouse interaction ──
+  let mouseX=0, mouseY=0;
+  deskCanvas.addEventListener('mousemove', e=>{
+    const rect = deskCanvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+    // check hover
+    let hovered = null;
+    for(const obj of deskObjects){
+      const dx=mouseX-obj.x, dy=mouseY-obj.y;
+      const c=Math.cos(-obj.angle), s=Math.sin(-obj.angle);
+      const lx = dx*c - dy*s;
+      const ly = dx*s + dy*c;
+      if(Math.abs(lx)<obj.w/2+6 && Math.abs(ly)<obj.h/2+6){
+        hovered = obj; break;
+      }
+    }
+    if(hovered){
+      tooltip.style.opacity='1';
+      tooltip.style.left=(mouseX+16)+'px'; tooltip.style.top=(mouseY-30)+'px';
+      tooltip.textContent = hovered.label + (hovered.sorted?' ✓':hovered.held?' · 抓取中':'');
+    } else {
+      tooltip.style.opacity='0';
+    }
+    // move robot attention?
+    const fkRes = robotArm && fk(robotArm.baseX, robotArm.baseY, robotArm.seg1Angle, robotArm.seg2Angle, robotArm.seg1Len, robotArm.seg2Len);
+    if(fkRes && hovered && !hovered.held && !hovered.sorted){
+      deskCanvas.style.cursor = 'pointer';
+    } else {
+      deskCanvas.style.cursor = 'default';
+    }
+  });
+
+  deskCanvas.addEventListener('click', e=>{
+    const rect = deskCanvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    for(const obj of deskObjects){
+      const dx=cx-obj.x, dy=cy-obj.y;
+      const c=Math.cos(-obj.angle), s=Math.sin(-obj.angle);
+      const lx = dx*c - dy*s;
+      const ly = dx*s + dy*c;
+      if(Math.abs(lx)<obj.w/2+6 && Math.abs(ly)<obj.h/2+6){
+        if(!obj.held && !obj.sorted){
+          // user clicked object → focus attention
+          attentionTarget = obj;
+          if(window._engine) window._engine.userFocusObject(obj);
+        }
+        break;
+      }
+    }
+  });
+
+  // ═══════════════════════════════════════════════
+  //  REASONING ENGINE
+  // ═══════════════════════════════════════════════
+  const chainContainer = document.getElementById('chainContainer');
+  const logMsg = document.getElementById('logMsg');
+  const compareRow = document.getElementById('compareRow');
+  const intentText = document.getElementById('intentText');
+  const intentSub = document.getElementById('intentSub');
+  const confPct = document.getElementById('confPct');
+  const confBar = document.getElementById('confBar');
+
+  const taskScenarios = [
+    { intent:'"帮我把桌面收拾整齐，文件归类，然后给我递一支笔"', sub:'解析: 多步骤任务 · 3 个子目标 · 依赖关系待建立', objects:['paper1','paper2','paper3','pen1'] },
+    { intent:'"咖啡要凉了，把它放回杯垫上，顺便看看有没有未读消息"', sub:'解析: 2 个子任务 · 条件触发 · 视觉确认', objects:['cup','phone'] },
+    { intent:'"订书机我找不到了，帮我找找钥匙和笔记本"', sub:'解析: 搜索任务 · 多目标定位 · 递送规划', objects:['stapler','keys','book'] },
+    { intent:'"收拾好桌面后把所有笔和订书机放回笔筒旁边"', sub:'解析: 整理任务 · 物体归类 · 空间关系推理', objects:['pen1','pen2','stapler'] },
+  ];
+  let currentScenario = 0;
+  let engineStep = 0;
+  let confidence = 0;
+  let autoPlay = true;
+  let autoTimer = null;
+  let speed = 4;
+  let selectedStrategy = null;
+  let startTime = Date.now();
+  let timerInterval = null;
+
+  const enginePhases = [
+    { name:'场景理解',   icon:'👁', detail:'视觉观测 · 物体识别 · 空间关系' },
+    { name:'任务分解',   icon:'🧩', detail:'解析指令 → 拆解子任务 → 建立依赖图' },
+    { name:'抓取规划',   icon:'✋', detail:'生成抓取位姿候选 · 碰撞检测 · 可达性分析' },
+    { name:'策略权衡',   icon:'⚖️', detail:'A/B 方案对比 · 代价评估 · 风险分析' },
+    { name:'轨迹生成',   icon:'📐', detail:'运动规划 · 避障 · 时间最优轨迹' },
+    { name:'执行验证',   icon:'✅', detail:'仿真验证 · 力控参数 · 准备执行' },
+  ];
+
+  function buildChain(){
+    chainContainer.innerHTML = '';
+    enginePhases.forEach((p,i)=>{
+      const div = document.createElement('div');
+      div.className = 'chain-item';
+      div.innerHTML = `<span class="chain-icon">${p.icon}</span><span>${p.name}<br><small style="opacity:0.6">${p.detail}</small></span>`;
+      chainContainer.appendChild(div);
+    });
+  }
+
+  function setChainActive(idx){
+    [...chainContainer.children].forEach((c,i)=>{
+      c.classList.remove('active','done');
+      if(i<idx) c.classList.add('done');
+      if(i===idx) c.classList.add('active');
+    });
+  }
+
+  function buildStrategyCards(){
+    const strategies = [
+      { id:'A', badge:'badge-a', title:'路径 A: 先归类后递送', desc:'先将文件按类型叠放整齐，再取笔递送。安全但较慢。', risk:'低风险', time:'~18s', energy:'中', cost:'★☆☆' },
+      { id:'B', badge:'badge-b', title:'路径 B: 并行取笔+归位', desc:'机械臂在归位途中顺路抓取签字笔，一步完成。高效但精度要求高。', risk:'中风险', time:'~10s', energy:'低', cost:'★★☆' },
+    ];
+    compareRow.innerHTML = '';
+    strategies.forEach(s=>{
+      const card = document.createElement('div');
+      card.className = 'strategy-card';
+      card.dataset.strat = s.id;
+      card.innerHTML = `
+        <span class="strategy-badge ${s.badge}">方案 ${s.id}</span>
+        <div class="strategy-title">${s.title}</div>
+        <div class="strategy-desc">${s.desc}</div>
+        <div class="strategy-metrics">
+          <span>⚠ ${s.risk}</span><span>⏱ ${s.time}</span><span>⚡ ${s.energy}</span>
+        </div>
+        <button class="strategy-vote" data-vote="${s.id}">👍 选择</button>
+      `;
+      card.addEventListener('click', function(e){
+        if(e.target.classList.contains('strategy-vote')){
+          e.stopPropagation();
+          selectStrategy(s.id);
+          return;
+        }
+        selectStrategy(s.id);
+      });
+      compareRow.appendChild(card);
+    });
+  }
+
+  function selectStrategy(id){
+    selectedStrategy = id;
+    [...compareRow.children].forEach(c=>{
+      c.classList.remove('selected','rejected');
+      if(c.dataset.strat===id) c.classList.add('selected');
+      else c.classList.add('rejected');
+    });
+    confidence = id==='A' ? 0.87 : 0.73;
+    confPct.textContent = Math.round(confidence*100)+'%';
+    confBar.style.width = (confidence*100)+'%';
+    logMsg.textContent = `用户选择方案 ${id} · 置信度更新至 ${Math.round(confidence*100)}% · 锁定执行计划`;
+    // visual feedback on desk
+    highlightObjects = deskObjects.filter(o=>taskScenarios[currentScenario].objects.includes(o.id));
+    if(id==='A'){
+      deskBadge.textContent = '方案 A: 先归类文件 → 再递笔';
+    } else {
+      deskBadge.textContent = '方案 B: 归位途中顺路抓取';
+    }
+  }
+
+  function advanceEngine(){
+    if(engineStep >= enginePhases.length){
+      if(autoPlay) stopAuto();
+      return;
+    }
+
+    setChainActive(engineStep);
+    const phase = enginePhases[engineStep];
+
+    switch(engineStep){
+      case 0: // scene understanding
+        attentionTarget = deskObjects.find(o=>o.type==='paper'&&!o.sorted) || deskObjects[0];
+        highlightObjects = [attentionTarget];
+        logMsg.textContent = '识别桌面物体: 检测到 '+deskObjects.length+' 个物品 · 建立空间关系图谱';
+        deskBadge.textContent = '场景理解 · 物体识别中';
+        break;
+      case 1: // task decomposition
+        highlightObjects = deskObjects.filter(o=>taskScenarios[currentScenario].objects.includes(o.id));
+        logMsg.textContent = '任务依赖图: 归类→递送 串行依赖 · 判断可并行子任务: 0 个';
+        deskBadge.textContent = '任务分解 · 子目标排序中';
+        break;
+      case 2: // grasp planning
+        const target = deskObjects.find(o=>taskScenarios[currentScenario].objects.includes(o.id)&&!o.sorted) || deskObjects[0];
+        attentionTarget = target;
+        highlightObjects = [target];
+        graspCandidates = [
+          {x:target.x-14,y:target.y-10,best:true},
+          {x:target.x+16,y:target.y+8,best:false},
+          {x:target.x-8,y:target.y+18,best:false},
+          {x:target.x+10,y:target.y-16,best:false},
+        ];
+        logMsg.textContent = '生成 4 个抓取候选位姿 · 力闭合评估 · 最优: 左侧面抓取';
+        deskBadge.textContent = '抓取规划 · 位姿生成中';
+        break;
+      case 3: // strategy comparison
+        buildStrategyCards();
+        highlightObjects = deskObjects.filter(o=>taskScenarios[currentScenario].objects.includes(o.id));
+        logMsg.textContent = '⚖️ 方案权衡中 … 请选择你偏好的执行策略';
+        deskBadge.textContent = '策略权衡 · 等待用户选择';
+        if(autoPlay) stopAuto(); // pause for user interaction
+        break;
+      case 4: // trajectory
+        if(!selectedStrategy) selectedStrategy = 'A';
+        const tgt = deskObjects.find(o=>taskScenarios[currentScenario].objects.includes(o.id)&&!o.sorted) || deskObjects[0];
+        const fkRes2 = robotArm && fk(robotArm.baseX, robotArm.baseY, robotArm.seg1Angle, robotArm.seg2Angle, robotArm.seg1Len, robotArm.seg2Len);
+        const start = fkRes2 || {j2x:robotArm.baseX+70, j2y:robotArm.baseY};
+        plannedTrajectory = [];
+        const steps2=12;
+        for(let i=0;i<=steps2;i++){
+          const t=i/steps2;
+          const midX = start.j2x + (tgt.x-start.j2x)*0.3 - 40;
+          const midY = start.j2y + (tgt.y-start.j2y)*0.5 - 50;
+          const bx = (1-t)*(1-t)*start.j2x + 2*(1-t)*t*midX + t*t*tgt.x;
+          const by = (1-t)*(1-t)*start.j2y + 2*(1-t)*t*midY + t*t*tgt.y;
+          plannedTrajectory.push({x:bx, y:by});
+        }
+        // sort object
+        deskObjects.forEach(o=>{ if(taskScenarios[currentScenario].objects.includes(o.id)) o.sorted=true; });
+        logMsg.textContent = 'Bézier 平滑轨迹生成 · 12 个航点 · 避障检测通过';
+        deskBadge.textContent = '轨迹生成 · 运动规划中';
+        attentionTarget = tgt;
+        break;
+      case 5: // verify
+        robotArm.gripperOpen = 6;
+        gripperState = 'closed';
+        confidence = 0.92 + Math.random()*0.06;
+        confPct.textContent = Math.round(confidence*100)+'%';
+        confBar.style.width = (confidence*100)+'%';
+        logMsg.textContent = '仿真验证通过 · 力控参数已校准 · 等待执行指令';
+        deskBadge.textContent = '验证完成 · 就绪';
+        highlightObjects = [];
+        break;
+    }
+
+    engineStep++;
+  }
+
+  function startAuto(){ autoPlay=true; document.getElementById('btnAuto').classList.add('on'); document.getElementById('btnAuto').textContent='⏸ 暂停'; scheduleNext(); }
+  function stopAuto(){ autoPlay=false; document.getElementById('btnAuto').classList.remove('on'); document.getElementById('btnAuto').textContent='▶ 自动推演'; if(autoTimer) clearTimeout(autoTimer); }
+  function getDelay(){ return Math.round(3600-(speed-1)*350); }
+  function scheduleNext(){ if(!autoPlay) return; autoTimer = setTimeout(()=>{ if(engineStep<enginePhases.length){ advanceEngine(); scheduleNext(); } else { stopAuto(); } }, getDelay()); }
+
+  function resetAll(){
+    stopAuto();
+    engineStep=0; confidence=0; selectedStrategy=null;
+    initDesk();
+    graspCandidates=[]; plannedTrajectory=[]; highlightObjects=[]; attentionTarget=null;
+    currentScenario = Math.floor(Math.random()*taskScenarios.length);
+    setChainActive(-1);
+    buildStrategyCards();
+    selectStrategy(''); // clear
+    compareRow.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-size:12px;color:var(--text-dim);padding:20px;">策略卡将在推理阶段展示</div>';
+    const sc = taskScenarios[currentScenario];
+    intentText.textContent = sc.intent;
+    intentSub.textContent = sc.sub;
+    logMsg.textContent='';
+    confPct.textContent='--'; confBar.style.width='0%';
+    deskBadge.textContent='桌面办公机器人 · 初始化中';
+    startTime=Date.now();
+    advanceEngine();
+    startAuto();
+  }
+
+  function reprioritize(){
+    if(autoPlay) stopAuto();
+    currentScenario = (currentScenario+1)%taskScenarios.length;
+    const sc = taskScenarios[currentScenario];
+    intentText.textContent = sc.intent;
+    intentSub.textContent = sc.sub;
+    selectedStrategy = null;
+    compareRow.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-size:12px;color:var(--text-dim);padding:20px;">策略卡将在推理阶段展示</div>';
+    logMsg.textContent = '🔀 用户重排优先级 · 新指令: '+sc.intent;
+    deskBadge.textContent = '任务重排 · 重新推理中';
+    // unsort all
+    deskObjects.forEach(o=>o.sorted=false);
+    highlightObjects = deskObjects.filter(o=>sc.objects.includes(o.id));
+  }
+
+  // expose engine for click interaction
+  window._engine = {
+    userFocusObject(obj){
+      logMsg.textContent = '用户点击关注: '+obj.label+' · 优先处理此目标';
+      attentionTarget = obj;
+      highlightObjects = [obj];
+      // generate grasp candidates for this object
+      graspCandidates = [
+        {x:obj.x-14,y:obj.y-10,best:true},
+        {x:obj.x+16,y:obj.y+8,best:false},
+        {x:obj.x-8,y:obj.y+18,best:false},
+      ];
+      deskBadge.textContent = '用户交互 · 关注 '+obj.label;
+    }
+  };
+
+  // ═══════════════════════════════════════════════
+  //  BINDINGS & INIT
+  // ═══════════════════════════════════════════════
+  document.getElementById('btnAuto').addEventListener('click',()=>{ autoPlay?stopAuto():startAuto(); });
+  document.getElementById('btnStep').addEventListener('click',()=>{ stopAuto(); advanceEngine(); });
+  document.getElementById('btnReprioritize').addEventListener('click', reprioritize);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+  document.getElementById('speedSlider')?.addEventListener?.('input', function(){
+    speed=parseInt(this.value); if(autoPlay){stopAuto();startAuto();}
+  });
+
+  function updateTimer(){
+    const elapsed = (Date.now()-startTime)/1000;
+    const m=Math.floor(elapsed/60), s=(elapsed%60).toFixed(1);
+    // show in badge
+  }
+
+  // ── animation loop ──
+  function loop(){
+    resizeDesk();
+    // smooth arm movement
+    if(robotArm){
+      robotArm.seg1Angle += (robotArm.targetSeg1-robotArm.seg1Angle)*0.08;
+      robotArm.seg2Angle += (robotArm.targetSeg2-robotArm.seg2Angle)*0.08;
+      // if attention target, point toward it
+      if(attentionTarget){
+        const dx=attentionTarget.x-robotArm.baseX, dy=attentionTarget.y-robotArm.baseY;
+        const targetA1 = Math.atan2(dy,dx)*0.5;
+        const targetA2 = Math.atan2(dy-Math.sin(targetA1)*robotArm.seg1Len, dx-Math.cos(targetA1)*robotArm.seg1Len) - targetA1;
+        robotArm.targetSeg1 += (targetA1-robotArm.targetSeg1)*0.06;
+        robotArm.targetSeg2 += (targetA2-robotArm.targetSeg2)*0.06;
+      }
+    }
+    drawDesk();
+    requestAnimationFrame(loop);
+  }
+
+  // init
+  buildChain();
+  buildStrategyCards();
+  compareRow.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-size:12px;color:var(--text-dim);padding:20px;">策略卡将在推理阶段展示</div>';
+  initDesk();
+  loop();
+  currentScenario = Math.floor(Math.random()*taskScenarios.length);
+  const sc = taskScenarios[currentScenario];
+  intentText.textContent = sc.intent;
+  intentSub.textContent = sc.sub;
+  advanceEngine();
+  startAuto();
+  timerInterval = setInterval(updateTimer, 100);
+</script>
+</body>
+</html>

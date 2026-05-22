@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>具身智能 · 物理推理中</title>
+<style>
+  :root {
+    --bg: #080c12;
+    --surface: #111820;
+    --primary: #00d4aa;
+    --primary-glow: #00ffcc;
+    --accent1: #4da6ff;
+    --accent2: #ff7b42;
+    --accent3: #f5e642;
+    --danger: #ff4060;
+    --text: #c8ccd4;
+    --text-dim: #5e6778;
+    --border: #1e2a38;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .layout {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+    padding: 24px;
+    max-width: 1100px;
+    width: 100%;
+  }
+
+  /* ── left: 3D scene canvas ── */
+  .scene-panel {
+    flex: 1 1 620px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+    min-height: 560px;
+  }
+  .scene-panel canvas { display:block; width:100%; height:100%; }
+
+  .scene-badge {
+    position: absolute; top:14px; left:16px;
+    font-size:11px; color: var(--text-dim);
+    background: rgba(0,0,0,0.5); padding:4px 10px; border-radius:6px;
+    pointer-events: none;
+  }
+  .scene-legend {
+    position: absolute; bottom:14px; left:16px;
+    font-size:10px; color: var(--text-dim); display:flex; gap:14px;
+    pointer-events: none;
+  }
+  .scene-legend span { display:flex; align-items:center; gap:5px; }
+  .legend-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+
+  /* ── right: status panel ── */
+  .status-panel {
+    flex: 0 0 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+
+  /* pipeline phase */
+  .pipeline-title {
+    font-size:12px; color: var(--text-dim); text-transform:uppercase;
+    letter-spacing:1.5px; margin-bottom:12px;
+  }
+  .pipeline-steps { display:flex; flex-direction:column; gap:6px; }
+  .pipe-step {
+    display:flex; align-items:center; gap:10px;
+    padding:8px 12px; border-radius:8px;
+    font-size:13px; color: var(--text-dim);
+    background: var(--bg); border:1px solid transparent;
+    transition: all 0.4s ease;
+  }
+  .pipe-step.active {
+    color: var(--primary-glow); border-color: rgba(0,212,170,0.35);
+    background: #0a1e1a;
+  }
+  .pipe-step.done { color: var(--accent1); border-color: rgba(77,166,255,0.2); }
+  .pipe-dot {
+    width:8px; height:8px; border-radius:50%; background:var(--text-dim);
+    flex-shrink:0; transition: all 0.4s;
+  }
+  .pipe-step.active .pipe-dot { background:var(--primary); box-shadow:0 0 8px var(--primary-glow); }
+  .pipe-step.done .pipe-dot { background:var(--accent1); }
+
+  /* live log */
+  .log-box {
+    background: var(--bg); border:1px solid var(--border);
+    border-radius:10px; padding:12px 14px;
+    font-family: 'Cascadia Code','Fira Code','JetBrains Mono',monospace;
+    font-size:11px; color: var(--text-dim); line-height:1.6;
+    min-height:56px; max-height:90px; overflow-y:auto;
+    position:relative;
+  }
+  .log-cursor {
+    display:inline-block; width:7px; height:12px; background:var(--primary);
+    vertical-align:middle; margin-left:2px;
+    animation: blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* stats grid */
+  .stats-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .stat-item {
+    background: var(--bg); border-radius:8px; padding:10px 12px;
+  }
+  .stat-label { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
+  .stat-value { font-size:18px; font-weight:600; margin-top:2px; font-variant-numeric:tabular-nums; }
+  .stat-value.highlight { color:var(--primary-glow); }
+
+  /* controls */
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn {
+    padding:7px 14px; border-radius:8px; border:1px solid var(--border);
+    background: var(--bg); color: var(--text); font-size:12px;
+    cursor:pointer; transition: all 0.15s ease;
+    font-family:inherit; white-space:nowrap;
+  }
+  .btn:hover { border-color: var(--primary); color: var(--primary-glow); }
+  .btn.on { background: rgba(0,212,170,0.12); border-color: var(--primary); color: var(--primary-glow); }
+  .btn.warn:hover { border-color: var(--danger); color: var(--danger); }
+  .speed-row { display:flex; align-items:center; gap:8px; font-size:11px; color: var(--text-dim); margin-top:4px; }
+  .speed-row input { accent-color: var(--primary); width:90px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── SCENE ── -->
+  <div class="scene-panel" id="scenePanel">
+    <canvas id="sceneCanvas"></canvas>
+    <div class="scene-badge" id="sceneBadge">场景初始化中 …</div>
+    <div class="scene-legend">
+      <span><i class="legend-dot" style="background:var(--accent1)"></i> 激光雷达</span>
+      <span><i class="legend-dot" style="background:var(--accent3)"></i> 候选路径</span>
+      <span><i class="legend-dot" style="background:var(--primary)"></i> 最优轨迹</span>
+      <span><i class="legend-dot" style="background:var(--danger)"></i> 障碍物</span>
+    </div>
+  </div>
+
+  <!-- ── STATUS ── -->
+  <div class="status-panel">
+
+    <!-- pipeline -->
+    <div class="card">
+      <div class="pipeline-title">具身推理管线</div>
+      <div class="pipeline-steps" id="pipeline"></div>
+    </div>
+
+    <!-- live log -->
+    <div class="card">
+      <div class="pipeline-title">实时感知日志</div>
+      <div class="log-box" id="logBox"><span id="logMsg"></span><span class="log-cursor"></span></div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">已感知物体</div>
+        <div class="stat-value highlight" id="stObjects">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">路径候选数</div>
+        <div class="stat-value highlight" id="stPaths">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">碰撞概率</div>
+        <div class="stat-value" id="stCollision">0%</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">规划置信度</div>
+        <div class="stat-value" id="stConf">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">里程计</div>
+        <div class="stat-value" id="stOdom">0.00 m</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">推理耗时</div>
+        <div class="stat-value" id="stTime">00:00.0</div>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="btn-row">
+      <button class="btn on" id="btnAuto">▶ 自动推演</button>
+      <button class="btn" id="btnStep">⏭ 单步</button>
+      <button class="btn" id="btnPerturb">🌀 环境扰动</button>
+      <button class="btn warn" id="btnReset">↺ 重置场景</button>
+    </div>
+    <div class="speed-row">
+      推理速度 <input type="range" id="speedSlider" min="1" max="10" value="4">
+      <span id="speedLabel">4x</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════
+  //  SCENE CANVAS
+  // ═══════════════════════════════════════════════
+  const sceneCanvas = document.getElementById('sceneCanvas');
+  const sctx = sceneCanvas.getContext('2d');
+  const scenePanel = document.getElementById('scenePanel');
+
+  let sw, sh;
+  function resizeScene(){
+    const rect = scenePanel.getBoundingClientRect();
+    sw = sceneCanvas.width = rect.width;
+    sh = sceneCanvas.height = rect.height;
+  }
+  resizeScene();
+  window.addEventListener('resize', resizeScene);
+
+  // ── environment ──
+  const robot = { x:0, y:0, angle:0, radius:12, targetX:0, targetY:0 };
+  let obstacles = [];
+  let lidarRays = [];
+  let candidatePaths = [];
+  let bestPath = [];
+  let detectedObjects = [];
+  let occupancyGrid = null;
+
+  function generateObstacles(){
+    const obs = [];
+    const cx=sw/2, cy=sh/2;
+    // random boxes + circles in the environment
+    const seed = [
+      {x:0.25,y:0.22,w:90,h:35}, {x:0.58,y:0.30,w:50,h:80},
+      {x:0.40,y:0.65,w:110,h:40}, {x:0.72,y:0.60,w:40,h:40},
+      {x:0.15,y:0.55,w:60,h:55}, {x:0.68,y:0.15,w:45,h:55},
+      {x:0.35,y:0.38,w:30,h:30}, {x:0.82,y:0.42,w:28,h:28},
+    ];
+    seed.forEach(s=>{
+      obs.push({
+        x: s.x*sw - s.w/2, y: s.y*sh - s.h/2,
+        w: s.w, h: s.h,
+        type: 'box'
+      });
+    });
+    // add some circular obstacles
+    const circles = [
+      {x:0.50,y:0.48,r:22},{x:0.20,y:0.30,r:18},{x:0.75,y:0.72,r:25},
+    ];
+    circles.forEach(c=>{
+      obs.push({x:c.x*sw, y:c.y*sh, r:c.r, type:'circle'});
+    });
+    return obs;
+  }
+
+  function initScene(){
+    robot.x = sw*0.12;
+    robot.y = sh*0.15;
+    robot.angle = Math.atan2(sh*0.82-robot.y, sw*0.88-robot.x);
+    robot.targetX = sw*0.88;
+    robot.targetY = sh*0.82;
+    obstacles = generateObstacles();
+    lidarRays = [];
+    candidatePaths = [];
+    bestPath = [];
+    detectedObjects = [];
+    occupancyGrid = null;
+  }
+
+  // ── simulated lidar ──
+  function castLidar(numRays=72){
+    const rays = [];
+    const maxRange = 280;
+    for(let i=0;i<numRays;i++){
+      const angle = robot.angle + (i/numRays)*Math.PI*2 - Math.PI;
+      let hitDist = maxRange;
+      let hitType = 'free';
+      for(const obs of obstacles){
+        // line-circle / line-box intersection (simplified)
+        const d = rayObstacleDist(robot.x, robot.y, angle, obs);
+        if(d < hitDist){ hitDist = d; hitType = 'obstacle'; }
+      }
+      rays.push({ angle, dist:hitDist, type:hitType });
+    }
+    return rays;
+  }
+
+  function rayObstacleDist(rx,ry,angle,obs){
+    // approximate: check intersection with obstacle bounds
+    const steps = 40;
+    const maxR = 280;
+    let prevInside = pointInObstacle(rx,ry,obs);
+    for(let i=1;i<=steps;i++){
+      const d = (i/steps)*maxR;
+      const px = rx + Math.cos(angle)*d;
+      const py = ry + Math.sin(angle)*d;
+      const inside = pointInObstacle(px,py,obs);
+      if(inside && !prevInside) return d;
+      if(!inside && prevInside) return d;
+      prevInside = inside;
+    }
+    return maxR;
+  }
+
+  function pointInObstacle(px,py,obs){
+    if(obs.type==='circle'){
+      const dx=px-obs.x, dy=py-obs.y;
+      return dx*dx+dy*dy < obs.r*obs.r;
+    }
+    return px>obs.x && px<obs.x+obs.w && py>obs.y && py<obs.y+obs.h;
+  }
+
+  // ── path planning (RRT-like sampling) ──
+  function generateCandidatePaths(count=8){
+    const paths = [];
+    for(let i=0;i<count;i++){
+      const waypoints = [];
+      const sx=robot.x, sy=robot.y;
+      const tx=robot.targetX + (Math.random()-0.5)*60;
+      const ty=robot.targetY + (Math.random()-0.5)*60;
+      // random midpoint for diversity
+      const mx = (sx+tx)/2 + (Math.random()-0.5)*180;
+      const my = (sy+ty)/2 + (Math.random()-0.5)*180;
+      waypoints.push({x:sx,y:sy});
+      waypoints.push({x:mx,y:my});
+      waypoints.push({x:tx,y:ty});
+      // cost: length + collision penalty
+      let cost=0, collisionCount=0;
+      for(let j=1;j<waypoints.length;j++){
+        const a=waypoints[j-1], b=waypoints[j];
+        cost += Math.hypot(b.x-a.x, b.y-a.y);
+        // check collision along segment
+        for(const obs of obstacles){
+          if(segmentHitsObstacle(a,b,obs)) collisionCount++;
+        }
+      }
+      paths.push({
+        waypoints,
+        cost: cost + collisionCount*500,
+        collisions: collisionCount,
+        color: collisionCount===0 ? 'var(--primary)' : 'var(--accent3)',
+      });
+    }
+    paths.sort((a,b)=>a.cost-b.cost);
+    return paths;
+  }
+
+  function segmentHitsObstacle(a,b,obs){
+    const steps=8;
+    for(let i=0;i<=steps;i++){
+      const t = i/steps;
+      const px = a.x+(b.x-a.x)*t;
+      const py = a.y+(b.y-a.y)*t;
+      if(pointInObstacle(px,py,obs)) return true;
+    }
+    return false;
+  }
+
+  // ═══════════════════════════════════════════════
+  //  DRAWING
+  // ═══════════════════════════════════════════════
+  function drawScene(){
+    sctx.clearRect(0,0,sw,sh);
+
+    // background grid
+    sctx.strokeStyle = 'rgba(30,42,56,0.5)';
+    sctx.lineWidth = 0.5;
+    const gs=40;
+    for(let x=gs;x<sw;x+=gs){ sctx.beginPath(); sctx.moveTo(x,0); sctx.lineTo(x,sh); sctx.stroke(); }
+    for(let y=gs;y<sh;y+=gs){ sctx.beginPath(); sctx.moveTo(0,y); sctx.lineTo(sw,y); sctx.stroke(); }
+
+    // occupancy grid (if built)
+    if(occupancyGrid){
+      for(const cell of occupancyGrid){
+        sctx.fillStyle = `rgba(77,166,255,${cell.p*0.25})`;
+        sctx.fillRect(cell.x-4, cell.y-4, 8, 8);
+      }
+    }
+
+    // obstacles
+    obstacles.forEach(obs=>{
+      sctx.fillStyle = 'rgba(255,64,96,0.12)';
+      sctx.strokeStyle = 'rgba(255,64,96,0.35)';
+      sctx.lineWidth = 1;
+      if(obs.type==='circle'){
+        sctx.beginPath(); sctx.arc(obs.x,obs.y,obs.r,0,Math.PI*2);
+        sctx.fill(); sctx.stroke();
+      } else {
+        sctx.fillRect(obs.x,obs.y,obs.w,obs.h);
+        sctx.strokeRect(obs.x,obs.y,obs.w,obs.h);
+      }
+    });
+
+    // candidate paths
+    candidatePaths.forEach((p,i)=>{
+      if(p.waypoints.length<2) return;
+      sctx.beginPath();
+      sctx.moveTo(p.waypoints[0].x, p.waypoints[0].y);
+      for(let j=1;j<p.waypoints.length;j++){
+        sctx.lineTo(p.waypoints[j].x, p.waypoints[j].y);
+      }
+      const isBest = i===0 && p.collisions===0;
+      sctx.strokeStyle = isBest ? 'rgba(0,212,170,0.7)' : 'rgba(245,230,66,0.22)';
+      sctx.lineWidth = isBest ? 2.5 : 1;
+      sctx.setLineDash(isBest ? [] : [8,12]);
+      sctx.stroke();
+      sctx.setLineDash([]);
+      // waypoint dots
+      p.waypoints.forEach((wp,wi)=>{
+        sctx.beginPath();
+        sctx.arc(wp.x,wp.y, wi===0||wi===p.waypoints.length-1?5:3, 0, Math.PI*2);
+        sctx.fillStyle = isBest ? 'rgba(0,212,170,0.8)' : 'rgba(245,230,66,0.35)';
+        sctx.fill();
+      });
+    });
+
+    // best path (thick overlay)
+    if(bestPath.length>1){
+      sctx.beginPath();
+      sctx.moveTo(bestPath[0].x, bestPath[0].y);
+      for(let i=1;i<bestPath.length;i++) sctx.lineTo(bestPath[i].x, bestPath[i].y);
+      sctx.strokeStyle = 'rgba(0,255,204,0.9)';
+      sctx.lineWidth = 3;
+      sctx.shadowColor = 'rgba(0,255,204,0.5)';
+      sctx.shadowBlur = 10;
+      sctx.stroke();
+      sctx.shadowBlur = 0;
+    }
+
+    // lidar rays
+    lidarRays.forEach(ray=>{
+      const ex = robot.x + Math.cos(ray.angle)*ray.dist;
+      const ey = robot.y + Math.sin(ray.angle)*ray.dist;
+      sctx.beginPath(); sctx.moveTo(robot.x, robot.y); sctx.lineTo(ex,ey);
+      sctx.strokeStyle = ray.type==='free'
+        ? 'rgba(77,166,255,0.15)'
+        : 'rgba(255,124,66,0.4)';
+      sctx.lineWidth = 0.6;
+      sctx.stroke();
+    });
+    // lidar hit points
+    lidarRays.forEach(ray=>{
+      if(ray.type!=='obstacle') return;
+      const ex = robot.x + Math.cos(ray.angle)*ray.dist;
+      const ey = robot.y + Math.sin(ray.angle)*ray.dist;
+      sctx.beginPath(); sctx.arc(ex,ey,2.8,0,Math.PI*2);
+      sctx.fillStyle = 'rgba(255,124,66,0.8)';
+      sctx.fill();
+    });
+
+    // detected objects
+    detectedObjects.forEach(obj=>{
+      sctx.beginPath(); sctx.arc(obj.x,obj.y,obj.r||14,0,Math.PI*2);
+      sctx.strokeStyle = 'rgba(77,166,255,0.5)';
+      sctx.lineWidth = 1.5;
+      sctx.setLineDash([4,4]);
+      sctx.stroke();
+      sctx.setLineDash([]);
+      sctx.fillStyle = 'rgba(255,255,255,0.08)';
+      sctx.fill();
+    });
+
+    // target marker
+    sctx.beginPath();
+    sctx.arc(robot.targetX, robot.targetY, 10, 0, Math.PI*2);
+    sctx.fillStyle = 'rgba(0,255,204,0.2)';
+    sctx.fill();
+    sctx.strokeStyle = 'rgba(0,255,204,0.6)';
+    sctx.lineWidth = 2;
+    sctx.setLineDash([3,3]);
+    sctx.stroke();
+    sctx.setLineDash([]);
+    // crosshair
+    const cr=16;
+    sctx.beginPath();
+    sctx.moveTo(robot.targetX-cr,robot.targetY); sctx.lineTo(robot.targetX+cr,robot.targetY);
+    sctx.moveTo(robot.targetX,robot.targetY-cr); sctx.lineTo(robot.targetX,robot.targetY+cr);
+    sctx.strokeStyle = 'rgba(0,255,204,0.4)';
+    sctx.stroke();
+
+    // robot body
+    const rx=robot.x, ry=robot.y, ra=robot.angle;
+    // chassis
+    sctx.beginPath();
+    sctx.arc(rx, ry, robot.radius+4, 0, Math.PI*2);
+    sctx.fillStyle = 'rgba(0,0,0,0.7)';
+    sctx.fill();
+    sctx.strokeStyle = 'rgba(0,212,170,0.7)';
+    sctx.lineWidth = 2;
+    sctx.stroke();
+    // direction indicator
+    sctx.beginPath();
+    sctx.moveTo(rx+Math.cos(ra)*18, ry+Math.sin(ra)*18);
+    sctx.lineTo(rx+Math.cos(ra+2.4)*10, ry+Math.sin(ra+2.4)*10);
+    sctx.lineTo(rx+Math.cos(ra-2.4)*10, ry+Math.sin(ra-2.4)*10);
+    sctx.closePath();
+    sctx.fillStyle = 'rgba(0,255,204,0.9)';
+    sctx.fill();
+    // inner dot
+    sctx.beginPath();
+    sctx.arc(rx, ry, 5, 0, Math.PI*2);
+    sctx.fillStyle = '#fff';
+    sctx.fill();
+
+    // sensor FOV cone (subtle)
+    sctx.beginPath();
+    sctx.moveTo(rx,ry);
+    sctx.arc(rx,ry,60, ra-0.6, ra+0.6);
+    sctx.closePath();
+    sctx.fillStyle = 'rgba(77,166,255,0.04)';
+    sctx.fill();
+
+    // coordinate labels
+    sctx.fillStyle = 'rgba(94,103,120,0.5)';
+    sctx.font = '9px monospace';
+    sctx.fillText(`(${(rx/sw*10).toFixed(1)}, ${(ry/sh*10).toFixed(1)}) → (${(robot.targetX/sw*10).toFixed(1)}, ${(robot.targetY/sh*10).toFixed(1)})`, 16, sh-10);
+  }
+
+  // ═══════════════════════════════════════════════
+  //  REASONING PIPELINE
+  // ═══════════════════════════════════════════════
+  const pipelineEl = document.getElementById('pipeline');
+  const logMsg = document.getElementById('logMsg');
+  const sceneBadge = document.getElementById('sceneBadge');
+
+  const steps = [
+    { id:'perceive', icon:'👁', label:'环境感知', sub:'LiDAR + 深度相机融合' },
+    { id:'detect', icon:'🔍', label:'物体检测', sub:'YOLO-v8 · 实例分割' },
+    { id:'map', icon:'🗺', label:'场景建图', sub:'3D 占据栅格 · SLAM 回环' },
+    { id:'plan', icon:'🧭', label:'运动规划', sub:'RRT* · 轨迹优化 · NMPC' },
+    { id:'control', icon:'🎯', label:'执行控制', sub:'全身阻抗控制 · 力反馈' },
+  ];
+
+  function buildPipeline(){
+    pipelineEl.innerHTML = '';
+    steps.forEach((s,i)=>{
+      const div = document.createElement('div');
+      div.className = 'pipe-step';
+      div.dataset.id = s.id;
+      div.innerHTML = `<span class="pipe-dot"></span><span>${s.icon} ${s.label}</span><span style="margin-left:auto;font-size:10px;opacity:0.5">${s.sub}</span>`;
+      pipelineEl.appendChild(div);
+    });
+  }
+
+  // ═══════════════════════════════════════════════
+  //  ENGINE STATE
+  // ═══════════════════════════════════════════════
+  let currentStep = 0;
+  let autoPlay = true;
+  let autoTimer = null;
+  let speed = 4;
+  let startTime = Date.now();
+  let collisionProb = 0;
+  let confidenceVal = 0;
+  let odometer = 0;
+  let timerInterval = null;
+
+  const statO = document.getElementById('stObjects');
+  const stPaths = document.getElementById('stPaths');
+  const stCollision = document.getElementById('stCollision');
+  const stConf = document.getElementById('stConf');
+  const stOdom = document.getElementById('stOdom');
+  const stTime = document.getElementById('stTime');
+
+  function getDelay(){ return Math.round(3800 - (speed-1)*370); }
+
+  function setPipelineActive(idx){
+    [...pipelineEl.children].forEach((c,i)=>{
+      c.classList.remove('active','done');
+      if(i<idx) c.classList.add('done');
+      if(i===idx) c.classList.add('active');
+    });
+  }
+
+  const logLines = {
+    perceive: ['初始化多模态传感器融合 … 校准 IMU …', 'LiDAR 点云帧接收中: 192k pts/frame', '深度图对齐完成，帧率: 30 fps', '检测到环境光照变化，自适应曝光补偿'],
+    detect:   ['运行实例分割模型 … 推理时间: 14ms', '检测到 3 个静态障碍物, 1 个动态目标', '动态目标速度估算: 0.4 m/s ←', '边界框 IoU > 0.85 确认，并入跟踪器'],
+    map:      ['占据栅格更新: 240×240 分辨率', '检测回环候选: 2 帧匹配 > 0.92', '图优化收敛，残差: 0.032', '全局地图更新，新增 48 个自由单元'],
+    plan:     ['RRT* 采样: 1200 节点, 8 条候选路径', '代价评估: 路径 A=3.2m, B=3.8m, C=4.1m', '选择路径 A · 平滑 B-spline 插值', 'NMPC 前瞻窗口: 2.0s · 控制频率 100Hz'],
+    control:  ['发送关节轨迹 → 7-DOF 机械臂', '阻抗参数: K=800, D=40 · 力限制 15N', '足端接触力反馈正常，ZMP 在支撑域内', '执行完成 · 位置误差 < 2mm'],
+  };
+
+  function advance(){
+    if(currentStep >= steps.length){
+      if(autoPlay) stopAuto();
+      return;
+    }
+
+    const stepKey = steps[currentStep].id;
+    setPipelineActive(currentStep);
+
+    // scene update per phase
+    switch(currentStep){
+      case 0: // perceive
+        lidarRays = castLidar(90);
+        sceneBadge.textContent = 'LiDAR 扫描中 · ' + lidarRays.filter(r=>r.type==='obstacle').length + ' 个击中点';
+        logMsg.textContent = logLines.perceive[Math.floor(Math.random()*logLines.perceive.length)];
+        statO.textContent = detectedObjects.length || Math.floor(Math.random()*3)+2;
+        stPaths.textContent = '--';
+        collisionProb = Math.floor(Math.random()*15)+5;
+        break;
+      case 1: // detect
+        detectedObjects = obstacles.filter(()=>Math.random()<0.6).map(o=>({x:o.x+(o.w||0)/2, y:o.y+(o.h||0)/2, r:o.r||Math.max(o.w,o.h)/2}));
+        sceneBadge.textContent = '物体检测 · ' + detectedObjects.length + ' 个目标识别';
+        logMsg.textContent = logLines.detect[Math.floor(Math.random()*logLines.detect.length)];
+        statO.textContent = detectedObjects.length;
+        collisionProb = Math.floor(Math.random()*25)+15;
+        break;
+      case 2: // map
+        occupancyGrid = Array.from({length:60},()=>({
+          x:Math.random()*sw, y:Math.random()*sh, p:Math.random()*0.5
+        }));
+        sceneBadge.textContent = '占据栅格建图中 · 240×240 cells';
+        logMsg.textContent = logLines.map[Math.floor(Math.random()*logLines.map.length)];
+        collisionProb = Math.floor(Math.random()*30)+20;
+        break;
+      case 3: // plan
+        candidatePaths = generateCandidatePaths(8);
+        const valid = candidatePaths.filter(p=>p.collisions===0);
+        bestPath = valid.length>0 ? valid[0].waypoints : candidatePaths[0].waypoints;
+        sceneBadge.textContent = 'RRT* 路径规划 · ' + candidatePaths.length + ' 条候选';
+        logMsg.textContent = logLines.plan[Math.floor(Math.random()*logLines.plan.length)];
+        stPaths.textContent = candidatePaths.length;
+        collisionProb = valid.length>0 ? Math.floor(Math.random()*8)+1 : Math.floor(Math.random()*20)+10;
+        confidenceVal = valid.length>0 ? 0.78+Math.random()*0.18 : 0.4+Math.random()*0.2;
+        stConf.textContent = Math.round(confidenceVal*100)+'%';
+        break;
+      case 4: // control
+        sceneBadge.textContent = '全身控制执行中 · 力反馈闭环';
+        logMsg.textContent = logLines.control[Math.floor(Math.random()*logLines.control.length)];
+        odometer += 0.8 + Math.random()*0.6;
+        stOdom.textContent = odometer.toFixed(2)+' m';
+        stCollision.textContent = Math.round(collisionProb)+'%';
+        stConf.textContent = Math.round((0.88+Math.random()*0.1)*100)+'%';
+        // move robot along best path
+        if(bestPath.length>1){
+          const stepFrac = 0.25;
+          const wp = bestPath[Math.min(Math.floor(currentStep/5*bestPath.length), bestPath.length-1)];
+          robot.x += (wp.x-robot.x)*stepFrac;
+          robot.y += (wp.y-robot.y)*stepFrac;
+          robot.angle = Math.atan2(robot.targetY-robot.y, robot.targetX-robot.x);
+        }
+        break;
+    }
+
+    stCollision.textContent = Math.round(collisionProb)+'%';
+    if(currentStep===3 && !stConf.textContent || stConf.textContent==='--'){
+      stConf.textContent = Math.round((0.55+Math.random()*0.15)*100)+'%';
+    }
+
+    currentStep++;
+  }
+
+  function startAuto(){ autoPlay=true; document.getElementById('btnAuto').classList.add('on'); document.getElementById('btnAuto').textContent='⏸ 暂停'; scheduleNext(); }
+  function stopAuto(){ autoPlay=false; document.getElementById('btnAuto').classList.remove('on'); document.getElementById('btnAuto').textContent='▶ 自动推演'; if(autoTimer) clearTimeout(autoTimer); }
+  function scheduleNext(){ if(!autoPlay) return; autoTimer = setTimeout(()=>{ if(currentStep<steps.length){ advance(); scheduleNext(); } else { stopAuto(); } }, getDelay()); }
+
+  function resetAll(){
+    stopAuto();
+    currentStep=0; collisionProb=0; confidenceVal=0; odometer=0;
+    initScene();
+    lidarRays=[]; candidatePaths=[]; bestPath=[]; detectedObjects=[]; occupancyGrid=null;
+    setPipelineActive(-1);
+    sceneBadge.textContent='场景初始化中 …';
+    logMsg.textContent='';
+    statO.textContent='0'; stPaths.textContent='0'; stCollision.textContent='0%';
+    stConf.textContent='--'; stOdom.textContent='0.00 m';
+    startTime=Date.now();
+    advance();
+    startAuto();
+  }
+
+  function perturbEnvironment(){
+    // randomly move/add obstacles to simulate dynamic environment
+    if(obstacles.length>3){
+      const idx = Math.floor(Math.random()*obstacles.length);
+      obstacles[idx].x += (Math.random()-0.5)*60;
+      obstacles[idx].y += (Math.random()-0.5)*60;
+    }
+    // add a new obstacle
+    obstacles.push({
+      x: robot.x + (Math.random()-0.5)*300,
+      y: robot.y + (Math.random()-0.5)*300,
+      w:20+Math.random()*50, h:20+Math.random()*50, type:'box'
+    });
+    logMsg.textContent='⚠ 环境变化！检测到新障碍物，触发重规划 …';
+    sceneBadge.textContent='环境扰动 · 重规划中';
+    // invalidate current path, re-plan
+    candidatePaths = generateCandidatePaths(Math.floor(Math.random()*5)+3);
+    const valid = candidatePaths.filter(p=>p.collisions===0);
+    bestPath = valid.length>0 ? valid[0].waypoints : [];
+    stPaths.textContent = candidatePaths.length;
+    collisionProb = valid.length>0 ? Math.floor(Math.random()*15)+5 : 30+Math.floor(Math.random()*30);
+    stCollision.textContent = Math.round(collisionProb)+'%';
+    stConf.textContent = valid.length>0 ? Math.round((0.6+Math.random()*0.25)*100)+'%' : Math.round((0.25+Math.random()*0.25)*100)+'%';
+  }
+
+  // ═══════════════════════════════════════════════
+  //  BINDINGS
+  // ═══════════════════════════════════════════════
+  document.getElementById('btnAuto').addEventListener('click',()=>{ autoPlay?stopAuto():startAuto(); });
+  document.getElementById('btnStep').addEventListener('click',()=>{ stopAuto(); advance(); });
+  document.getElementById('btnPerturb').addEventListener('click',()=>{ if(autoPlay) stopAuto(); perturbEnvironment(); });
+  document.getElementById('btnReset').addEventListener('click',resetAll);
+  document.getElementById('speedSlider').addEventListener('input',function(){
+    speed=parseInt(this.value);
+    document.getElementById('speedLabel').textContent=speed+'x';
+    if(autoPlay){ stopAuto(); startAuto(); }
+  });
+
+  function updateTimer(){
+    const elapsed = (Date.now()-startTime)/1000;
+    const m = Math.floor(elapsed/60);
+    const s = (elapsed%60).toFixed(1);
+    stTime.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(4,'0')}`;
+  }
+
+  // ═══════════════════════════════════════════════
+  //  LOOP
+  // ═══════════════════════════════════════════════
+  function loop(){
+    resizeScene();
+    drawScene();
+    requestAnimationFrame(loop);
+  }
+
+  // init
+  buildPipeline();
+  initScene();
+  loop();
+  advance();
+  startAuto();
+  timerInterval = setInterval(updateTimer, 100);
+</script>
+</body>
+</html>

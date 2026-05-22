@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 深度推理中</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131f;
+    --primary: #7c5cfc;
+    --primary-glow: #9d7dfd;
+    --accent1: #00e5a0;
+    --accent2: #ff6b9d;
+    --accent3: #ffb347;
+    --text: #c8c8d4;
+    --text-dim: #6b6b7a;
+    --border: #252536;
+    --node-size: 42px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  canvas { position:fixed; top:0; left:0; z-index:0; pointer-events:none; }
+
+  .main-card {
+    position:relative; z-index:1;
+    width: 680px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 44px 36px;
+    box-shadow: 0 0 60px rgba(124,92,252,0.07), 0 30px 60px rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  /* ---- header ---- */
+  .header {
+    display:flex; align-items:center; gap:12px; margin-bottom:28px;
+  }
+  .pulse-dot {
+    width:12px; height:12px; border-radius:50%; background:var(--accent1);
+    box-shadow:0 0 10px var(--accent1);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { transform:scale(1); opacity:1; }
+    50% { transform:scale(1.6); opacity:0.5; }
+  }
+  .header-title { font-size:17px; font-weight:600; letter-spacing:-0.2px; }
+  .header-sub  { font-size:12px; color:var(--text-dim); margin-left:auto; }
+
+  /* ---- phase badge ---- */
+  .phase-row { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+  .phase-chip {
+    padding:6px 14px; border-radius:20px; font-size:11px; font-weight:500;
+    background:var(--border); color:var(--text-dim);
+    transition:all 0.35s ease;
+    cursor:default; user-select:none;
+    border:1px solid transparent;
+  }
+  .phase-chip.active {
+    background:#1a1a30; color:var(--primary-glow);
+    border-color:rgba(124,92,252,0.4);
+    box-shadow:0 0 12px rgba(124,92,252,0.15);
+  }
+  .phase-chip.done {
+    background:#0f1f1a; color:var(--accent1);
+    border-color:rgba(0,229,160,0.3);
+  }
+
+  /* ---- reasoning chain ---- */
+  .chain {
+    display:flex; flex-direction:column; gap:10px;
+    margin-bottom:22px; min-height:180px;
+  }
+  .chain-node {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 16px; border-radius:12px;
+    background:var(--bg); border:1px solid var(--border);
+    opacity:0; transform:translateY(8px);
+    transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.5s ease, background 0.5s ease;
+  }
+  .chain-node.show {
+    opacity:1; transform:translateY(0);
+  }
+  .chain-node.active-node {
+    border-color:rgba(124,92,252,0.45);
+    background:#12122a;
+  }
+  .node-marker {
+    width:var(--node-size); height:var(--node-size); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; flex-shrink:0;
+    background:var(--border); color:var(--text-dim);
+    transition:all 0.5s ease;
+  }
+  .chain-node.active-node .node-marker {
+    background:rgba(124,92,252,0.2); color:var(--primary-glow);
+    box-shadow:0 0 14px rgba(124,92,252,0.2);
+  }
+  .chain-node.done-node .node-marker {
+    background:rgba(0,229,160,0.15); color:var(--accent1);
+  }
+  .node-body { flex:1; min-width:0; }
+  .node-label { font-size:14px; font-weight:500; }
+  .node-detail {
+    font-size:12px; color:var(--text-dim); margin-top:2px;
+    opacity:0; max-height:0; overflow:hidden;
+    transition: opacity 0.4s ease, max-height 0.4s ease;
+  }
+  .chain-node.active-node .node-detail,
+  .chain-node.done-node .node-detail {
+    opacity:1; max-height:60px;
+  }
+  .node-time {
+    font-size:11px; color:var(--text-dim); flex-shrink:0;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---- live log ---- */
+  .live-log {
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:12px; padding:12px 16px;
+    font-size:12px; color:var(--text-dim); line-height:1.7;
+    min-height:44px; max-height:80px; overflow-y:auto;
+    margin-bottom:22px;
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono',monospace;
+  }
+  .live-log .cursor {
+    display:inline-block; width:8px; height:14px; background:var(--primary);
+    vertical-align:middle; margin-left:1px;
+    animation:blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* ---- stats row ---- */
+  .stats {
+    display:flex; gap:28px; margin-bottom:20px;
+    font-size:12px; color:var(--text-dim);
+  }
+  .stat-val { color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  /* ---- controls ---- */
+  .controls {
+    display:flex; gap:10px; flex-wrap:wrap;
+    padding-top:16px; border-top:1px solid var(--border);
+  }
+  .btn {
+    padding:8px 18px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text); font-size:13px;
+    cursor:pointer; transition:all 0.2s ease;
+    font-family:inherit;
+  }
+  .btn:hover { border-color:var(--primary); color:var(--primary-glow); }
+  .btn.active-btn { background:rgba(124,92,252,0.15); border-color:var(--primary); color:var(--primary-glow); }
+  .btn.danger { border-color:rgba(255,107,157,0.3); }
+  .btn.danger:hover { border-color:var(--accent2); color:var(--accent2); background:rgba(255,107,157,0.08); }
+
+  .speed-label { font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:6px; margin-left:auto; }
+  .speed-label input { accent-color:var(--primary); width:80px; }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="main-card">
+
+  <!-- header -->
+  <div class="header">
+    <div class="pulse-dot"></div>
+    <span class="header-title">Claude Code · 深度推理引擎</span>
+    <span class="header-sub" id="timer">00:00.0</span>
+  </div>
+
+  <!-- phase chips -->
+  <div class="phase-row" id="phaseRow">
+    <span class="phase-chip active"  data-phase="0">🔍 问题拆解</span>
+    <span class="phase-chip"         data-phase="1">🧠 上下文检索</span>
+    <span class="phase-chip"         data-phase="2">⚙️ 方案推演</span>
+    <span class="phase-chip"         data-phase="3">✅ 验证输出</span>
+  </div>
+
+  <!-- reasoning chain -->
+  <div class="chain" id="chain"></div>
+
+  <!-- live log -->
+  <div class="live-log" id="liveLog"><span></span><span class="cursor"></span></div>
+
+  <!-- stats -->
+  <div class="stats">
+    <div>推理步骤 <span class="stat-val" id="statSteps">0</span></div>
+    <div>Token 消耗 <span class="stat-val" id="statTokens">0</span></div>
+    <div>置信度 <span class="stat-val" id="statConf">--</span></div>
+    <div>深度 <span class="stat-val" id="statDepth">L0</span></div>
+  </div>
+
+  <!-- controls -->
+  <div class="controls">
+    <button class="btn active-btn" id="btnPlay">▶ 自动推演</button>
+    <button class="btn" id="btnStep">⏭ 单步推进</button>
+    <button class="btn" id="btnBranch">⑂ 分支探索</button>
+    <button class="btn" id="btnDoubt">⚡ 质疑回溯</button>
+    <button class="btn danger" id="btnReset">↺ 重置</button>
+    <span class="speed-label">
+      速度 <input type="range" id="speedSlider" min="1" max="10" value="4" title="推理速度">
+    </span>
+  </div>
+</div>
+
+<script>
+  // ── canvas particle network ──────────────────────────────
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  let W,H;
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+
+  const particles = Array.from({length:55},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.5,
+    r:1.2+Math.random()*2.2,
+    hue: Math.random()<0.55 ? 260 : (Math.random()<0.5 ? 165 : 340),
+  }));
+
+  function drawParticles(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+    });
+    // connections
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const a=particles[i], b=particles[j];
+        const dx=a.x-b.x, dy=a.y-b.y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<110){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`hsla(${a.hue},60%,60%,${0.07*(1-d/110)})`;
+          ctx.stroke();
+        }
+      }
+    }
+    // dots
+    particles.forEach(p=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.hue},65%,62%,0.7)`;
+      ctx.fill();
+    });
+  }
+
+  // ── reasoning engine ─────────────────────────────────────
+  const chainEl = document.getElementById('chain');
+  const liveLogEl = document.getElementById('liveLog');
+  const timerEl = document.getElementById('timer');
+  const statSteps = document.getElementById('statSteps');
+  const statTokens = document.getElementById('statTokens');
+  const statConf = document.getElementById('statConf');
+  const statDepth = document.getElementById('statDepth');
+  const phaseRow = document.getElementById('phaseRow');
+
+  const reasoningSteps = [
+    { phase:0, label:'解析用户意图', detail:'识别核心问题域，提取关键约束与隐含需求', tokens:120 },
+    { phase:0, label:'划分问题边界', detail:'排除无关变量，锁定目标函数空间', tokens:85 },
+    { phase:1, label:'检索相关知识', detail:'扫描代码库索引 → 匹配 3 个相关模块 → 加载上下文', tokens:310 },
+    { phase:1, label:'加载依赖图谱', detail:'构建符号引用 DAG，发现 2 处潜在冲突', tokens:195 },
+    { phase:2, label:'生成候选方案 (A)', detail:'最小改动路径：修改 2 文件，复用现有抽象，无新增依赖', tokens:260 },
+    { phase:2, label:'生成候选方案 (B)', detail:'重构路径：提取公共接口，统一 3 处调用点，长期维护收益高', tokens:290 },
+    { phase:2, label:'交叉评估 A↔B', detail:'权衡: A=低风险快速交付 | B=架构整洁但变更面大 → 倾向 A', tokens:175 },
+    { phase:3, label:'输出推理链验证', detail:'回放推导逻辑，检查每步前提是否成立 — 全部通过', tokens:140 },
+    { phase:3, label:'生成最终回答', detail:'整理结论 + 关键引用 + 置信度标注，准备呈现', tokens:105 },
+  ];
+
+  let stepIndex = 0;
+  let phaseIndex = 0;
+  let totalTokens = 0;
+  let startTime = Date.now();
+  let timerInterval = null;
+  let autoPlay = true;
+  let autoTimer = null;
+  let speed = 4; // 1..10
+  let confidence = 0;
+  let paused = false;
+
+  const phaseNames = ['问题拆解','上下文检索','方案推演','验证输出'];
+  const phaseConfidenceBase = [0.65, 0.72, 0.58, 0.88];
+
+  function createNode(step,i){
+    const div = document.createElement('div');
+    div.className = 'chain-node';
+    div.innerHTML = `
+      <div class="node-marker">${i+1}</div>
+      <div class="node-body">
+        <div class="node-label">${step.label}</div>
+        <div class="node-detail">${step.detail || ''}</div>
+      </div>
+      <div class="node-time">${step.tokens} tk</div>
+    `;
+    return div;
+  }
+
+  function updatePhaseChips(phaseIdx){
+    [...phaseRow.children].forEach((chip,i)=>{
+      chip.classList.remove('active','done');
+      if(i<phaseIdx) chip.classList.add('done');
+      if(i===phaseIdx) chip.classList.add('active');
+    });
+  }
+
+  function getSpeedMs(){ return Math.round(3200 - (speed-1)*320); }
+
+  function advanceStep(){
+    if(stepIndex >= reasoningSteps.length){
+      if(autoPlay) stopAuto();
+      return;
+    }
+    const step = reasoningSteps[stepIndex];
+
+    // update phase chips if entering a new phase
+    if(step.phase !== phaseIndex){
+      phaseIndex = step.phase;
+      updatePhaseChips(phaseIndex);
+    }
+
+    // show node
+    const node = createNode(step, stepIndex);
+    chainEl.appendChild(node);
+    requestAnimationFrame(()=>{
+      node.classList.add('show');
+      if(stepIndex>0) chainEl.children[stepIndex-1].classList.remove('active-node');
+      node.classList.add('active-node');
+    });
+
+    // mark previous as done
+    if(stepIndex>0){
+      chainEl.children[stepIndex-1].classList.add('done-node');
+    }
+
+    // live log
+    const msgs = [
+      `analyzing "${step.label}" …`,
+      `→ 匹配 ${Math.floor(Math.random()*4)+1} 个上下文片段`,
+      `→ 评估 ${Math.floor(Math.random()*3)+2} 条推演路径`,
+      `→ 置信区间 [${(step.phase===2?0.55:0.7).toFixed(2)}, ${(0.8+Math.random()*0.18).toFixed(2)}]`,
+    ];
+    const msg = msgs[Math.floor(Math.random()*msgs.length)];
+    liveLogEl.firstElementChild.textContent = msg;
+
+    // stats
+    totalTokens += step.tokens;
+    stepIndex++;
+    statSteps.textContent = stepIndex;
+    statTokens.textContent = totalTokens.toLocaleString();
+    confidence = phaseConfidenceBase[phaseIndex] + Math.random()*0.22;
+    statConf.textContent = Math.round(confidence*100)+'%';
+    statDepth.textContent = 'L'+(phaseIndex+1)+'.'+(stepIndex%4+1);
+  }
+
+  function startAuto(){
+    autoPlay=true;
+    document.getElementById('btnPlay').classList.add('active-btn');
+    document.getElementById('btnPlay').textContent = '⏸ 暂停';
+    scheduleNext();
+  }
+
+  function stopAuto(){
+    autoPlay=false;
+    document.getElementById('btnPlay').classList.remove('active-btn');
+    document.getElementById('btnPlay').textContent = '▶ 自动推演';
+    if(autoTimer) clearTimeout(autoTimer);
+  }
+
+  function scheduleNext(){
+    if(!autoPlay) return;
+    autoTimer = setTimeout(()=>{ advanceStep(); scheduleNext(); }, getSpeedMs());
+  }
+
+  function resetAll(){
+    stopAuto();
+    stepIndex=0; phaseIndex=0; totalTokens=0; confidence=0;
+    chainEl.innerHTML='';
+    liveLogEl.firstElementChild.textContent='';
+    updatePhaseChips(0);
+    statSteps.textContent='0'; statTokens.textContent='0';
+    statConf.textContent='--'; statDepth.textContent='L0';
+    startTime=Date.now();
+    updateTimer();
+    advanceStep();
+    startAuto();
+  }
+
+  // ── timer ────────────────────────────────────────────────
+  function updateTimer(){
+    const elapsed = (Date.now()-startTime)/1000;
+    const m = Math.floor(elapsed/60);
+    const s = (elapsed%60).toFixed(1);
+    timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(4,'0')}`;
+  }
+
+  // ── buttons ──────────────────────────────────────────────
+  document.getElementById('btnPlay').addEventListener('click',()=>{
+    if(autoPlay) stopAuto(); else startAuto();
+  });
+  document.getElementById('btnStep').addEventListener('click',()=>{
+    if(autoPlay) stopAuto();
+    advanceStep();
+  });
+  document.getElementById('btnBranch').addEventListener('click',()=>{
+    if(autoPlay) stopAuto();
+    liveLogEl.firstElementChild.textContent = '⑂ 分支探索：评估替代推理路径 … 发现 1 个可优化节点，回溯 2 步 …';
+    // simulate branch: remove last 2 completed nodes, re-advance
+    for(let i=0;i<2 && stepIndex>0;i++){
+      const last = chainEl.lastElementChild;
+      if(last) { last.remove(); stepIndex--; totalTokens -= reasoningSteps[stepIndex]?.tokens||0; }
+    }
+    statSteps.textContent=stepIndex; statTokens.textContent=totalTokens.toLocaleString();
+    if(stepIndex>0 && chainEl.lastElementChild){
+      chainEl.lastElementChild.classList.remove('done-node');
+      chainEl.lastElementChild.classList.add('active-node');
+    }
+    updatePhaseChips(reasoningSteps[Math.max(0,stepIndex-1)]?.phase||0);
+  });
+  document.getElementById('btnDoubt').addEventListener('click',()=>{
+    if(autoPlay) stopAuto();
+    liveLogEl.firstElementChild.textContent = '⚡ 质疑回溯：重新审视前提假设 … 降低置信度 12%，要求更多证据 …';
+    confidence = Math.max(0.3, confidence-0.12);
+    statConf.textContent = Math.round(confidence*100)+'%';
+    // flash the last node
+    if(chainEl.lastElementChild){
+      chainEl.lastElementChild.style.borderColor='rgba(255,107,157,0.6)';
+      setTimeout(()=>{ if(chainEl.lastElementChild) chainEl.lastElementChild.style.borderColor=''; },800);
+    }
+  });
+  document.getElementById('btnReset').addEventListener('click',resetAll);
+
+  document.getElementById('speedSlider').addEventListener('input',function(){
+    speed = parseInt(this.value);
+    if(autoPlay){ stopAuto(); startAuto(); }
+  });
+
+  // ── init ─────────────────────────────────────────────────
+  function loop(){
+    drawParticles();
+    updateTimer();
+    requestAnimationFrame(loop);
+  }
+  loop();
+  timerInterval = setInterval(updateTimer, 100);
+  advanceStep();
+  startAuto();
+</script>
+</body>
+</html>
