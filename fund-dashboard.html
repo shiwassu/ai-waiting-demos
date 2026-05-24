@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>基金投资助手 · Dashboard</title>
 <style>
   :root {
@@ -230,10 +233,9 @@
       </div>
       <div id="sectorSummaries"></div>
       <div class="card" style="margin-top:12px">
-        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· 公开RSS + rss2json 代理 · 零配置</span></div>
+        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· Google News RSS + rss2json 代理 · 零配置 · 真实数据</span></div>
         <div style="font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span>源: Google Finance · Yahoo Finance · Reuters · 财联社 · 东方财富 · 华尔街见闻</span>
-          <span id="newsSrcStatus">● 启动中…</span>
+          <span id="newsSrcStatus">● 启动中，正在连接 Google 财经 RSS…</span>
         </div>
       </div>
     </div>
@@ -433,62 +435,39 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  真实新闻抓取 (公开 RSS → rss2json 代理, 零 Key)
+//  真实新闻抓取 — 全部通过 rss2json CORS 代理
+//  新浪财经 API 会因 CORS 被浏览器拦截，改用 RSS
 // ═══════════════════════════════════════════════════
 let realNewsAvailable = false;
 let realNewsSourceName = '';
 
-// Google News 业务/财经 主题 RSS — 比关键词搜索质量高得多
 const FREE_RSS_FEEDS = [
   {
-    name: 'Google 财经·中国',
+    name: 'Google财经·中国',
     rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   },
   {
-    name: 'Google 财经·全球',
+    name: 'Google财经·全球',
     rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en',
   },
   {
-    name: '新浪财经',
-    rss: 'https://finance.sina.com.cn/roll/index.d.html',
+    name: '新浪财经RSS',
+    rss: 'https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=20&page=1',
   },
 ];
 
-// 直接抓取新浪财经滚动新闻 (JSONP 接口, CORS 友好)
-async function fetchSinaFinanceDirect(){
-  try{
-    const url = `https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=30&page=1&r=${Math.random()}`;
-    const resp = await fetch(url);
-    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    if(!data.result?.data) throw new Error('无数据');
-    return data.result.data.map(item=>({
-      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: '新浪财经',
-      url: item.url||'',
-      content: (item.intro||'').slice(0,200),
-      priority: classifyPriority((item.title||'')+' '+(item.intro||'')),
-      sectors: classifySectors(item.title||''),
-      period: getPeriodFromDate(new Date(item.ctime*1000||Date.now())),
-      time: fmtTime(new Date(item.ctime*1000||Date.now())),
-      date: fmtDate(new Date(item.ctime*1000||Date.now())),
-      keywords: item.keywords?.split?.(',')||[],
-    }));
-  }catch(e){
-    return null;
-  }
-}
-
 async function fetchRssFeed(feedConfig){
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedConfig.rss)}`;
+  const rssUrl = feedConfig.rss;
+  // rss2json 代理: 自动处理 RSS/JSON 两种格式
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
   try{
     const resp = await fetch(apiUrl);
     if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
-    if(data.status!=='ok' || !data.items) throw new Error('格式异常');
+    if(!data.items || data.items.length===0) throw new Error('无数据');
     return data.items.map(item=>({
       title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: item.author||feedConfig.name,
+      source: item.author || feedConfig.name,
       url: item.link||'',
       content: (item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,200),
       priority: classifyPriority((item.title||'')+' '+(item.description||'')),
@@ -507,29 +486,19 @@ async function fetchRealNewsFromApis(){
   const results = [];
   const status = {};
 
-  // 新浪财经 (直接 CORS, 最快)
-  const sinaItems = await fetchSinaFinanceDirect();
-  if(sinaItems?.length){
-    results.push(sinaItems);
-    status['新浪财经'] = `✓ ${sinaItems.length}条`;
-  } else {
-    status['新浪财经'] = '✗ 不可用';
-  }
-
-  // Google News RSS (通过 rss2json)
-  const promises = FREE_RSS_FEEDS.slice(0,2).map(async (feed) => {
+  const promises = FREE_RSS_FEEDS.map(async (feed) => {
     const items = await fetchRssFeed(feed);
     if(items?.length){
       results.push(items);
       status[feed.name] = `✓ ${items.length}条`;
     } else {
-      status[feed.name] = '✗ 不可用';
+      status[feed.name] = '✗';
     }
   });
 
-  await Promise.race([Promise.all(promises), new Promise(r=>setTimeout(r,8000))]);
+  // 10 秒超时
+  await Promise.race([Promise.all(promises), new Promise(r=>setTimeout(r,10000))]);
 
-  // 合并去重
   if(results.length>0){
     const seen = new Set();
     const merged = [];
@@ -545,13 +514,16 @@ async function fetchRealNewsFromApis(){
     });
 
     realNewsAvailable = true;
-    realNewsSourceName = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' · ');
-    document.getElementById('newsSrcStatus').innerHTML = `<span style="color:var(--green)">● 实时: ${realNewsSourceName} (${merged.length}条)</span>`;
+    const okSources = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k);
+    realNewsSourceName = okSources.join(' · ');
+    const stEl = document.getElementById('newsSrcStatus');
+    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| 来源: ${realNewsSourceName} | 共 ${merged.length} 条</span>`;
     return {news: merged.slice(0, 30), status};
   }
 
   realNewsAvailable = false;
-  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--red)">● 网络异常，请稍后重试</span>';
+  const stEl2 = document.getElementById('newsSrcStatus');
+  if(stEl2) stEl2.innerHTML = '<span style="color:var(--red);font-weight:600">● 抓取失败</span> <span style="color:var(--text-dim)">| 请检查网络后点击"重新拉取"</span>';
   return null;
 }
 
