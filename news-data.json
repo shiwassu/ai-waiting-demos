@@ -1,10 +1,102 @@
 {
-  "updated": "2026-05-24T22:06:32.340375",
-  "total": 50,
+  "updated": "2026-05-24T23:31:22.926753",
+  "total": 145,
   "sources": [
-    "新浪财经"
+    "新浪财经",
+    "akshare-财新"
   ],
+  "priority_dist": {
+    "high": 28,
+    "medium": 48,
+    "low": 69
+  },
   "items": [
+    {
+      "title": "连涨两日偏离值超20%！和泰机电遇“机器人”概念炒作，公司紧急澄清“不沾边”",
+      "source": "每日经济新闻",
+      "url": "https://finance.sina.com.cn/roll/2026-05-24/doc-inhyzkke4105227.shtml",
+      "content": "记者|彭斐 编辑|黄博文 5月21日至5月22日，和泰机电（SZ001225，股价59.14元，市值38.95亿元）在深圳证券交易所连续两个交易日收盘价格涨幅偏离值累计超过20%...",
+      "priority": "high",
+      "sectors": [
+        "机器人"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:34",
+      "keywords": [
+        "机器人",
+        "净利润",
+        "股价"
+      ]
+    },
+    {
+      "title": "周末大事件！霍尔木兹海峡利好来了，原油暗盘暴跌！7只半导体热门股拟套现127亿元",
+      "source": "市场资讯",
+      "url": "https://finance.sina.com.cn/stock/marketresearch/2026-05-24/doc-inhyzkke4103529.shtml",
+      "content": "来源：中国基金报 【导读】周末大事，以及十大券商最新研判中国基金报记者 泰勒大家好啊，马上就要开盘了，一起回顾一下周末的大事，以及看看券商分析师们的最新研判。",
+      "priority": "high",
+      "sectors": [
+        "能源",
+        "半导体"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:23",
+      "keywords": []
+    },
+    {
+      "title": "航运巨头净利润蒸发近8成国际航运巨头利润暴跌近80%",
+      "source": "",
+      "url": "https://finance.sina.com.cn/stock/wbstock/2026-05-24/doc-inhyzkke4101623.shtml",
+      "content": "来源：@华夏时报微博【#航运巨头净利润蒸发近8成##国际航运巨头利润暴跌近80%#】全球知名海运物流集团——法国达飞海运集团22日发布的财报显示，受市场运价回落...",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:57",
+      "keywords": [
+        "航运",
+        "海运",
+        "净利润",
+        "国际航运",
+        "美元"
+      ]
+    },
+    {
+      "title": "1.72亿元收购款未按期支付 长春国控遭双重监管处罚",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkiy6303698.shtml",
+      "content": "一笔始于2023年、历时近三年的重大资产重组后续履约纠纷，因地方国资平台多次失信违约，最终迎来监管双重处罚。近日，长春经开国资控股集团有限公司（以下简称“长春国控”）...",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:57",
+      "keywords": [
+        "长春市",
+        "吉林省"
+      ]
+    },
+    {
+      "title": "国货航：公司密切关注小包关税政策变化情况",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4099180.shtml",
+      "content": "证券日报网5月24日讯，国货航在接受调研者提问时表示，公司密切关注小包关税政策变化情况，与客户一起采取措施积极应对。未来一段时间，国货航会根据市场需求和运力结构...",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "证券日报"
+      ]
+    },
     {
       "title": "事关A股，重要调整，4家公司，即将退市",
       "source": "证券时报",
@@ -12,7 +104,7 @@
       "content": "重点关注 1．日前，国际指数编制公司MSCI公布了其2026年最新的指数季度调整结果，将于2026年5月29日（本周五）收盘后生效。 其中，本次MSCI中国指数新纳入的22只成份股中...",
       "priority": "high",
       "sectors": [
-        "金融"
+        "综合"
       ],
       "period": "night",
       "date": "2026-05-24",
@@ -20,145 +112,413 @@
       "keywords": []
     },
     {
-      "title": "七大违规行径曝光，这家投顾机构再收罚单！",
-      "source": "券商中国",
-      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyzeaf5750395.shtml",
-      "content": "又一家投顾机构领到罚单。 近日，北京证监局发布行政监管措施决定书，对和讯信息科技有限公司采取责令改正及责令暂停新增客户6个月的行政监管措施。",
+      "title": "【本文系数据通用户提前专享】中国入境游蕴藏着万亿元级规模的增量空间，战略价值在被全方位认知",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446820.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】中国入境游蕴藏着万亿元级规模的增量空间，战略价值在被全方位认知",
       "priority": "high",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "21:19",
+      "time": "--:--",
       "keywords": [
-        "和讯",
-        "证券",
-        "证券投资",
-        "北京证监局",
-        "违规"
+        "周刊提前读"
       ]
     },
     {
-      "title": "李蓓，规模腰斩？",
-      "source": "上海证券报",
-      "url": "https://finance.sina.com.cn/stock/marketresearch/2026-05-24/doc-inhyzeae3200249.shtml",
-      "content": "百亿级私募持续扩张的过程中，李蓓却黯然掉队。 中基协最新数据显示，截至4月7日更新数据，半夏投资规模降至50亿元以下。这意味着，2022年突破百亿的李蓓...",
+      "title": "【本文系数据通用户提前专享】在缓解通胀压力和减轻财政利息负担之间，美联储进退两难",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446815.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】在缓解通胀压力和减轻财政利息负担之间，美联储进退两难",
       "priority": "high",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "21:18",
-      "keywords": []
-    },
-    {
-      "title": "刚刚，全线拉升！美伊谈判，传出重磅消息！",
-      "source": "券商中国",
-      "url": "https://finance.sina.com.cn/stock/zqgd/2026-05-24/doc-inhyzeae3186902.shtml",
-      "content": "风险偏好迅速回升！ 北京时间24日晚间，被视作反映市场风险偏好指标的加密货币持续拉升。截至19：00，比特币价格已突破7.7万美元，涨幅超过3%；以太坊涨幅超过4.50%...",
-      "priority": "high",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "20:05",
+      "time": "--:--",
       "keywords": [
-        "谈判",
-        "伊朗",
-        "无人机",
-        "美国"
+        "周刊提前读"
       ]
     },
     {
-      "title": "斩获两连板！千亿巨头提示风险",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/stock/s/2026-05-24/doc-inhyzeae3186758.shtml",
-      "content": "来源：资本秘闻 在二级市场接连走出两个涨停后，5月24日晚间，千亿市值龙头京东方A（000725）发布了股票交易异常波动公告，再次提示风险称，截至目前...",
+      "title": "5月22日03:23，一艘挂伊朗船旗的液体散货船“DALIA”驶出霍尔木兹海峡，但尚未突破美军封锁",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446518.html?cxapp_link=true",
+      "content": "5月22日03:23，一艘挂伊朗船旗的液体散货船“DALIA”驶出霍尔木兹海峡，但尚未突破美军封锁",
       "priority": "high",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "19:54",
-      "keywords": []
-    },
-    {
-      "title": "华尔街集体翻空，黄金迎关键通胀数据考验",
-      "source": "一财网",
-      "url": "https://finance.sina.com.cn/jjxw/2026-05-24/doc-inhyzeah4194610.shtml",
-      "content": "在美联储鹰派政策预期持续压制下，黄金价格已经连跌两周。 5月22日，伦敦现货黄金持续承压下挫，收盘跌0.75%报4508美元/盎司。COMEX黄金收盘跌0.70%，两周累计跌幅超5%。",
-      "priority": "high",
-      "sectors": [
-        "黄金"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "19:48",
+      "time": "--:--",
       "keywords": [
-        "黄金",
-        "金价",
-        "美联储",
-        "美元",
-        "鹰派"
+        "霍尔木兹日报"
       ]
     },
     {
-      "title": "英伟达算力链价值要重构了？光模块强势反弹，机构：板块归母净利润有望继续向好",
-      "source": "新浪基金",
-      "url": "https://finance.sina.com.cn/money/fund/etf/2026-05-24/doc-inhyyxui5850272.shtml",
-      "content": " 周五（5月22日），英伟达产业链上的算力硬件再度爆发，光模块CPO赛道止跌反弹，“易中天”集体拉升，天孚通信率先大涨超10%，新易盛涨超7%，中际旭创反弹逾4%。",
-      "priority": "high",
-      "sectors": [
-        "光模块",
-        "AI"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "19:23",
-      "keywords": []
-    },
-    {
-      "title": "890亿元外资扫货中国资产，摩根大通：看好A股三大主线",
-      "source": "21世纪经济报道",
-      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyyxui5848945.shtml",
-      "content": "记者丨孙永乐 近日，摩根大通中国首席经济学家兼大中华区经济研究主管朱锋及摩根大通中国股票策略师张晓宁，与媒体一起分析探讨了目前中国经济和股市的热点话题...",
-      "priority": "high",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "19:15",
-      "keywords": [
-        "资产",
-        "摩根大通",
-        "流动性",
-        "外资",
-        "主线"
-      ]
-    },
-    {
-      "title": "002931，001225！2连涨停，紧急提示！事关机器人业务！",
-      "source": "e公司",
-      "url": "https://finance.sina.com.cn/stock/zqgd/2026-05-24/doc-inhyyxui5847247.shtml",
-      "content": " 因股票交易连续2个交易日（2026年5月21日、2026年5月22日）收盘价格涨幅偏离值累计超过20%，5月24日晚间锋龙股份（002931）披露股票交易异常波动公告。",
+      "title": "机器人概念再度活跃，康平科技、鼎泰高科“20cm”涨停，格灵深瞳、欧科亿、索辰科技、正业科技、华瑞股份、国瓷材料等涨超10%",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446446.html?cxapp_link=true",
+      "content": "机器人概念再度活跃，康平科技、鼎泰高科“20cm”涨停，格灵深瞳、欧科亿、索辰科技、正业科技、华瑞股份、国瓷材料等涨超10%",
       "priority": "high",
       "sectors": [
         "机器人"
       ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "今日热点"
+      ]
+    },
+    {
+      "title": "伊朗表示，美国提出的最新方案已在一定程度上缩小交战方之间的分歧。然而，伊朗最高领袖保留铀库存的言论以及围绕霍尔木兹海峡收费系统的争执，阻碍了局势取得突破的前景",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446414.html?cxapp_link=true",
+      "content": "伊朗表示，美国提出的最新方案已在一定程度上缩小交战方之间的分歧。然而，伊朗最高领袖保留铀库存的言论以及围绕霍尔木兹海峡收费系统的争执，阻碍了局势取得突破的前景",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "富国银行证券（Wells Fargo Securities）宏观策略主管Michael Schumacher表示，日本央行目前处境艰难，正在经历2021年美联储",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446293.html?cxapp_link=true",
+      "content": "富国银行证券（Wells Fargo Securities）宏观策略主管Michael Schumacher表示，日本央行目前处境艰难，正在经历2021年美联储面临的局面",
+      "priority": "high",
+      "sectors": [
+        "金融"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "据知情人士透露，印度央行正在考虑所有稳定卢比汇率的可用办法，包括加息、增加货币互换以及从海外投资者处筹集美元",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446185.html?cxapp_link=true",
+      "content": "据知情人士透露，印度央行正在考虑所有稳定卢比汇率的可用办法，包括加息、增加货币互换以及从海外投资者处筹集美元",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "人形机器人盘中走高，上纬新材涨13.81%，华升股份、凯众股份、埃斯顿、北特科技、锋龙股份、伯特利、昊志机电涨停",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446110.html?cxapp_link=true",
+      "content": "人形机器人盘中走高，上纬新材涨13.81%，华升股份、凯众股份、埃斯顿、北特科技、锋龙股份、伯特利、昊志机电涨停",
+      "priority": "high",
+      "sectors": [
+        "机器人"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "今日热点"
+      ]
+    },
+    {
+      "title": "北京时间5月20日03:58，一艘挂中国船旗的超大型液体散货船“YUAN GUI YANG”号驶出阿曼湾，突破美军封锁",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446094.html?cxapp_link=true",
+      "content": "北京时间5月20日03:58，一艘挂中国船旗的超大型液体散货船“YUAN GUI YANG”号驶出阿曼湾，突破美军封锁",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "霍尔木兹日报"
+      ]
+    },
+    {
+      "title": "在伊朗战争引发市场动荡后，4月外资重返中国A股，创下三个月来的首个月度净流入。",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446061.html?cxapp_link=true",
+      "content": "在伊朗战争引发市场动荡后，4月外资重返中国A股，创下三个月来的首个月度净流入。",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "这位即将上任的美联储主席此前曾猛烈抨击该央行未能认识到AI方面的突破将提高生产力，形成“显著降低通胀的力量”，从而使政策制定者更容易降息",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446036.html?cxapp_link=true",
+      "content": "这位即将上任的美联储主席此前曾猛烈抨击该央行未能认识到AI方面的突破将提高生产力，形成“显著降低通胀的力量”，从而使政策制定者更容易降息",
+      "priority": "high",
+      "sectors": [
+        "金融",
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "资产管理公司Seymour Asset Management创始人Tim Seymour表示，近期全球债券市场遭遇抛售，多国基准收益率升至数年来的高点，这一市场",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445869.html?cxapp_link=true",
+      "content": "资产管理公司Seymour Asset Management创始人Tim Seymour表示，近期全球债券市场遭遇抛售，多国基准收益率升至数年来的高点，这一市场表现与2021年秋季美联储政策严重滞后时的情景高度相似",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "摩根士丹利日本负责人表示，他希望日元对美元汇率升至140左右，实现这一目标的关键在于日本央行的行动",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445746.html?cxapp_link=true",
+      "content": "摩根士丹利日本负责人表示，他希望日元对美元汇率升至140左右，实现这一目标的关键在于日本央行的行动",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "印尼上市公司的总市值已从1月份的高点暴跌逾30%至6180亿美元，而新加坡上市公司的总市值则攀升至6450亿美元",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445742.html?cxapp_link=true",
+      "content": "印尼上市公司的总市值已从1月份的高点暴跌逾30%至6180亿美元，而新加坡上市公司的总市值则攀升至6450亿美元",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "亚洲三个最脆弱的经济体正面临越来越大的压力，央行面对的是伊朗战争连带而来的石油冲击对经济影响加深，但同时又不得不收紧政策",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445607.html?cxapp_link=true",
+      "content": "亚洲三个最脆弱的经济体正面临越来越大的压力，央行面对的是伊朗战争连带而来的石油冲击对经济影响加深，但同时又不得不收紧政策",
+      "priority": "high",
+      "sectors": [
+        "能源"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "油价的冲击正在慢慢转化成更广泛的成本压力，CPI、PPI读数上不断超预期上行，通胀预期也在慢慢抬升，偏鹰派的沃什上台后，施策主张或指向抗通胀，本轮降息周期或因此",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445556.html?cxapp_link=true",
+      "content": "油价的冲击正在慢慢转化成更广泛的成本压力，CPI、PPI读数上不断超预期上行，通胀预期也在慢慢抬升，偏鹰派的沃什上台后，施策主张或指向抗通胀，本轮降息周期或因此扭转，从而压制全球风险资产",
+      "priority": "high",
+      "sectors": [
+        "金融"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "权益周观察"
+      ]
+    },
+    {
+      "title": "A股市场呈分化格局，电力板块冲高，人形机器人概念多股大涨。CPO、PCB板块回调拖累通信行业领跌，有色金属、化工、油气股整体跌幅居前",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445432.html?cxapp_link=true",
+      "content": "A股市场呈分化格局，电力板块冲高，人形机器人概念多股大涨。CPO、PCB板块回调拖累通信行业领跌，有色金属、化工、油气股整体跌幅居前",
+      "priority": "high",
+      "sectors": [
+        "能源",
+        "有色",
+        "光模块",
+        "机器人"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "今日热点"
+      ]
+    },
+    {
+      "title": "5月21日，美国最高法院可能就总统特朗普试图解雇美联储理事丽莎·库克（Lisa Cook）的合法性作出裁决，结果或将对美联储独立性产生潜在影响",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444974.html?cxapp_link=true",
+      "content": "5月21日，美国最高法院可能就总统特朗普试图解雇美联储理事丽莎·库克（Lisa Cook）的合法性作出裁决，结果或将对美联储独立性产生潜在影响",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "互换市场目前预期，美联储将在3月前升息25个基点，相较之下，伊朗战争爆发前，外界预期美联储年底前将降息两次以上，每次降息幅度25个基点",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444923.html?cxapp_link=true",
+      "content": "互换市场目前预期，美联储将在3月前升息25个基点，相较之下，伊朗战争爆发前，外界预期美联储年底前将降息两次以上，每次降息幅度25个基点",
+      "priority": "high",
+      "sectors": [
+        "金融"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】央行购买和将黄金运回国内的数量正在上升，预示着未来全球在地缘政治上将更加分裂，各种跨境交易将更加困难和昂贵",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444555.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】央行购买和将黄金运回国内的数量正在上升，预示着未来全球在地缘政治上将更加分裂，各种跨境交易将更加困难和昂贵",
+      "priority": "high",
+      "sectors": [
+        "黄金"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "达拉斯联储前主席费舍尔（Richard Fisher）认为，鲍威尔成功捍卫了美联储的独立性，有效抵御了政治权力对央行业务的干预",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444346.html?cxapp_link=true",
+      "content": "达拉斯联储前主席费舍尔（Richard Fisher）认为，鲍威尔成功捍卫了美联储的独立性，有效抵御了政治权力对央行业务的干预",
+      "priority": "high",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "机器人板块早盘强势领涨，三丰智能“20cm”涨停，绿的谐波、机器人、雷赛智能、信捷电气、埃斯顿等涨停",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444251.html?cxapp_link=true",
+      "content": "机器人板块早盘强势领涨，三丰智能“20cm”涨停，绿的谐波、机器人、雷赛智能、信捷电气、埃斯顿等涨停",
+      "priority": "high",
+      "sectors": [
+        "机器人"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "今日热点"
+      ]
+    },
+    {
+      "title": "史上最大IPO，关键一战！华尔街，重大警告！",
+      "source": "券商中国",
+      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyzkkc5650709.shtml",
+      "content": "美股AI大牛市突遭警告。 美银美林首席投资策略师Michael Hartnett 在最新发布的报告中警告称，SpaceX、OpenAI等史诗级IPO恐将把AI（人工智能）...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:05",
+      "time": "23:13",
       "keywords": [
-        "机器人",
-        "智能机器人",
-        "优必选",
-        "锋龙股份"
+        "IPO",
+        "SpaceX",
+        "AI",
+        "美股",
+        "卫星"
       ]
+    },
+    {
+      "title": "张坤百亿单品不再“单挑”",
+      "source": "一财网",
+      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyzkkc5631132.shtml",
+      "content": "作者 |第一财经曹璐 公募行业明星基金经理“单人扛鼎”的时代，正加速落幕。 易方达蓝筹精选一纸公告，让顶流基金经理张坤，也“配”上帮手了。",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:06",
+      "keywords": [
+        "基金经理",
+        "张坤",
+        "易方达",
+        "蓝筹"
+      ]
+    },
+    {
+      "title": "明起停牌，仿制药CRO龙头筹划重大事项",
+      "source": "中国证券报",
+      "url": "https://finance.sina.com.cn/stock/s/2026-05-24/doc-inhyzkkc5630622.shtml",
+      "content": "5月24日晚，仿制药CRO龙头百诚医药发布公告称，公司近日收到控股股东、实际控制人邵春能、楼金芳的通知，邵春能、楼金芳及其一致行动人正在筹划涉及公司控制权变更的重大事...",
+      "priority": "medium",
+      "sectors": [
+        "医药"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:02",
+      "keywords": []
     },
     {
       "title": "存储热引爆氢氟酸行情？上市公司回应涨价预期",
@@ -167,7 +527,7 @@
       "content": "来源：财联社 存储行业需求爆发，带动电子级氢氟酸及上游无水氢氟酸涨价预期升温，产业链个股随之走强。 财联社记者多方采访获悉，无水氢氟酸价格自3月起稳步上行...",
       "priority": "medium",
       "sectors": [
-        "金融"
+        "综合"
       ],
       "period": "night",
       "date": "2026-05-24",
@@ -175,94 +535,869 @@
       "keywords": []
     },
     {
-      "title": "PCB价值量显著飙升！胜宏科技等包揽A股吸金榜前四！华宝基金电子ETF豪涨4.36%，续创历史新高！",
-      "source": "新浪基金",
-      "url": "https://finance.sina.com.cn/money/fund/etf/2026-05-24/doc-inhyzeaf5739831.shtml",
-      "content": "周五（5月22日）超592亿主力资金涌入电子板块，板块吸金额高居31个申万一级行业首位，荟聚电子板块核心龙头的电子ETF华宝（515260）场内涨幅最高上探4.47%，收涨4.36%...",
+      "title": "博杰股份：目前光耦合设备已完成初步技术储备和方案设计",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4098928.shtml",
+      "content": "证券日报网5月24日讯 ，博杰股份在接受调研者提问时表示，目前光耦合设备已完成初步技术储备和方案设计，相关研发工作正在有序推进中。",
       "priority": "medium",
       "sectors": [
-        "金融"
+        "综合"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "20:42",
-      "keywords": []
-    },
-    {
-      "title": "科技板块波动加大，最新研判来了！公募基金：寻找“二次点火”型资产",
-      "source": "券商中国",
-      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyzeaa6409739.shtml",
-      "content": "近期，积累了大量盈利盘的科技板块出现波动加大的信号。 5月21日，科技板块高台跳水，科创半导体设备指数从早盘上涨约3%到收盘下跌近7%，单日振幅10个百分点；5月22日...",
-      "priority": "medium",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "20:05",
+      "time": "21:34",
       "keywords": [
-        "半导体",
-        "资产",
-        "机器人",
-        "ETF",
-        "PCB"
+        "博杰股份",
+        "证券日报",
+        "自动化"
       ]
     },
     {
-      "title": "伊朗局势缓和提振风险偏好相关资产，外汇市场反应或相对滞后",
-      "source": "环球市场播报",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-05-24/doc-inhyzeah4193352.shtml",
-      "content": "华侨银行外汇策略师表示，受伊朗局势有望缓和提振，风险类资产本周开局走势偏稳。但伊朗核计划及铀浓缩核心细节仍未明朗，外汇市场或不会盲目追涨。",
+      "title": "博杰股份：公司坚持大客户战略",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4098922.shtml",
+      "content": "证券日报网5月24日讯，博杰股份在接受调研者提问时表示，公司基于技术同心圆战略，利用平台化、模块化技术，采用“积木式搭建”方式，开发了自动化测试设备...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "博杰股份",
+        "证券日报",
+        "自动化",
+        "型号"
+      ]
+    },
+    {
+      "title": "博杰股份：目前三位实际控制人各司其职",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5631440.shtml",
+      "content": "证券日报网5月24日讯，博杰股份在接受调研者提问时表示，目前公司三位实际控制人各司其职，王兆春先生主要负责公司战略规划和投资布局等...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "博杰股份",
+        "证券日报",
+        "技术创新"
+      ]
+    },
+    {
+      "title": "博杰股份：公司主要有两种合作模式",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4098923.shtml",
+      "content": "证券日报网5月24日讯，博杰股份在接受调研者提问时表示，公司主要有两种合作模式：一是终端客户直接下单，公司交付至代工厂；二是通过代工厂下单...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "博杰股份",
+        "终端",
+        "证券日报",
+        "代工厂"
+      ]
+    },
+    {
+      "title": "益生股份：公司回购股份拟用于员工持股计划",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5635743.shtml",
+      "content": "证券日报网5月24日讯，益生股份在接受调研者提问时表示，公司回购股份拟用于员工持股计划。",
       "priority": "medium",
       "sectors": [
         "金融"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:46",
-      "keywords": []
+      "time": "21:32",
+      "keywords": [
+        "益生股份",
+        "员工持股计划",
+        "证券日报"
+      ]
     },
     {
-      "title": "硬科技火速回归，港股芯片领跑！华宝基金港股通信息技术ETF狂拉逾6%，创业板人工智能强势回血近4%",
-      "source": "新浪基金",
-      "url": "https://finance.sina.com.cn/money/fund/etf/2026-05-24/doc-inhyzeaa6400465.shtml",
-      "content": " 5月22日，A股火速反弹，三大指数集体上行，午后涨幅进一步扩大，沪指收复4100点，创业板指、深证成指均涨超2%，两市成交额2.89万亿元，全市场超3800股上涨。",
+      "title": "国货航：公司航油成本与国际油价的波动密切相关",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4099183.shtml",
+      "content": "证券日报网5月24日讯，国货航在接受调研者提问时表示，公司航油成本与国际油价的波动密切相关。为应对航油价格波动带来的成本波动，按照行业惯例和合同约定...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "航油成本",
+        "国际油价",
+        "证券日报",
+        "航油",
+        "价格波动"
+      ]
+    },
+    {
+      "title": "益生股份：目前公司的种蛋和农牧设备已出口至东南亚的国家",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkiy6305743.shtml",
+      "content": "证券日报网5月24日讯，益生股份在接受调研者提问时表示，公司计划先实现产品出海，目前公司的种蛋和农牧设备已出口至东南亚的国家...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "益生股份",
+        "农牧",
+        "东南亚",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "益生股份：公司自主研发的蛋鸡品种已通过中试阶段",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5635740.shtml",
+      "content": "证券日报网5月24日讯，益生股份在接受调研者提问时表示，公司自主研发的蛋鸡品种已通过中试阶段，预计今年能获得新品系证书，公司蛋鸡的生产性能非常优异...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "益生股份",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "博杰股份：目前公司已覆盖超过50%价值量的MLCC核心制程设备",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4098948.shtml",
+      "content": "证券日报网5月24日讯，博杰股份在接受调研者提问时表示，受益于AI服务器、新能源汽车电子等下游领域的需求拉动，MLCC需求持续旺盛...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "博杰股份",
+        "MLCC",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "益生股份：公司未来通过新建场区、并购等方式提高种鸡存栏规模",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4103202.shtml",
+      "content": "证券日报网5月24日讯，益生股份在接受调研者提问时表示，公司未来通过新建场区、并购等方式，提高种鸡存栏规模，增强公司种源供应能力。",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "益生股份",
+        "存栏",
+        "并购",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "博杰股份：目前AI服务器相关FCT测试设备测试时长通常为4-6小时",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5631443.shtml",
+      "content": "证券日报网5月24日讯，博杰股份在接受调研者提问时表示，随着芯片和服务器主板设计复杂度的不断提升，测试方案和技术也在持续演进。",
+      "priority": "medium",
+      "sectors": [
+        "AI"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:32",
+      "keywords": [
+        "博杰股份",
+        "AI",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "新雷能：公司在数据中心领域的布局可以覆盖数据中心所需的一次、二次和三次电源",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094790.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司在数据中心领域的布局可以覆盖数据中心所需的一次、二次和三次电源：公司在一次电源领域包括CRPS电源、OCP电源...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "变换器"
+      ]
+    },
+    {
+      "title": "新雷能：公司在三次电源领域按水平供电和垂直供电两条技术路线布局",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094774.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司在三次电源领域按水平供电（Power Block）和垂直供电（VPD）两条技术路线布局。Power Block方面，公司自主研发的两相80A、140A...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "ADI"
+      ]
+    },
+    {
+      "title": "国货航：公司决定引入经济性能良好的A350F新机型",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkiy6301520.shtml",
+      "content": "国货航在接受调研者提问时表示，基于公司长期发展规划、市场运力需求及货机机型更新迭代需求，公司决定引入经济性能良好的A350F新机型。",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "货机"
+      ]
+    },
+    {
+      "title": "新雷能：公司与ADI采用ODM合作模式",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094635.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司与ADI采用ODM合作模式，即由公司负责产品的研发设计与生产制造，ADI利用其品牌影响力和渠道优势负责海外市场的客户开拓和销售...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "ADI",
+        "专利"
+      ]
+    },
+    {
+      "title": "新雷能：公司针对800V及±400V供电架构做了诸多产品布局包括高压变换模块、热插拔模块等",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094789.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司针对800V及±400V供电架构做了诸多产品布局包括高压变换模块、热插拔模块等，目前这部分产品处于小批量送样中。（文章来源：证券日报）",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "热插拔"
+      ]
+    },
+    {
+      "title": "新雷能：目前公司与ADI合作的一款母线变换器产品已经在一季度开始量产",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5627173.shtml",
+      "content": "新雷能在接受调研者提问时表示，目前公司与ADI合作的一款母线变换器产品已经在一季度开始量产，近期又发布了一款更高功率等级的母线变换器产品...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "变换器",
+        "ADI"
+      ]
+    },
+    {
+      "title": "新雷能：公司产品包括抗辐照电源管理芯片、电源微模组、电源模块及电源组件",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094757.shtml",
+      "content": "证券日报网5月24日讯 ，新雷能在接受调研者提问时表示，在低轨卫星方向，公司产品包括抗辐照电源管理芯片、电源微模组、电源模块及电源组件。",
       "priority": "medium",
       "sectors": [
         "半导体"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:26",
+      "time": "21:29",
+      "keywords": [
+        "卫星"
+      ]
+    },
+    {
+      "title": "新雷能：公司通过与ADI的合作目前已成功实现一家数据中心大客户的批量供货",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkka3076554.shtml",
+      "content": "新雷能在接受调研者提问时表示，国际市场方面，公司通过与ADI的合作目前已成功实现一家数据中心大客户的批量供货，同时ADI正在积极推进其他客户...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "ADI",
+        "供货",
+        "国内市场"
+      ]
+    },
+    {
+      "title": "新雷能：公司关于数据中心二次模块产能布局分为国内和国外两部分",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkka3076656.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司关于数据中心二次模块产能布局分为国内和国外两部分。针对已经发布的两款产品，国内目前产能已经达到20万只/月...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:29",
+      "keywords": [
+        "新雷能",
+        "马来西亚"
+      ]
+    },
+    {
+      "title": "首航新能：公司营收主要来源于境外市场",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5627075.shtml",
+      "content": "证券日报网5月24日讯 ，首航新能在接受调研者提问时表示，公司营收主要来源于境外市场，2025年度境外收入占公司总体营业收入的比例为89.44%。",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:28",
+      "keywords": [
+        "证券日报",
+        "欧洲市场"
+      ]
+    },
+    {
+      "title": "首航新能：公司注重价值竞争，将持续提高产品附加值以提升产品盈利能力",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkiy6299254.shtml",
+      "content": "首航新能在接受调研者提问时表示，公司注重价值竞争，将持续提高产品附加值以提升产品盈利能力，具体应对举措包括： 1、从开发产品维度进化为系统解决方案维度...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:28",
       "keywords": []
     },
     {
-      "title": "军工震荡，华宝基金军工ETF（512810）周线连阴，后市机会怎么看？",
-      "source": "新浪基金",
-      "url": "https://finance.sina.com.cn/money/fund/etf/2026-05-24/doc-inhyyxuk4317452.shtml",
-      "content": "周五（5月22日），A股全线回暖，军工板块率先反弹，军工核心资产——军工ETF华宝（512810）场内价格收涨1.41%终结六连阴，不过尚未收复半年线...",
+      "title": "新雷能：公司2026年一季度营收已恢复增长态势",
+      "source": "证券日报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4094630.shtml",
+      "content": "新雷能在接受调研者提问时表示，公司2026年一季度营收已恢复增长态势。根据公司2025年设定的股权激励及员工持股计划考核目标，2026年营业收入增长率目标不低于60%（以2024...",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:28",
+      "keywords": [
+        "新雷能",
+        "证券日报"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】伴随市场对AI产业链的热捧，两大国产存储巨头带着亮眼业绩先后启动IPO，市场热度极高",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446814.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】伴随市场对AI产业链的热捧，两大国产存储巨头带着亮眼业绩先后启动IPO，市场热度极高",
+      "priority": "medium",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "美国咨询机构认为AI所引发的“裁员潮”或许即将到来；在国内招聘市场，企业仍亟需AI顶尖人才，想跳槽的职场人倾心AI相关的工作，在职的人员担心自身岗位的前途",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446755.html?cxapp_link=true",
+      "content": "美国咨询机构认为AI所引发的“裁员潮”或许即将到来；在国内招聘市场，企业仍亟需AI顶尖人才，想跳槽的职场人倾心AI相关的工作，在职的人员担心自身岗位的前途",
+      "priority": "medium",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "数据图解"
+      ]
+    },
+    {
+      "title": "亚马逊创始人杰夫·贝索斯（Jeff Bezos）认为，当前航天行业的核心任务完全聚焦于经济效益，即如何打造既能顺利完成飞行任务，又具备显著低成本优势的运载工具，",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446683.html?cxapp_link=true",
+      "content": "亚马逊创始人杰夫·贝索斯（Jeff Bezos）认为，当前航天行业的核心任务完全聚焦于经济效益，即如何打造既能顺利完成飞行任务，又具备显著低成本优势的运载工具，以此来真正解锁人类在太空探索领域的诸多可能性",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "中国股票型ETF正迈向连续第八周的资金流出，国家队减持可能仍是原因之一。而据彭博行业研究(BI)的预测，国家队资金的撤退或已进入最后阶段",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446515.html?cxapp_link=true",
+      "content": "中国股票型ETF正迈向连续第八周的资金流出，国家队减持可能仍是原因之一。而据彭博行业研究(BI)的预测，国家队资金的撤退或已进入最后阶段",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "标普将新城发展的信用评级展望上调至“稳定”，并确认这家中资民营房企的长期发行人评级为“B”，这给经历多年低迷的中国地产业带来一丝暖意",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446504.html?cxapp_link=true",
+      "content": "标普将新城发展的信用评级展望上调至“稳定”，并确认这家中资民营房企的长期发行人评级为“B”，这给经历多年低迷的中国地产业带来一丝暖意",
       "priority": "medium",
       "sectors": [
         "金融"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "19:22",
-      "keywords": []
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
     },
     {
-      "title": "爱德泰港股IPO：一款产品卖到全球第一，大客户依赖症待解",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/stock/newstock/2026-05-24/doc-inhyyxui5832853.shtml",
-      "content": "来源：尺度商业 文 | 董武英 编辑 | 刘振涛 如果要说近年来资本市场上最为火热的板块，光通信必然是其中之一，光模块龙头中际旭创市值超过1.15万亿...",
+      "title": "在经历多年爆炸性增长后，全球私募信贷市场迎来首次压力测试。业者越来越转向一种以往不可思议的做法：积极交易贷款，借此抛售问题资产并伺机捡便宜",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446499.html?cxapp_link=true",
+      "content": "在经历多年爆炸性增长后，全球私募信贷市场迎来首次压力测试。业者越来越转向一种以往不可思议的做法：积极交易贷款，借此抛售问题资产并伺机捡便宜",
       "priority": "medium",
       "sectors": [
-        "金融"
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "文远知行一季报发布后股价表现萎靡，或显示市场对于“讲故事”提估值的叙事逐渐审慎，开始更关注基本面的盈利进展",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446483.html?cxapp_link=true",
+      "content": "文远知行一季报发布后股价表现萎靡，或显示市场对于“讲故事”提估值的叙事逐渐审慎，开始更关注基本面的盈利进展",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "公司速递"
+      ]
+    },
+    {
+      "title": "百度的业绩驱动已经由传统搜索广告业务转为以AI云基础设施为核心的AI业务",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446463.html?cxapp_link=true",
+      "content": "百度的业绩驱动已经由传统搜索广告业务转为以AI云基础设施为核心的AI业务",
+      "priority": "medium",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "公司速递"
+      ]
+    },
+    {
+      "title": "中国最热门的人工智能AI股票可能成为香港股票指数成分股候选对象，这将打开互联互通交易的渠道，并可能引发数十亿美元的资金流入",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446372.html?cxapp_link=true",
+      "content": "中国最热门的人工智能AI股票可能成为香港股票指数成分股候选对象，这将打开互联互通交易的渠道，并可能引发数十亿美元的资金流入",
+      "priority": "medium",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "穆迪评级将墨西哥的信用评级下调至投资级的最低级别，理由是该国财政状况恶化，这引发了人们对拉丁美洲第二大经济体正走向垃圾级的担忧",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446068.html?cxapp_link=true",
+      "content": "穆迪评级将墨西哥的信用评级下调至投资级的最低级别，理由是该国财政状况恶化，这引发了人们对拉丁美洲第二大经济体正走向垃圾级的担忧",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "据知情人士称，美国总统唐纳德·特朗普准备最早于周四颁布一道旨在加强人工智能网络安全的行政命令，并已邀请科技行业领袖参加此次活动",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446064.html?cxapp_link=true",
+      "content": "据知情人士称，美国总统唐纳德·特朗普准备最早于周四颁布一道旨在加强人工智能网络安全的行政命令，并已邀请科技行业领袖参加此次活动",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "A股震荡偏弱，三大指数早盘涨跌不一。半导体板块逆市爆发，光伏设备、光纤概念震荡走强，绿电概念显著调整，传媒股跌幅居前",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445786.html?cxapp_link=true",
+      "content": "A股震荡偏弱，三大指数早盘涨跌不一。半导体板块逆市爆发，光伏设备、光纤概念震荡走强，绿电概念显著调整，传媒股跌幅居前",
+      "priority": "medium",
+      "sectors": [
+        "能源",
+        "半导体"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "今日热点"
+      ]
+    },
+    {
+      "title": "该行最新面向全球资管行业的调查显示，5月资产配置者对股票的配置升至净超配50%，高于上月的13%",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445609.html?cxapp_link=true",
+      "content": "该行最新面向全球资管行业的调查显示，5月资产配置者对股票的配置升至净超配50%，高于上月的13%",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "城堡证券的股票和股票衍生品策略主管Scott Rubner称，推动美国股市近几周升至历史高点的强劲资金流出现逆转的风险正在上升",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445354.html?cxapp_link=true",
+      "content": "城堡证券的股票和股票衍生品策略主管Scott Rubner称，推动美国股市近几周升至历史高点的强劲资金流出现逆转的风险正在上升",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "截至今年4月，弘鼎资本(HD Capital Ltd.)旗下的天域中国基金将11%仓位配置在油轮板块，为最大板块敞口；该基金今年收益超过30%",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445353.html?cxapp_link=true",
+      "content": "截至今年4月，弘鼎资本(HD Capital Ltd.)旗下的天域中国基金将11%仓位配置在油轮板块，为最大板块敞口；该基金今年收益超过30%",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "数据显示，过去五年，当美国10年期国债收益率单周上升20个基点或以上时，MSCI亚太指数在19周中有16周下跌",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445346.html?cxapp_link=true",
+      "content": "数据显示，过去五年，当美国10年期国债收益率单周上升20个基点或以上时，MSCI亚太指数在19周中有16周下跌",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "机构仍判断这样的回暖不会成为常态；分析认为二手房成交上涨的一部分原因可能是部分需求从新房市场转移到二手房，而不是新增需求",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102445128.html?cxapp_link=true",
+      "content": "机构仍判断这样的回暖不会成为常态；分析认为二手房成交上涨的一部分原因可能是部分需求从新房市场转移到二手房，而不是新增需求",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "数据图解"
+      ]
+    },
+    {
+      "title": "周一开盘后不久，Kospi指数一度下跌4.7%，较5月14日高点累计跌幅扩大至10%以上，并短暂进入回调区间",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444927.html?cxapp_link=true",
+      "content": "周一开盘后不久，Kospi指数一度下跌4.7%，较5月14日高点累计跌幅扩大至10%以上，并短暂进入回调区间",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】宁德时代和华为在行业的影响力超越车企",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444550.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】宁德时代和华为在行业的影响力超越车企",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "在LABUBU全球爆火之后，关于泡泡玛特能否比肩迪士尼的讨论不绝于耳；机构分析迪士尼业绩认为，爆款IP存在高度不确定性，简单“做加法”难以实现更高估值",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444460.html?cxapp_link=true",
+      "content": "在LABUBU全球爆火之后，关于泡泡玛特能否比肩迪士尼的讨论不绝于耳；机构分析迪士尼业绩认为，爆款IP存在高度不确定性，简单“做加法”难以实现更高估值",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "数据图解"
+      ]
+    },
+    {
+      "title": "根据咨询机构我的钢铁(Mysteel)，全球最大的钢铁市场中国的行业盈利状况已改善至8月以来的最好水平，但势头能够维持多久尚存在不确定性",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444299.html?cxapp_link=true",
+      "content": "根据咨询机构我的钢铁(Mysteel)，全球最大的钢铁市场中国的行业盈利状况已改善至8月以来的最好水平，但势头能够维持多久尚存在不确定性",
+      "priority": "medium",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "特朗普称不急于与伊朗达成协议",
+      "source": "新华社",
+      "url": "https://finance.sina.com.cn/stock/marketresearch/2026-05-24/doc-inhyzkke4115695.shtml",
+      "content": "新华社华盛顿5月24日电（记者颜亮 徐剑梅）美国总统特朗普24日在社交媒体发文称，与伊朗的谈判“正在以有序且建设性的方式进行”，他已告知美方代表...",
+      "priority": "low",
+      "sectors": [
+        "综合"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "18:12",
+      "time": "23:07",
       "keywords": []
+    },
+    {
+      "title": "被罚1669万元！长安汽车内幕交易案曝光：员工借华为合作消息，获利400余万",
+      "source": "北京商报",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkka3084554.shtml",
+      "content": "近日，中证中小投资者服务中心（以下简称“投服中心”）官方公众号披露了一则关于《韩某等人内幕交易“长安汽车”案》信息。 案情显示，2023年11月26日...",
+      "priority": "low",
+      "sectors": [
+        "消费"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:28",
+      "keywords": [
+        "长安汽车",
+        "华为",
+        "内幕交易",
+        "内幕信息"
+      ]
+    },
+    {
+      "title": "内塔尼亚胡告诉特朗普，以色列将继续保留对威胁采取行动的自由",
+      "source": "环球市场播报",
+      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-05-24/doc-inhyzkka3079617.shtml",
+      "content": " 一名以色列消息人士称，在周六（5月24日）关于美伊即将达成协议的电话会谈中，以色列总理内塔尼亚胡告诉美国总统特朗普，以色列将保留在黎巴嫩对威胁采取行动的自由。",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "22:10",
+      "keywords": []
+    },
+    {
+      "title": "莫言：人工智能无法取代作家的创作",
+      "source": "新华社",
+      "url": "https://finance.sina.com.cn/jjxw/2026-05-24/doc-inhyzkkc5630990.shtml",
+      "content": "新华社伦敦5月24日电 专访丨莫言：人工智能无法取代作家的创作 新华社记者吴黎明 于艾岑 中国作家莫言日前在伦敦接受新华社记者独家专访时...",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:52",
+      "keywords": [
+        "莫言",
+        "文学"
+      ]
+    },
+    {
+      "title": "神州细胞，递交香港IPO招股书，中信证券独家保荐",
+      "source": "瑞恩资本",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkke4103994.shtml",
+      "content": "2026年5月22日，来自北京的A股上市公司北京神州细胞生物技术集团股份公司 SINOCELLTECH GROUP LIMITED(简称神州细胞”)向港交所递交招股书，拟在香港主板上市。",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:50",
+      "keywords": [
+        "神州细胞",
+        "独家",
+        "北京市",
+        "中信证券"
+      ]
+    },
+    {
+      "title": "享道出行，递交IPO招股书，拟赴香港上市，中金公司、国泰君安国际联席保荐",
+      "source": "瑞恩资本",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5634684.shtml",
+      "content": "2026年5月22日，来自上海的享道出行(上海)科技股份有限公司EnjoyGo Technology Limited(下称享道出行)在港交所递交招股书，拟在香港主板上市。",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:50",
+      "keywords": [
+        "网约车",
+        "香港",
+        "上海市",
+        "国泰君安国际",
+        "中金公司"
+      ]
+    },
+    {
+      "title": "渣打CEO为「低价值人力资本」言论致歉",
+      "source": "瑞恩资本",
+      "url": "https://finance.sina.com.cn/stock/relnews/hk/2026-05-24/doc-inhyzkkc5628095.shtml",
+      "content": "渣打(02888.HK)CEO温拓思(Bill Winters)周二(5月19日)发表以金融资本取代「低价值人力资源」言论，引发外界批评。温拓思于周五(5月19日)在其个人LinkedIn发文...",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:50",
+      "keywords": [
+        "渣打",
+        "温拓思",
+        "自动化",
+        "香港"
+      ]
     },
     {
       "title": "视频 | 启源A06车主集体投诉摄像头，开启辅助驾驶，车会自己猛刹！",
@@ -271,7 +1406,7 @@
       "content": "",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
       "period": "night",
       "date": "2026-05-24",
@@ -279,573 +1414,988 @@
       "keywords": []
     },
     {
-      "title": "最后一天，这2只转债不及时操作或亏损",
-      "source": "上海证券报",
-      "url": "https://finance.sina.com.cn/stock/s/2026-05-24/doc-inhyzeaf5749262.shtml",
-      "content": "5月25日，是盈峰转债、富春转债的最后交易日。盈峰转债、富春转债5月22日收盘价分别为167.950元/张、141.536元/张，如果投资者不及时操作，可能分别亏损超39%、28%。",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "21:18",
-      "keywords": []
-    },
-    {
-      "title": "两连板后，002931、001225紧急公告",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/stock/s/2026-05-24/doc-inhyzeaa6422598.shtml",
-      "content": "来源：华夏时报 5月24日晚间，锋龙股份（002931）发布股票交易异常波动公告，称目前公司不涉及人形机器人业务，主营业务仍为园林机械零部件...",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "21:14",
-      "keywords": []
-    },
-    {
-      "title": "百诚医药，停牌！筹划控制权变更！",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/stock/s/2026-05-24/doc-inhyzeaf5731246.shtml",
-      "content": "来源：资本秘闻 筹划控制权变更，百诚医药（301096）5月25日停牌。 5月24日晚间，百诚医药发布公告称，公司于近日收到公司控股股东、实际控制人邵春能、楼金芳的通知...",
+      "title": "海王生物剥离四家子公司聚焦主业，轻装上阵提升核心竞争力",
+      "source": "",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkka3076401.shtml",
+      "content": "5月22日，海王生物(000078)公告披露，公司近期完成对多家控股子公司的股权处置，进一步优化业务布局。公告显示，公司全资子公司银河投资将持有的深业医药60%股权转让给深圳...",
       "priority": "low",
       "sectors": [
         "医药"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:54",
+      "time": "21:47",
+      "keywords": [
+        "海王生物",
+        "股权转让",
+        "湖北省"
+      ]
+    },
+    {
+      "title": "韩某等人内幕交易\\\"长安汽车\\\"案",
+      "source": "",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzeae3204177.shtml",
+      "content": "5月22日，中证中小投资者服务中心发布消息，韩某等人内幕交易长安汽车(000625.SZ)案。某汽车集团和某科技公司签署合作协议后，双方员工内幕交易非法获利400余万元。",
+      "priority": "low",
+      "sectors": [
+        "消费"
+      ],
+      "period": "night",
+      "date": "2026-05-24",
+      "time": "21:35",
       "keywords": []
     },
     {
-      "title": "两连板后，002931紧急公告",
-      "source": "上海证券报",
-      "url": "https://finance.sina.com.cn/wm/2026-05-24/doc-inhyzeaa6403495.shtml",
-      "content": " 5月24日晚间，锋龙股份（002931）发布股票交易异常波动公告，称目前公司不涉及人形机器人业务，主营业务仍为园林机械零部件、汽车零部件和液压零部件的研发、生产和销售。",
+      "title": "半导体传闻催生利仁科技八连板 新晋股东或成最大赢家",
+      "source": "",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5626697.shtml",
+      "content": "随着半导体产业链热度持续升温，将传统小家电企业利仁科技（001259.SZ）推上资本风口。公司股价在短短九个交易日从5月11日的41.32元/股，飙升至5月21日的88.00元/股...",
       "priority": "low",
       "sectors": [
-        "金融"
+        "半导体"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:32",
+      "time": "21:33",
       "keywords": [
-        "锋龙股份",
-        "优必选",
-        "机器人"
+        "利仁科技",
+        "净利润",
+        "半导体",
+        "股价"
       ]
     },
     {
-      "title": "消息人士称，潜在协议包含伊朗承诺不再谋求核武器",
-      "source": "环球市场播报",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-05-24/doc-inhyzeaf5720635.shtml",
-      "content": "知情人士透露，美伊拟议协议规定，伊朗承诺绝不研发核武器，暂停新增铀浓缩活动，并就上缴现有高浓缩铀储备展开谈判。 铀储备处置细则以及浓缩活动暂停时长...",
+      "title": "包钢股份：累计回购公司股份62586400股",
+      "source": "证券日报网",
+      "url": "https://finance.sina.com.cn/stock/relnews/cn/2026-05-24/doc-inhyzkkc5626393.shtml",
+      "content": "证券日报网讯5月24日，包钢股份发布公告称，截至2026年5月21日，包钢股份本次回购股份方案回购期限已届满，公司已累计回购股份6，258.6400万股，占公司总股本的0.138%...",
       "priority": "low",
       "sectors": [
         "金融"
       ],
       "period": "night",
       "date": "2026-05-24",
-      "time": "19:29",
-      "keywords": []
-    },
-    {
-      "title": "鲁比奥称霍尔木兹海峡或将迎来“好消息” 美伊谈判仍在推进",
-      "source": "环球市场播报",
-      "url": "https://finance.sina.com.cn/stock/usstock/c/2026-05-24/doc-inhyyxuh3302764.shtml",
-      "content": " 美国国务卿鲁比奥表示，围绕被封锁的霍尔木兹海峡，未来数小时内可能会有“一些好消息”。目前伊朗与华盛顿正继续推进和平谈判。",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "18:59",
-      "keywords": []
-    },
-    {
-      "title": "跨境券商内地存量业务或超2500亿，出清如何影响港股、中概股？",
-      "source": "一财网",
-      "url": "https://finance.sina.com.cn/roll/2026-05-24/doc-inhyyxuk4311978.shtml",
-      "content": "存量清理涉及多少客户和资产？ 伴随富途国际、老虎证券、长桥证券等在中国内地非法跨境展业被全面封堵，市场将目光聚焦在了存量业务清理可能带来的市场冲击上。",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "18:53",
+      "time": "21:32",
       "keywords": [
-        "富途",
-        "老虎证券",
-        "存量业务",
-        "资产",
-        "证券"
+        "包钢股份",
+        "网讯",
+        "证券日报",
+        "公司股份"
       ]
     },
     {
-      "title": "特朗普过去24小时都忙了什么？（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/stock/marketresearch/2026-05-24/doc-inhyyxue6522444.shtml",
-      "content": "来源：金十数据 1． 重申必须瓦解伊朗核计划 否则不会同意任何协议——据以色列媒体Kann报道，特朗普向内塔尼亚胡重申，除非伊朗的核计划被彻底瓦解...",
+      "title": "【本文系数据通用户提前专享】全球资本追逐AI“船票”，融资轮次之快、估值竞赛之热史无前例",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446813.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】全球资本追逐AI“船票”，融资轮次之快、估值竞赛之热史无前例",
       "priority": "low",
       "sectors": [
-        "金融"
+        "AI"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:43",
-      "keywords": []
-    },
-    {
-      "title": "沙特媒体称美伊将很快达成初步协议",
-      "source": "新华社",
-      "url": "https://finance.sina.com.cn/stock/marketresearch/2026-05-24/doc-inhyyxui5836072.shtml",
-      "content": "报道称，美伊之间可能达成的初步协议将是一份谅解备忘录，巴基斯坦将在谈判各方无需到场的情况下宣布这份谅解备忘录。之后美伊双方将就最终协议进行谈判...",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "18:27",
-      "keywords": []
-    },
-    {
-      "title": "有机硅聚醚消泡剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4308561.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价有机硅聚醚消泡剂 有机硅聚醚消泡剂含量99%河南顺之邦环保科技有限公司河南顺之邦河南省/郑州市4000元/吨...",
-      "priority": "low",
-      "sectors": [
-        "金融"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "有机硅",
-        "生意社",
-        "河南省",
-        "郑州市",
-        "环保"
+        "周刊提前读"
       ]
     },
     {
-      "title": "纺织浆料消泡剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxui5840651.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价纺织浆料消泡剂 固含量25%PH：6-8河南顺之邦环保科技有限公司国产河南省/郑州市4000元/吨 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】AI技术提供了心理健康服务走向低成本、高可及性的可能，在这一伦理高风险领域，它能走多远？",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446822.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】AI技术提供了心理健康服务走向低成本、高可及性的可能，在这一伦理高风险领域，它能走多远？",
+      "priority": "low",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "供给维持高位、需求边际转弱，焦煤价格承压下挫",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446842.html?cxapp_link=true",
+      "content": "供给维持高位、需求边际转弱，焦煤价格承压下挫",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "CCI快报"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】3月起，一线城市新房和二手房价格同步转涨",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446821.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】3月起，一线城市新房和二手房价格同步转涨",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】“贷款只是燃料，不是发动机”",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446819.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】“贷款只是燃料，不是发动机”",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】重视安全性与稳定性的险资，通过各类交易结构，成为商业不动产市场最受瞩目的买方力量之一",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446818.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】重视安全性与稳定性的险资，通过各类交易结构，成为商业不动产市场最受瞩目的买方力量之一",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "【本文系数据通用户提前专享】目前盘活数据资产最有动力的，是城投平台；数据资产权属边界模糊、估值体系不成熟、融资落地复杂等，仍是待解难题",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-23/102446816.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】目前盘活数据资产最有动力的，是城投平台；数据资产权属边界模糊、估值体系不成熟、融资落地复杂等，仍是待解难题",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "周刊提前读"
+      ]
+    },
+    {
+      "title": "据知情人士透露，DeepSeek高层管理人员已向正在进行的700亿元人民币（100 亿美元）融资的潜在投资者表示，这家初创公司将优先考虑开创性的人工智能AI研究",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446510.html?cxapp_link=true",
+      "content": "据知情人士透露，DeepSeek高层管理人员已向正在进行的700亿元人民币（100 亿美元）融资的潜在投资者表示，这家初创公司将优先考虑开创性的人工智能AI研究，而不是短期的商业化",
+      "priority": "low",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "知情交易员透露，周四土耳其国有银行抛售约60亿美元外汇以捍卫里拉汇率，其中约一半发生在法院推翻主要反对党领导层选举结果后不久",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446419.html?cxapp_link=true",
+      "content": "知情交易员透露，周四土耳其国有银行抛售约60亿美元外汇以捍卫里拉汇率，其中约一半发生在法院推翻主要反对党领导层选举结果后不久",
       "priority": "low",
       "sectors": [
         "金融"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "环保",
-        "河南省"
+        "市场动态"
       ]
     },
     {
-      "title": "己内酰胺级硫酸铵商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxui5840649.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价己内酰胺级硫酸铵 氮（N）含量≥20.5山东北鲁恒升化工有限公司国产山东省1000元/吨 （文章来源：生意社）",
+      "title": "五个中东国家正式拒绝伊朗设立波斯湾海峡管理局(PGSA)以控制霍尔木兹海峡通行",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446416.html?cxapp_link=true",
+      "content": "五个中东国家正式拒绝伊朗设立波斯湾海峡管理局(PGSA)以控制霍尔木兹海峡通行",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "作为亚洲最佳英伟达替代标的而高歌猛进数年后，台积电正越来越多地与其他人工智能(AI)概念股争夺投资者的关注",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446411.html?cxapp_link=true",
+      "content": "作为亚洲最佳英伟达替代标的而高歌猛进数年后，台积电正越来越多地与其他人工智能(AI)概念股争夺投资者的关注",
+      "priority": "low",
+      "sectors": [
+        "半导体",
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "该行政令旨在应对强大新型人工智能模型引发的网络安全担忧",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446375.html?cxapp_link=true",
+      "content": "该行政令旨在应对强大新型人工智能模型引发的网络安全担忧",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "为强化美国在量子领域的领导地位，特朗普政府同意向国际商业机器(IBM)提供10亿美元资金，用于建设一家量子计算芯片制造工厂",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446374.html?cxapp_link=true",
+      "content": "为强化美国在量子领域的领导地位，特朗普政府同意向国际商业机器(IBM)提供10亿美元资金，用于建设一家量子计算芯片制造工厂",
+      "priority": "low",
+      "sectors": [
+        "半导体"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "联合国成员国正推动重写国际税收规则，试图把对Alphabet和亚马逊等科技巨头的征税依据从公司总部所在地转向其用户所在地区",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-22/102446373.html?cxapp_link=true",
+      "content": "联合国成员国正推动重写国际税收规则，试图把对Alphabet和亚马逊等科技巨头的征税依据从公司总部所在地转向其用户所在地区",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "摩根大通首席执行官杰米‧戴蒙表示，随着AI技术加速普及，这家华尔街巨头未来可能会僱用更多AI专家，减少传统银行家的招聘",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446193.html?cxapp_link=true",
+      "content": "摩根大通首席执行官杰米‧戴蒙表示，随着AI技术加速普及，这家华尔街巨头未来可能会僱用更多AI专家，减少传统银行家的招聘",
+      "priority": "low",
+      "sectors": [
+        "金融",
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "高盛表示，由于中东战争久拖不决导致供应持续受阻，本月全球原油及成品油库存以创纪录的速度下降",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446191.html?cxapp_link=true",
+      "content": "高盛表示，由于中东战争久拖不决导致供应持续受阻，本月全球原油及成品油库存以创纪录的速度下降",
+      "priority": "low",
+      "sectors": [
+        "能源"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "随着油价飙升导致印尼财政吃紧，5月初，总统普拉博沃召集几位最信任的顾问到他在雅加达南部的家中，商讨如何增加财政收入",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446189.html?cxapp_link=true",
+      "content": "随着油价飙升导致印尼财政吃紧，5月初，总统普拉博沃召集几位最信任的顾问到他在雅加达南部的家中，商讨如何增加财政收入",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "韩国5月份前20天的出口保持强劲增长，显示外需韧性仍在。不过，油价上涨和更广泛的通胀担忧可能给决策前景带来挑战",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446084.html?cxapp_link=true",
+      "content": "韩国5月份前20天的出口保持强劲增长，显示外需韧性仍在。不过，油价上涨和更广泛的通胀担忧可能给决策前景带来挑战",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "一位知情人士援引这家初创公司向投资者披露的数据称，这家Claude开发商预计第二季度收入将达到109亿美元，较前一季度增长逾一倍",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446040.html?cxapp_link=true",
+      "content": "一位知情人士援引这家初创公司向投资者披露的数据称，这家Claude开发商预计第二季度收入将达到109亿美元，较前一季度增长逾一倍",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "爱彼迎首席执行官Brian Chesky为公司使用中国AI模型辩护，称担心中国公司恐获取美国用户数据的国会议员“误解”了这项技术",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446039.html?cxapp_link=true",
+      "content": "爱彼迎首席执行官Brian Chesky为公司使用中国AI模型辩护，称担心中国公司恐获取美国用户数据的国会议员“误解”了这项技术",
+      "priority": "low",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "该公司周三晚些时候在声明中表示，预计截至7月的三个月营收约为910亿美元",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446038.html?cxapp_link=true",
+      "content": "该公司周三晚些时候在声明中表示，预计截至7月的三个月营收约为910亿美元",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "SpaceX公开提交首次公开募股(IPO)文件，披露数十亿美元亏损以及一项超级投票权股份计划",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-21/102446037.html?cxapp_link=true",
+      "content": "SpaceX公开提交首次公开募股(IPO)文件，披露数十亿美元亏损以及一项超级投票权股份计划",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "三星电子与其最大工会的谈判破裂，该工会告诉当地媒体，它将按计划罢工，势将扰乱这家全球最大记忆体芯片制造商的营运",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445819.html?cxapp_link=true",
+      "content": "三星电子与其最大工会的谈判破裂，该工会告诉当地媒体，它将按计划罢工，势将扰乱这家全球最大记忆体芯片制造商的营运",
+      "priority": "low",
+      "sectors": [
+        "半导体"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "印尼总统普拉博沃制定计划，加强国家对大宗商品出口的控制，以应对不断增加的财政压力和印尼盾跌势",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445817.html?cxapp_link=true",
+      "content": "印尼总统普拉博沃制定计划，加强国家对大宗商品出口的控制，以应对不断增加的财政压力和印尼盾跌势",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "受有利的同比基数和政府降低能源账单的努力所推动，英国4月通胀降至逾一年低位。尽管如此，未来几个月价格压力预计将再度回升",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445815.html?cxapp_link=true",
+      "content": "受有利的同比基数和政府降低能源账单的努力所推动，英国4月通胀降至逾一年低位。尽管如此，未来几个月价格压力预计将再度回升",
+      "priority": "low",
+      "sectors": [
+        "能源"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "昨日（5月19日）仅一艘挂冈比亚国旗的杂货船从霍尔木兹海峡驶出",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445766.html?cxapp_link=true",
+      "content": "昨日（5月19日）仅一艘挂冈比亚国旗的杂货船从霍尔木兹海峡驶出",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "霍尔木兹日报"
+      ]
+    },
+    {
+      "title": "Meta将在全球范围内裁减约8000个岗位，并鼓励员工居家办公",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445748.html?cxapp_link=true",
+      "content": "Meta将在全球范围内裁减约8000个岗位，并鼓励员工居家办公",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "随着投资者愈发担心融资扩张速度过快会为下一轮市场冲击埋下隐患，与人工智能(AI)数据中心投资热潮相关的借贷正迅速升至华尔街潜在信用风险清单的前列",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445707.html?cxapp_link=true",
+      "content": "随着投资者愈发担心融资扩张速度过快会为下一轮市场冲击埋下隐患，与人工智能(AI)数据中心投资热潮相关的借贷正迅速升至华尔街潜在信用风险清单的前列",
+      "priority": "low",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "长期美债收益率周二升至2007年以来最高水平，而5年期和10年期国债期货的大宗抛售，更是令市场雪上加霜",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445705.html?cxapp_link=true",
+      "content": "长期美债收益率周二升至2007年以来最高水平，而5年期和10年期国债期货的大宗抛售，更是令市场雪上加霜",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "三星电子和Alphabet Inc.旗下的谷歌发布了与眼镜合作伙伴Warby Parker和Gentle Monster共同开发的智能眼镜设计，计划秋季上市",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-20/102445704.html?cxapp_link=true",
+      "content": "三星电子和Alphabet Inc.旗下的谷歌发布了与眼镜合作伙伴Warby Parker和Gentle Monster共同开发的智能眼镜设计，计划秋季上市",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "数据显示，卢布兑美元汇率自4月初以来已上涨约12%，达到72.6，为2023年2月以来最高水平",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445611.html?cxapp_link=true",
+      "content": "数据显示，卢布兑美元汇率自4月初以来已上涨约12%，达到72.6，为2023年2月以来最高水平",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "标普全球（S&P Global）副董事长耶金（Dan Yergin）认为，当前美国国内汽油零售价格的高企反映了市场供需真实情况。一方面，美国国内需求持续增长；另",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445534.html?cxapp_link=true",
+      "content": "标普全球（S&P Global）副董事长耶金（Dan Yergin）认为，当前美国国内汽油零售价格的高企反映了市场供需真实情况。一方面，美国国内需求持续增长；另一方面，美国正在大量出口炼油产品以填补国际市场流失的缺口，这也限制了国内价格的回落空间",
+      "priority": "low",
+      "sectors": [
+        "消费"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "华尔街原声"
+      ]
+    },
+    {
+      "title": "5月19日截至发稿，海峡过船数量由前一日的10艘降为零",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445444.html?cxapp_link=true",
+      "content": "5月19日截至发稿，海峡过船数量由前一日的10艘降为零",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "霍尔木兹日报"
+      ]
+    },
+    {
+      "title": "日本财务省一名高级官员质疑日本通过抛售美国国债来支撑日元的可能性，暗示此举最终可能适得其反",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445352.html?cxapp_link=true",
+      "content": "日本财务省一名高级官员质疑日本通过抛售美国国债来支撑日元的可能性，暗示此举最终可能适得其反",
+      "priority": "low",
+      "sectors": [
+        "综合"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "渣打集团计划裁减逾15%的支持岗位，并上调未来四年的回报目标，显示越来越多的银行正在借助人工智能来提升效率",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445349.html?cxapp_link=true",
+      "content": "渣打集团计划裁减逾15%的支持岗位，并上调未来四年的回报目标，显示越来越多的银行正在借助人工智能来提升效率",
       "priority": "low",
       "sectors": [
         "金融"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "己内酰胺",
-        "生意社",
-        "山东省"
+        "市场动态"
       ]
     },
     {
-      "title": "DL-氨基丙醇商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxui5839588.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价DL-氨基丙醇 180kg/桶、吨桶装97%-99% （文章来源：生意社）",
+      "title": "陪审团驳回了埃隆·马斯克的指控，即OpenAI在萨姆·奥尔特曼的领导之下背叛了造福公众的使命，而是转变成了一家营利性企业，陪审团认为他提起诉讼的时间太晚了",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445348.html?cxapp_link=true",
+      "content": "陪审团驳回了埃隆·马斯克的指控，即OpenAI在萨姆·奥尔特曼的领导之下背叛了造福公众的使命，而是转变成了一家营利性企业，陪审团认为他提起诉讼的时间太晚了",
+      "priority": "low",
+      "sectors": [
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "包括礼来、霍尼韦尔和三星电子在内的客户，正使用戴尔的产品进行药物研发和创建AI优化半导体工厂等工作",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-19/102445350.html?cxapp_link=true",
+      "content": "包括礼来、霍尼韦尔和三星电子在内的客户，正使用戴尔的产品进行药物研发和创建AI优化半导体工厂等工作",
+      "priority": "low",
+      "sectors": [
+        "半导体",
+        "AI"
+      ],
+      "period": "noon",
+      "date": "2026-05-24",
+      "time": "--:--",
+      "keywords": [
+        "市场动态"
+      ]
+    },
+    {
+      "title": "最新一轮日债抛售反映了全球利率压力和国内财政担忧的双重影响，而补充预算案则进一步强化了市场对供应的预期",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102445032.html?cxapp_link=true",
+      "content": "最新一轮日债抛售反映了全球利率压力和国内财政担忧的双重影响，而补充预算案则进一步强化了市场对供应的预期",
       "priority": "low",
       "sectors": [
         "金融"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社"
+        "市场动态"
       ]
     },
     {
-      "title": "异庚烷商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4307053.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价异庚烷 国标99%以上，140kg/桶山东北鲁恒升化工有限公司国产山东省11000元/吨 （文章来源：生意社）",
+      "title": "在冲突看不到结束迹象的情况下，全球债券市场遭遇抛售，进一步压抑不具孳息收益的黄金价格",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102445028.html?cxapp_link=true",
+      "content": "在冲突看不到结束迹象的情况下，全球债券市场遭遇抛售，进一步压抑不具孳息收益的黄金价格",
       "priority": "low",
       "sectors": [
-        "金融"
+        "黄金"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "山东省",
-        "化工有限公司"
+        "市场动态"
       ]
     },
     {
-      "title": "三乙二醇乙醚商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxue6521077.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价三乙二醇乙醚 国标99%山东北鲁恒升化工有限公司山东山东省10000元/吨 （文章来源：生意社）",
+      "title": "据存托信托与结算公司的数据，5月14日和15日，英镑看跌期权的交易量是价值至少1亿英镑的看涨期权的六倍多",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102445026.html?cxapp_link=true",
+      "content": "据存托信托与结算公司的数据，5月14日和15日，英镑看跌期权的交易量是价值至少1亿英镑的看涨期权的六倍多",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "化工有限公司",
-        "山东省"
+        "市场动态"
       ]
     },
     {
-      "title": "五乙烯六胺商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4308012.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价五乙烯六胺 200公斤/桶 国标99.8% 蓝色铁桶山东北鲁恒升化工有限公司东曹江苏省43000元/吨 （文章来源：生意社）",
+      "title": "5月16日，一艘挂巴拿马船旗的液体散货船“SEAWAY”于北京时间5月16日15:41驶出霍尔木兹海峡",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444985.html?cxapp_link=true",
+      "content": "5月16日，一艘挂巴拿马船旗的液体散货船“SEAWAY”于北京时间5月16日15:41驶出霍尔木兹海峡",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "乙烯",
-        "生意社",
-        "山东省"
+        "霍尔木兹日报"
       ]
     },
     {
-      "title": "精对苯二甲酸商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuh3299444.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价精对苯二甲酸 优等品山东北鲁恒升化工有限公司恒力石化山东省4600元/吨 （文章来源：生意社）",
+      "title": "通源石油涨超10%，首华燃气、科力股份、中油工程、中曼石油等涨幅居前",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444967.html?cxapp_link=true",
+      "content": "通源石油涨超10%，首华燃气、科力股份、中油工程、中曼石油等涨幅居前",
       "priority": "low",
       "sectors": [
-        "金融"
+        "能源"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "甲酸",
-        "生意社",
-        "山东省",
-        "恒力石化",
-        "化工有限公司"
+        "今日热点"
       ]
     },
     {
-      "title": "污水处理菌种 厌氧菌商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuh3299047.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价污水处理菌种 厌氧菌 99%河南顺之邦环保科技有限公司国产河南省/郑州市22元/公斤 （文章来源：生意社）",
+      "title": "投资者表示，关键在于，只要中东局势僵持导致石油无法通过至关重要的霍尔木兹海峡，债券面临的压力就会持续",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444925.html?cxapp_link=true",
+      "content": "投资者表示，关键在于，只要中东局势僵持导致石油无法通过至关重要的霍尔木兹海峡，债券面临的压力就会持续",
       "priority": "low",
       "sectors": [
-        "金融"
+        "能源"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "污水处理",
-        "环保",
-        "郑州市",
-        "河南省"
+        "市场动态"
       ]
     },
     {
-      "title": "特戊酸商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxue6522606.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价特戊酸 99%山东北鲁恒升化工有限公司国产江苏省15000元/吨 （文章来源：生意社）",
+      "title": "投资者正在狂热追逐科技股和AI股票的火热涨势，同时也普遍承认，不断上升的债券收益率可能会让股市偏离轨道",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444885.html?cxapp_link=true",
+      "content": "投资者正在狂热追逐科技股和AI股票的火热涨势，同时也普遍承认，不断上升的债券收益率可能会让股市偏离轨道",
       "priority": "low",
       "sectors": [
-        "金融"
+        "AI"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "山东省",
-        "江苏省"
+        "市场动态"
       ]
     },
     {
-      "title": "植物液除臭剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuh3298426.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价植物液除臭剂 液体除臭剂含量99%河南顺之邦环保科技有限公司国产河南省/郑州市5600元/吨 （文章来源：生意社）",
+      "title": "据The Information援引知情人士报道，贝莱德考虑在下个月的SpaceX首次公开募股(IPO)中投资50亿至100亿美元",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444884.html?cxapp_link=true",
+      "content": "据The Information援引知情人士报道，贝莱德考虑在下个月的SpaceX首次公开募股(IPO)中投资50亿至100亿美元",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "河南省"
+        "市场动态"
       ]
     },
     {
-      "title": "对苯醌二肟商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4307401.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价对苯醌二肟 99%山东北鲁恒升化工有限公司国产山东省190000元/吨 （文章来源：生意社）",
+      "title": "瑞银认为今年市场上行动能并不光靠估值，也不单靠盈利，是一个双向的结合",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-18/102444836.html?cxapp_link=true",
+      "content": "瑞银认为今年市场上行动能并不光靠估值，也不单靠盈利，是一个双向的结合",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "化工有限公司",
-        "山东省"
+        "市场洞察"
       ]
     },
     {
-      "title": "双吗啉基二乙基醚DMDEE商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuh3298786.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价双吗啉基二乙基醚DMDEE 99%双吗啉基二乙基醚DMDEE ＞99%，淡黄色，200kg/桶、吨桶 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】休学学生回到学校，社会如何支持？",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444554.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】休学学生回到学校，社会如何支持？",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社"
+        "周刊提前读"
       ]
     },
     {
-      "title": "切削液消泡剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxui5841078.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价切削液消泡剂 99.9河南顺之邦环保科技有限公司国产河南省/郑州市3800元/吨 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】这场始于“世界尽头”的疫情，暴露出探险邮轮面对罕见自然疫源病时的脆弱",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444551.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】这场始于“世界尽头”的疫情，暴露出探险邮轮面对罕见自然疫源病时的脆弱",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "郑州市",
-        "环保",
-        "河南省"
+        "周刊提前读"
       ]
     },
     {
-      "title": "N-甲基吡咯烷酮 商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxue6522033.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价N-甲基吡咯烷酮 国标99，9%，200kg/桶山东北鲁恒升化工有限公司国产湖北省10000元/吨 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】中美元首北京会谈，定位“中美建设性战略稳定关系”",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444539.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】中美元首北京会谈，定位“中美建设性战略稳定关系”",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社"
+        "周刊提前读"
       ]
     },
     {
-      "title": "脱硫消泡剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxue6522718.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价脱硫消泡剂 无色透明聚醚消泡剂河南顺之邦环保科技有限公司国产河南省/郑州市5600元/吨 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】科技股独大，这轮行情是否与过去真的不一样？",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444549.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】科技股独大，这轮行情是否与过去真的不一样？",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "环保",
-        "河南省"
+        "周刊提前读"
       ]
     },
     {
-      "title": "DMF 二甲基甲酰胺商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4306863.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价DMF 二甲基甲酰胺 国标优级品 99.9%山东北鲁恒升化工有限公司山东山东省3600元/吨 (文章来源：生意社)",
+      "title": "【本文系数据通用户提前专享】CRS 2.0全球落地提速，境外收入征税趋紧",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444543.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】CRS 2.0全球落地提速，境外收入征税趋紧",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "化工有限公司",
-        "山东省"
+        "周刊提前读"
       ]
     },
     {
-      "title": "1,2-丙二胺商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxui5838685.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价1，2-丙二胺 含量98%，净重170kg/桶1，2-丙二胺 国标 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】从宏观审慎管理的角度，避免剧烈波动的逆周期调节，与实现更有效率的有管理的浮动之间，应如何抉择？",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444542.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】从宏观审慎管理的角度，避免剧烈波动的逆周期调节，与实现更有效率的有管理的浮动之间，应如何抉择？",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社"
+        "周刊提前读"
       ]
     },
     {
-      "title": "丙烯酸羟乙酯商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4307260.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价丙烯酸羟乙酯 97%山东北鲁恒升化工有限公司国产山东省4800元/吨 （文章来源：生意社）",
+      "title": "【本文系数据通用户提前专享】访华团美国企业名单，折射了两国关系与商业诉求的深刻演变",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444541.html?cxapp_link=true",
+      "content": "【本文系数据通用户提前专享】访华团美国企业名单，折射了两国关系与商业诉求的深刻演变",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "丙烯酸",
-        "生意社",
-        "化工有限公司",
-        "山东省"
+        "周刊提前读"
       ]
     },
     {
-      "title": "高温固体消泡剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4308358.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价高温固体消泡剂 含量25%PH：7-9河南顺之邦环保科技有限公司国产河南省/郑州市5300元/吨 （文章来源：生意社）",
+      "title": "供应格局宽松，补库需求压减，焦煤价格显著下挫",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-16/102444528.html?cxapp_link=true",
+      "content": "供应格局宽松，补库需求压减，焦煤价格显著下挫",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "郑州市",
-        "河南省"
+        "CCI快报"
       ]
     },
     {
-      "title": "羟乙基二异丙醇胺商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxue6521697.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价羟乙基二异丙醇胺 85%山东北鲁恒升化工有限公司国产山东省8200元/吨 （文章来源：生意社）",
+      "title": "近期中国芯片股大幅上涨，其估值在全球同行中位居前列，投资者对此日益谨慎",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444297.html?cxapp_link=true",
+      "content": "近期中国芯片股大幅上涨，其估值在全球同行中位居前列，投资者对此日益谨慎",
       "priority": "low",
       "sectors": [
-        "金融"
+        "半导体"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "异丙醇",
-        "生意社",
-        "山东省",
-        "化工有限公司"
+        "市场动态"
       ]
     },
     {
-      "title": "仲辛醇商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4306726.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价仲辛醇 国标，含量：99%山东北鲁恒升化工有限公司山东山东省10000元/吨 （文章来源：生意社）",
+      "title": "美国总统唐纳德·特朗普表示，美国从伊朗取得高浓缩铀这个目标“更多的是为了公关工作，而不是为了其他任何目的”，同时重申了他移除这些核材料的决心",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444295.html?cxapp_link=true",
+      "content": "美国总统唐纳德·特朗普表示，美国从伊朗取得高浓缩铀这个目标“更多的是为了公关工作，而不是为了其他任何目的”，同时重申了他移除这些核材料的决心",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "生意社",
-        "化工有限公司",
-        "山东省"
+        "市场动态"
       ]
     },
     {
-      "title": "反渗透膜阻垢剂商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4306107.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价反渗透膜阻垢剂 PH：2±1 25河南顺之邦环保科技有限公司国产河南省/郑州市4300元/吨 （文章来源：生意社）",
+      "title": "预测2026年5月经营质量、会计质量等因子表现更优",
+      "source": "财新",
+      "url": "https://database.caixin.com/2026-05-15/102444288.html?cxapp_link=true",
+      "content": "预测2026年5月经营质量、会计质量等因子表现更优",
       "priority": "low",
       "sectors": [
-        "金融"
+        "综合"
       ],
-      "period": "night",
+      "period": "noon",
       "date": "2026-05-24",
-      "time": "18:11",
+      "time": "--:--",
       "keywords": [
-        "反渗透膜",
-        "生意社",
-        "河南省",
-        "郑州市",
-        "环保"
-      ]
-    },
-    {
-      "title": "碱式聚合氯化铝商品报价动态（2026-05-24）",
-      "source": "市场资讯",
-      "url": "https://finance.sina.com.cn/money/future/nyzx/2026-05-24/doc-inhyyxuk4306071.shtml",
-      "content": "生意社05月24日讯交易商品牌/产地交货地最新报价碱式聚合氯化铝 含量≥28%河南顺之邦环保科技有限公司国产河南省/郑州市1030元/吨河南顺之邦环保科技有限公司顺之邦河南省/...",
-      "priority": "low",
-      "sectors": [
-        "有色"
-      ],
-      "period": "night",
-      "date": "2026-05-24",
-      "time": "18:11",
-      "keywords": [
-        "郑州市",
-        "环保",
-        "生意社",
-        "河南省"
+        "量化观察"
       ]
     }
   ]
