@@ -250,27 +250,23 @@
 <div class="panel" id="panel-signals">
   <div class="btn-row">
     <button class="btn primary" onclick="generateAll()">🔍 生成交易信号</button>
-    <span style="margin:0 8px;color:var(--text-dim)">|</span>
-    <span class="chip period on" id="sigViewFund" onclick="switchSigView('fund')">📈 ETF基金</span>
-    <span class="chip period" id="sigViewSector" onclick="switchSigView('sector')">🔥 热点板块</span>
     <button class="btn" onclick="buyManual()">💰 模拟买入</button>
     <button class="btn" onclick="sellAll()">📤 清仓</button>
     <button class="btn" onclick="clearHistory()">🗑 清空历史</button>
+    <span style="font-size:11px;color:var(--text-dim);margin-left:8px">ETF + 板块信号同时监控</span>
   </div>
   <div class="grid3" style="margin-bottom:16px">
     <div class="card"><div class="card-header">恐慌指数 (VIX 模拟)</div><div class="gauge-container"><div class="gauge-label" id="vixLabel">25 — 中度恐慌</div><div class="gauge-track"><div class="gauge-needle" id="vixNeedle" style="left:42%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin:4px 20px 0"><span>0 贪婪</span><span>50</span><span>100 恐慌</span></div></div></div>
+    <div class="card"><div class="card-header">ETF 入场/出场信号</div><div id="sigListFund" style="font-size:12px;color:var(--text-dim)"></div></div>
+    <div class="card"><div class="card-header">🔥 板块入场/出场信号</div><div id="sigListSector" style="font-size:12px;color:var(--text-dim)"></div></div>
+  </div>
+  <div class="grid2" style="margin-bottom:16px">
     <div class="card"><div class="card-header">均线交叉信号</div><div id="crossSummary" style="font-size:12px;color:var(--text-dim)"></div></div>
     <div class="card"><div class="card-header">回撤监控</div><div id="ddSummary" style="font-size:12px;color:var(--text-dim)"></div></div>
   </div>
   <div class="grid2">
-    <div class="card"><div class="card-header">入场/出场信号</div><div id="sigList"></div></div>
     <div class="card"><div class="card-header">持仓 & 移动止盈</div><div id="posList"></div><div style="margin-top:10px;font-size:12px;color:var(--text-dim)">已用仓位: <b id="posUsed" style="color:var(--primary)">0%</b> · 浮动盈亏: <b id="posPnL">+0.00%</b></div></div>
-  </div>
-  <div class="card" style="margin-top:16px">
-    <div class="card-header">信号历史数据库 (localStorage)</div>
-    <div style="max-height:200px;overflow-y:auto">
-      <table class="sig-table"><thead><tr><th>时间</th><th>基金</th><th>类型</th><th>评分</th><th>原因</th></tr></thead><tbody id="sigHistory"></tbody></table>
-    </div>
+    <div class="card"><div class="card-header">信号历史数据库 (localStorage)</div><div style="max-height:200px;overflow-y:auto"><table class="sig-table"><thead><tr><th>时间</th><th>名称</th><th>类型</th><th>评分</th><th>原因</th></tr></thead><tbody id="sigHistory"></tbody></table></div></div>
   </div>
 </div>
 
@@ -463,6 +459,11 @@ function classifySector(title){
 function generateNews(){
   const count = Math.floor(rng(12,22));
   const news = [];
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+  const yestStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+
   for(let i=0;i<count;i++){
     const tmpl = pick(NEWS_TEMPLATES);
     const title = tmpl.t();
@@ -473,9 +474,12 @@ function generateNews(){
     let period = 'morning';
     if(hour>=12 && hour<18) period='noon';
     else if(hour>=18 || hour<6) period='night';
+    // 80% today, 20% yesterday for realism
+    const date = Math.random()<0.8?todayStr:yestStr;
     news.push({
       title, source:'财联社', priority:tmpl.p, sectors, period,
       time: `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`,
+      date,
       keywords: tmpl.k || [],
     });
   }
@@ -652,7 +656,7 @@ function renderNews(){
           <span class="news-priority-dot ${dotCls[n.priority]}"></span>
           <span class="news-title" style="color:${n.priority==='high'?'var(--text-bright)':'var(--text)'}">${n.title}</span>
           <span class="news-sector-tag">${n.sectors[0]||'综合'}</span>
-          <span class="news-time-tag">${n.time}</span>
+          <span class="news-time-tag">${n.date} ${n.time}</span>
         </div>
         <div class="news-expand">
           <div class="news-summary">${generateSummary(n)}</div>
@@ -871,15 +875,6 @@ function renderSectorMonitor(){
 }
 
 // ── signals render ──
-let sigView = 'fund';
-
-function switchSigView(view){
-  sigView = view;
-  document.getElementById('sigViewFund').classList.toggle('on', view==='fund');
-  document.getElementById('sigViewSector').classList.toggle('on', view==='sector');
-  renderSignals();
-}
-
 // ── sector signal generation ──
 function generateSectorSignals(){
   const signals = [];
@@ -925,67 +920,38 @@ function generateSectorSignals(){
   return signals;
 }
 
-function renderSignals(){
-  // ── sector mode ──
-  if(sigView==='sector'){
-    const sectorSignals = generateSectorSignals();
-    currentSignals = sectorSignals;
-    const entryCount = sectorSignals.filter(s=>s.type==='entry').length;
-    const exitCount = sectorSignals.filter(s=>s.type==='exit').length;
-
-    document.getElementById('sigList').innerHTML = sectorSignals.map(s=>`
-      <div class="signal-row ${s.cls}">
-        <span class="signal-type">${s.type==='entry'?'🟢':s.type==='exit'?'🔴':'⚪'}</span>
-        <div class="signal-detail">
-          <div style="font-weight:600">🔥 ${s.name} ${s.type==='entry'?'入场':'出场'}信号 <span style="font-size:10px;color:var(--text-dim)">${SECTOR_INDEX[s.name]?.desc||''}</span></div>
-          <div style="color:var(--text-dim);font-size:11px">${s.reasons.join(' · ')}</div>
-        </div>
-        <div class="signal-score" style="color:${s.score>=65?'var(--green)':s.score>=45?'var(--text-dim)':'var(--red)'}">${s.score.toFixed(0)}</div>
-      </div>
-    `).join('') || '<div style="color:var(--text-dim)">无明确信号</div>';
-
-    document.getElementById('crossSummary').innerHTML = sectorSignals.map(s=>{
-      if(s.cross==='golden') return `<div style="color:var(--green);margin:3px 0">✨ ${s.name}: 5/20金叉</div>`;
-      if(s.cross==='death') return `<div style="color:var(--red);margin:3px 0">⚠ ${s.name}: 5/20死叉</div>`;
-      return '';
-    }).filter(Boolean).join('') || '近期无均线交叉信号';
-
-    document.getElementById('ddSummary').innerHTML = sectorSignals.map(s=>{
-      if(s.over8pct) return `<div style="color:var(--red);margin:3px 0">🔴 ${s.name}: 回撤${s.ddFromPeak}% ≥8%</div>`;
-      if(s.ddFromPeak>5) return `<div style="color:var(--orange);margin:3px 0">🟡 ${s.name}: 回撤${s.ddFromPeak}%</div>`;
-      return '';
-    }).filter(Boolean).join('') || '所有板块回撤在5%以内';
-
-    document.getElementById('dSigCount').textContent = sectorSignals.length;
-    document.getElementById('dEntryN').textContent = entryCount;
-    document.getElementById('dExitN').textContent = exitCount;
-
-    // save sector signals to history
-    for(const s of sectorSignals){ if(s.type!=='hold') saveSignal(s); }
-    renderSigHistoryTable();
-    return;
-  }
-
-  // ── fund mode (original) ──
-  currentSignals = generateSignals();
-
-  for(const sig of currentSignals){
-    if(sig.type!=='hold') saveSignal(sig);
-  }
-
-  const entryCount = currentSignals.filter(s=>s.type==='entry').length;
-  const exitCount = currentSignals.filter(s=>s.type==='exit').length;
-
-  document.getElementById('sigList').innerHTML = currentSignals.map(s=>`
-    <div class="signal-row ${s.cls}">
-      <span class="signal-type">${s.type==='entry'?'🟢':s.type==='exit'?'🔴':'⚪'}</span>
-      <div class="signal-detail">
-        <div style="font-weight:600">${s.name} ${s.type==='entry'?'入场':'出场'}信号</div>
-        <div style="color:var(--text-dim);font-size:11px">${s.reasons.join(' · ')}</div>
-      </div>
-      <div class="signal-score" style="color:${s.score>=65?'var(--green)':s.score>=45?'var(--text-dim)':'var(--red)'}">${s.score.toFixed(0)}</div>
+function renderMiniSignalList(elId, signals, prefix){
+  const el = document.getElementById(elId);
+  if(!el) return {e:0,x:0};
+  const entryN = signals.filter(s=>s.type==='entry').length;
+  const exitN = signals.filter(s=>s.type==='exit').length;
+  el.innerHTML = signals.map(s=>`
+    <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:6px;font-size:11px">
+      <span>${s.type==='entry'?'🟢':s.type==='exit'?'🔴':'⚪'}</span>
+      <span style="flex:1;color:${s.score>=65?'var(--green)':s.score<45?'var(--red)':'var(--text)'}"><b>${prefix}${s.name}</b></span>
+      <span style="color:${s.score>=65?'var(--green)':s.score<45?'var(--red)':'var(--text-dim)'}">${s.type==='entry'?'入场':s.type==='exit'?'出场':'持有'} ${s.score.toFixed(0)}分</span>
     </div>
-  `).join('') || '<div style="color:var(--text-dim)">无明确信号</div>';
+    ${s.reasons.length?`<div style="font-size:9px;color:var(--text-dim);margin:2px 0 4px 18px">${s.reasons.slice(0,3).join(' · ')}</div>`:''}
+  `).join('') || '<div style="color:var(--text-dim);padding:10px 0">无明确信号</div>';
+  return {e:entryN, x:exitN};
+}
+
+function renderSignals(){
+  // ── always generate both ──
+  const fundSignals = generateSignals();
+  const sectorSignals = generateSectorSignals();
+  const allSignals = [...fundSignals, ...sectorSignals];
+
+  // save all to history
+  for(const s of allSignals){ if(s.type!=='hold') saveSignal(s); }
+
+  // ETF signals column
+  const fe = renderMiniSignalList('sigListFund', fundSignals, '');
+  // Sector signals column
+  const se = renderMiniSignalList('sigListSector', sectorSignals, '🔥 ');
+
+  const entryCount = fe.e + se.e;
+  const exitCount = fe.x + se.x;
 
   // VIX
   const vix = getVIX();
@@ -993,19 +959,21 @@ function renderSignals(){
   const vixLabel = vix<20?'贪婪':vix<40?'中性':vix<60?'中度恐慌':'极度恐慌';
   document.getElementById('vixLabel').textContent = `${vix} — ${vixLabel}`;
 
-  // cross summary
-  document.getElementById('crossSummary').innerHTML = currentSignals.map(s=>{
-    if(s.cross==='golden') return `<div style="color:var(--green);margin:3px 0">✨ ${s.name}: 5/20日金叉</div>`;
-    if(s.cross==='death') return `<div style="color:var(--red);margin:3px 0">⚠ ${s.name}: 5/20日死叉</div>`;
-    return '';
-  }).filter(Boolean).join('') || '近期无均线交叉信号';
+  // cross summary (merged)
+  const crossLines = [];
+  for(const s of allSignals){
+    if(s.cross==='golden') crossLines.push(`<div style="color:var(--green);margin:3px 0;font-size:11px">✨ ${s.name}: 5/20金叉</div>`);
+    if(s.cross==='death') crossLines.push(`<div style="color:var(--red);margin:3px 0;font-size:11px">⚠ ${s.name}: 5/20死叉</div>`);
+  }
+  document.getElementById('crossSummary').innerHTML = crossLines.join('') || '<div style="font-size:11px">近期无均线交叉信号</div>';
 
-  // drawdown summary
-  document.getElementById('ddSummary').innerHTML = currentSignals.map(s=>{
-    if(s.over8pct) return `<div style="color:var(--red);margin:3px 0">🔴 ${s.name}: 回撤 ${s.ddFromPeak}% ≥8%，注意风险！</div>`;
-    if(s.ddFromPeak>5) return `<div style="color:var(--orange);margin:3px 0">🟡 ${s.name}: 回撤 ${s.ddFromPeak}%</div>`;
-    return '';
-  }).filter(Boolean).join('') || '所有标的回撤均在5%以内';
+  // drawdown summary (merged)
+  const ddLines = [];
+  for(const s of allSignals){
+    if(s.over8pct) ddLines.push(`<div style="color:var(--red);margin:3px 0;font-size:11px">🔴 ${s.name}: 回撤${s.ddFromPeak}% ≥8%</div>`);
+    else if(s.ddFromPeak>5) ddLines.push(`<div style="color:var(--orange);margin:3px 0;font-size:11px">🟡 ${s.name}: 回撤${s.ddFromPeak}%</div>`);
+  }
+  document.getElementById('ddSummary').innerHTML = ddLines.join('') || '<div style="font-size:11px">所有标的回撤在5%以内</div>';
 
   // positions
   const posList = Object.values(positionCache);
@@ -1021,7 +989,7 @@ function renderSignals(){
         const curPLPct = +((curNav-p.avgCost)/p.avgCost*100).toFixed(2);
         const peakPL = p.peakPL || 0;
         const trailStop = peakPL>0 && curPL<peakPL*0.7 ? '⚠ 触发移动止盈' : '';
-        return `<div class="fund-row" style="padding:10px 12px;margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;background:var(--surface2);border-radius:6px;border-left:3px solid ${curPL>=0?'var(--green)':'var(--red)'}">
+        return `<div style="padding:8px 10px;margin-bottom:3px;display:flex;justify-content:space-between;font-size:11px;background:var(--surface2);border-radius:6px;border-left:3px solid ${curPL>=0?'var(--green)':'var(--red)'}">
           <div><b>${p.name}</b> <span style="color:var(--text-dim)">${p.code}</span></div>
           <div>${p.shares.toFixed(0)}份 @${p.avgCost.toFixed(4)}</div>
           <div style="color:${curPL>=0?'var(--green)':'var(--red)'}">${curPL>=0?'+':''}${curPLPct}%</div>
@@ -1037,7 +1005,7 @@ function renderSignals(){
   renderSigHistoryTable();
 
   // dashboard updates
-  document.getElementById('dSigCount').textContent = currentSignals.length;
+  document.getElementById('dSigCount').textContent = allSignals.length;
   document.getElementById('dEntryN').textContent = entryCount;
   document.getElementById('dExitN').textContent = exitCount;
   document.getElementById('dPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
@@ -1048,7 +1016,7 @@ function renderSignals(){
   document.getElementById('dSentiment').style.color = sent.moodColor;
   document.getElementById('dSentLabel').textContent = `偏多${sent.bullCount}条 · 偏空${sent.bearCount}条`;
 
-  const topSig = currentSignals.slice(0,4);
+  const topSig = allSignals.slice(0,4);
   document.getElementById('dSignals').innerHTML = topSig.map(s=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
       <span>${s.name}</span>
