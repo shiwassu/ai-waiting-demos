@@ -233,12 +233,10 @@
       </div>
       <div id="sectorSummaries"></div>
       <div class="card" style="margin-top:12px">
-        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· 填入 Finnhub Key 保证可靠抓取 · 无 Key 时尝试 RSS</span></div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px">
-          <span style="color:var(--text-dim)">Finnhub Key:</span>
-          <input id="keyFinnhub" placeholder="粘贴 API Key（免费）" style="width:180px;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:11px;font-family:monospace" onchange="saveApiKey()">
-          <a href="https://finnhub.io/register" target="_blank" style="font-size:10px;color:var(--primary);white-space:nowrap">→ 30秒免费注册</a>
-          <span id="newsSrcStatus" style="font-size:10px">● 就绪</span>
+        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· JSONP 跨域 · 零配置 · 真实数据</span></div>
+        <div style="font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span>源: 新浪财经 (JSONP直连) + Google News (rss2json JSONP)</span>
+          <span id="newsSrcStatus">● 就绪，点击拉取新闻</span>
         </div>
       </div>
     </div>
@@ -438,59 +436,67 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  真实新闻抓取
-//  CORS 代理不稳定 → 改用 Finnhub 免费 API
-//  Finnhub: 支持 CORS, 60 req/min 免费, 30秒注册
-//  无 Key 时: rss2json (可能被 CORS 拦截)
+//  真实新闻抓取 — JSONP 绕开 CORS (零 Key)
+//  JSONP: 用 <script> 标签加载数据, 不受同源策略限制
+//  Sina + Google News via rss2json
 // ═══════════════════════════════════════════════════
-let API_KEYS = { finnhub: '' };
 let realNewsAvailable = false;
 let realNewsSourceName = '';
 
-function loadApiKeys(){
-  try{
-    const saved = localStorage.getItem('fund_api_key_finnhub');
-    if(saved) API_KEYS.finnhub = saved;
-    const el = document.getElementById('keyFinnhub');
-    if(el) el.value = API_KEYS.finnhub || '';
-  }catch(e){}
-}
-function saveApiKey(){
-  API_KEYS.finnhub = document.getElementById('keyFinnhub').value.trim();
-  localStorage.setItem('fund_api_key_finnhub', API_KEYS.finnhub);
-  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--green)">● Key 已保存，点击拉取新闻</span>';
+// ── JSONP 抓取 (CORS 杀手) ──
+function fetchJSONP(url, timeout=8000){
+  return new Promise((resolve, reject) => {
+    const callbackName = '_jsonp_' + Math.random().toString(36).slice(2);
+    const timer = setTimeout(()=>{ cleanup(); reject(new Error('timeout')); }, timeout);
+
+    window[callbackName] = function(data){
+      clearTimeout(timer);
+      cleanup();
+      resolve(data);
+    };
+
+    const sep = url.includes('?') ? '&' : '?';
+    const script = document.createElement('script');
+    script.src = url + sep + 'callback=' + callbackName;
+    script.onerror = ()=>{ clearTimeout(timer); cleanup(); reject(new Error('network')); };
+    document.head.appendChild(script);
+
+    function cleanup(){
+      delete window[callbackName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+  });
 }
 
-// ── Finnhub (支持 CORS, 免费) ──
-async function fetchFinnhub(){
-  if(!API_KEYS.finnhub) return null;
-  const url = `https://finnhub.io/api/v1/news?category=general&token=${API_KEYS.finnhub}`;
-  const resp = await fetch(url);
-  if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  const data = await resp.json();
-  if(!Array.isArray(data) || data.length===0) return null;
-  return data.slice(0,25).map(item=>({
-    title: (item.headline||'').trim(),
-    source: item.source||'Finnhub',
-    url: item.url||'',
-    content: (item.summary||'').slice(0,200),
-    priority: classifyPriority((item.headline||'')+' '+(item.summary||'')),
-    sectors: classifySectors(item.headline||''),
-    period: getPeriodFromDate(new Date(item.datetime*1000)),
-    time: fmtTime(new Date(item.datetime*1000)),
-    date: fmtDate(new Date(item.datetime*1000)),
-    keywords: item.category?[item.category]:[],
-  }));
+// ── 新浪财经 (JSONP, 国内最快, 零 CORS 问题) ──
+async function fetchSinaNews(){
+  try{
+    const url = `https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=30&page=1&r=${Date.now()}`;
+    const data = await fetchJSONP(url, 8000);
+    if(!data?.result?.data) return null;
+    return data.result.data.map(item=>({
+      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
+      source: item.media_name||'新浪财经',
+      url: item.url||item.wapurl||'',
+      content: (item.intro||'').slice(0,200),
+      priority: classifyPriority((item.title||'')+' '+(item.intro||'')),
+      sectors: classifySectors(item.title||''),
+      period: getPeriodFromDate(new Date(item.ctime*1000||Date.now())),
+      time: fmtTime(new Date(item.ctime*1000||Date.now())),
+      date: fmtDate(new Date(item.ctime*1000||Date.now())),
+      keywords: item.keywords?.split?.(',')||[],
+    }));
+  }catch(e){ return null; }
 }
 
-// ── rss2json 备用 (可能被 CORS 拦截) ──
-async function fetchRss2Json(rssUrl){
+// ── Google News via rss2json (JSONP 备用) ──
+async function fetchGoogleNewsRSS(){
   try{
-    const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-    const resp = await fetch(api);
-    if(!resp.ok) return null;
-    const data = await resp.json();
-    if(!data.items) return null;
+    const rssUrl = 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans';
+    // rss2json 也支持 JSONP
+    const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    const data = await fetchJSONP(url, 8000);
+    if(!data?.items) return null;
     return data.items.map(item=>({
       title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
       source: item.author||'Google News',
@@ -511,29 +517,24 @@ async function fetchRealNewsFromApis(){
   const status = {};
   const stEl = document.getElementById('newsSrcStatus');
 
-  // 第1优先: Finnhub (CORS 友好, 真实财经新闻)
-  if(API_KEYS.finnhub){
-    if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接 Finnhub…</span>';
-    try{
-      const items = await fetchFinnhub();
-      if(items?.length){
-        results.push(items);
-        status['Finnhub'] = `✓ ${items.length}条`;
-      }
-    }catch(e){ status['Finnhub'] = `✗ ${e.message}`; }
+  // 第1优先: 新浪财经 JSONP (国内最快，零 CORS 问题)
+  if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接新浪财经…</span>';
+  const sinaItems = await fetchSinaNews();
+  if(sinaItems?.length){
+    results.push(sinaItems);
+    status['新浪财经'] = `✓ ${sinaItems.length}条`;
+  } else {
+    status['新浪财经'] = '✗';
   }
 
-  // 第2优先: rss2json (可能被 CORS 拦截)
-  if(results.length===0){
-    if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接 rss2json…</span>';
-    const rssUrl = 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans';
-    const items = await fetchRss2Json(rssUrl);
-    if(items?.length){
-      results.push(items);
-      status['rss2json'] = `✓ ${items.length}条`;
-    } else {
-      status['rss2json'] = '✗ CORS拦截';
-    }
+  // 第2优先: Google News RSS (JSONP)
+  if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接 Google News…</span>';
+  const gItems = await fetchGoogleNewsRSS();
+  if(gItems?.length){
+    results.push(gItems);
+    status['Google News'] = `✓ ${gItems.length}条`;
+  } else {
+    status['Google News'] = '✗';
   }
 
   if(results.length>0){
@@ -549,14 +550,15 @@ async function fetchRealNewsFromApis(){
       const p={high:0,medium:1,low:2};
       return (p[a.priority]||2)-(p[b.priority]||2);
     });
+
     realNewsAvailable = true;
-    const okSrc = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' · ');
-    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| ${okSrc} | 共 ${merged.length} 条</span>`;
-    return {news: merged.slice(0,30), status};
+    const okSrc = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' + ');
+    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| ${okSrc} | 共 ${merged.length} 条 | ${new Date().toLocaleTimeString('zh-CN')}</span>`;
+    return {news: merged.slice(0, 30), status};
   }
 
   realNewsAvailable = false;
-  if(stEl) stEl.innerHTML = '<span style="color:var(--red);font-weight:600">● 抓取失败</span> <span style="color:var(--text-dim)">| CORS 策略限制，请填入免费 Finnhub Key 或点击"重新拉取"重试</span>';
+  if(stEl) stEl.innerHTML = '<span style="color:var(--red);font-weight:600">● 抓取失败</span> <span style="color:var(--text-dim)">| 网络异常，请点击"重新拉取"重试</span>';
   return null;
 }
 
@@ -1291,11 +1293,10 @@ setInterval(()=>{
 // init
 initFundData();
 initSectorData();
-loadApiKeys();
 buildSectorChips();
 newsCache = [];
 renderSignals();
-// 自动拉取真实新闻 (有 Finnhub Key 优先)
+// 自动拉取真实新闻 (JSONP跨域, 零配置)
 refreshNews();
 </script>
 </body>
