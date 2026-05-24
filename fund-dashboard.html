@@ -433,57 +433,62 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  零 Key 真实新闻抓取 (公开 RSS → rss2json 代理)
+//  真实新闻抓取 (公开 RSS → rss2json 代理, 零 Key)
 // ═══════════════════════════════════════════════════
 let realNewsAvailable = false;
 let realNewsSourceName = '';
 
+// Google News 业务/财经 主题 RSS — 比关键词搜索质量高得多
 const FREE_RSS_FEEDS = [
   {
-    name: 'Google Finance 中文',
-    rss: 'https://news.google.com/rss/search?q=finance+stock+market+A股&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    name: 'Google 财经·中国',
+    rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   },
   {
-    name: 'Google Finance 英文',
-    rss: 'https://news.google.com/rss/search?q=finance+stock+market+economy&hl=en-US&gl=US&ceid=US:en',
+    name: 'Google 财经·全球',
+    rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en',
   },
   {
-    name: 'Yahoo Finance',
-    rss: 'https://news.google.com/rss/search?q=site:finance.yahoo.com+market+stock&hl=en-US',
-  },
-  {
-    name: 'Reuters',
-    rss: 'https://news.google.com/rss/search?q=site:reuters.com+markets+china&hl=en-US',
-  },
-  {
-    name: '财联社主题',
-    rss: 'https://news.google.com/rss/search?q=site:cls.cn+财经+A股&hl=zh-CN',
-  },
-  {
-    name: '东方财富',
-    rss: 'https://news.google.com/rss/search?q=site:eastmoney.com+A股+基金&hl=zh-CN',
-  },
-  {
-    name: '证券时报',
-    rss: 'https://news.google.com/rss/search?q=site:stcn.com+财经+股市&hl=zh-CN',
-  },
-  {
-    name: '华尔街见闻',
-    rss: 'https://news.google.com/rss/search?q=site:wallstreetcn.com+市场+快讯&hl=zh-CN',
+    name: '新浪财经',
+    rss: 'https://finance.sina.com.cn/roll/index.d.html',
   },
 ];
 
+// 直接抓取新浪财经滚动新闻 (JSONP 接口, CORS 友好)
+async function fetchSinaFinanceDirect(){
+  try{
+    const url = `https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=30&page=1&r=${Math.random()}`;
+    const resp = await fetch(url);
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if(!data.result?.data) throw new Error('无数据');
+    return data.result.data.map(item=>({
+      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
+      source: '新浪财经',
+      url: item.url||'',
+      content: (item.intro||'').slice(0,200),
+      priority: classifyPriority((item.title||'')+' '+(item.intro||'')),
+      sectors: classifySectors(item.title||''),
+      period: getPeriodFromDate(new Date(item.ctime*1000||Date.now())),
+      time: fmtTime(new Date(item.ctime*1000||Date.now())),
+      date: fmtDate(new Date(item.ctime*1000||Date.now())),
+      keywords: item.keywords?.split?.(',')||[],
+    }));
+  }catch(e){
+    return null;
+  }
+}
+
 async function fetchRssFeed(feedConfig){
-  // rss2json: 免费 1000 req/month，无需注册
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedConfig.rss)}`;
   try{
     const resp = await fetch(apiUrl);
     if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
-    if(data.status!=='ok' || !data.items) throw new Error('RSS 格式异常');
+    if(data.status!=='ok' || !data.items) throw new Error('格式异常');
     return data.items.map(item=>({
       title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: feedConfig.name.replace('Google ',''),
+      source: item.author||feedConfig.name,
       url: item.link||'',
       content: (item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,200),
       priority: classifyPriority((item.title||'')+' '+(item.description||'')),
@@ -502,11 +507,19 @@ async function fetchRealNewsFromApis(){
   const results = [];
   const status = {};
 
-  // 并发抓取所有 RSS 源（取前 4 个提高速度）
-  const feedsToFetch = FREE_RSS_FEEDS.slice(0, 4);
-  const promises = feedsToFetch.map(async (feed) => {
+  // 新浪财经 (直接 CORS, 最快)
+  const sinaItems = await fetchSinaFinanceDirect();
+  if(sinaItems?.length){
+    results.push(sinaItems);
+    status['新浪财经'] = `✓ ${sinaItems.length}条`;
+  } else {
+    status['新浪财经'] = '✗ 不可用';
+  }
+
+  // Google News RSS (通过 rss2json)
+  const promises = FREE_RSS_FEEDS.slice(0,2).map(async (feed) => {
     const items = await fetchRssFeed(feed);
-    if(items && items.length>0){
+    if(items?.length){
       results.push(items);
       status[feed.name] = `✓ ${items.length}条`;
     } else {
@@ -514,11 +527,7 @@ async function fetchRealNewsFromApis(){
     }
   });
 
-  // 8 秒超时
-  await Promise.race([
-    Promise.all(promises),
-    new Promise(r => setTimeout(r, 8000)),
-  ]);
+  await Promise.race([Promise.all(promises), new Promise(r=>setTimeout(r,8000))]);
 
   // 合并去重
   if(results.length>0){
@@ -526,7 +535,7 @@ async function fetchRealNewsFromApis(){
     const merged = [];
     for(const batch of results){
       for(const item of batch){
-        const key = item.title.slice(0,60);
+        const key = item.title.slice(0,50);
         if(!seen.has(key)){ seen.add(key); merged.push(item); }
       }
     }
@@ -537,12 +546,12 @@ async function fetchRealNewsFromApis(){
 
     realNewsAvailable = true;
     realNewsSourceName = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' · ');
-    document.getElementById('newsSrcStatus').innerHTML = `<span style="color:var(--green)">● 实时数据: ${realNewsSourceName}</span>`;
+    document.getElementById('newsSrcStatus').innerHTML = `<span style="color:var(--green)">● 实时: ${realNewsSourceName} (${merged.length}条)</span>`;
     return {news: merged.slice(0, 30), status};
   }
 
   realNewsAvailable = false;
-  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--orange)">● 网络不通 · 使用模拟数据</span>';
+  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--red)">● 网络异常，请稍后重试</span>';
   return null;
 }
 
@@ -1169,10 +1178,10 @@ function renderSigHistoryTable(){
 
 // ── actions ──
 async function refreshNews(){
-  document.getElementById('newsOverallSummary').innerHTML = '<span style="color:var(--orange)">⏳ 正在从 API 拉取真实新闻…</span>';
+  document.getElementById('newsOverallSummary').innerHTML = '<span style="color:var(--orange)">⏳ 正在抓取真实新闻…</span>';
+  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--orange)">● 连接中…</span>';
   const real = await fetchRealNewsFromApis();
   if(real && real.news.length>0){
-    // 用真实数据更新板块情绪
     for(const [sec, cfg] of Object.entries(SECTOR_MAP)){
       const secNews = real.news.filter(n=>n.sectors.includes(sec));
       const bullish = secNews.filter(n=>/走强|突破|增长|净流入|复苏|加速|新高/.test(n.title)).length;
@@ -1182,8 +1191,8 @@ async function refreshNews(){
     }
     newsCache = real.news;
   } else {
-    document.getElementById('newsSrcStatus').textContent = '使用本地模拟数据';
-    newsCache = generateNews();
+    // 无真实数据时清空，显示错误
+    newsCache = [];
   }
   renderNews(); renderSignals();
 }
@@ -1278,9 +1287,9 @@ setInterval(()=>{
 initFundData();
 initSectorData();
 buildSectorChips();
-newsCache = generateNews();
+newsCache = [];
 renderSignals();
-// 自动拉取真实新闻（零配置，公开 RSS）
+// 自动拉取真实新闻
 refreshNews();
 </script>
 </body>
