@@ -233,9 +233,9 @@
       </div>
       <div id="sectorSummaries"></div>
       <div class="card" style="margin-top:12px">
-        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· JSONP 跨域 · 零配置 · 真实数据</span></div>
+        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· 同域静态 JSON · 每2小时自动更新</span></div>
         <div style="font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span>源: 新浪财经 (JSONP直连) + Google News (rss2json JSONP)</span>
+          <span>源: 新浪财经 API + akshare 财新 + Tushare | Python脚本定时抓取 → GitHub Pages</span>
           <span id="newsSrcStatus">● 就绪，点击拉取新闻</span>
         </div>
       </div>
@@ -453,7 +453,7 @@ async function fetchRealNewsFromApis(){
 
     const updated = data.updated?.slice(0,16) || '--';
     realNewsAvailable = true;
-    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| 新浪财经 | ${data.total}条 | 更新 ${updated}</span>`;
+    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| 新浪财经 + 财新 + Tushare | ${data.total}条 | 更新 ${updated}</span>`;
     return {news: data.items, status: {'news-data.json': `✓ ${data.total}条`}};
   }catch(e){
     realNewsAvailable = false;
