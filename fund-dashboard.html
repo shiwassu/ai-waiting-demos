@@ -230,14 +230,10 @@
       </div>
       <div id="sectorSummaries"></div>
       <div class="card" style="margin-top:12px">
-        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· 填入免费API Key启用真实数据</span></div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px">
-          <span style="color:var(--text-dim)">Finnhub:</span>
-          <input id="keyFinnhub" placeholder="API Key" style="width:160px;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:11px;font-family:monospace" onchange="saveApiKeys()">
-          <span style="color:var(--text-dim)">NewsAPI:</span>
-          <input id="keyNewsapi" placeholder="API Key" style="width:160px;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:11px;font-family:monospace" onchange="saveApiKeys()">
-          <span id="newsSrcStatus" style="font-size:10px;color:var(--text-dim)"></span>
-          <a href="https://finnhub.io/register" target="_blank" style="font-size:10px;color:var(--primary)">免费注册</a>
+        <div class="card-header">新闻数据源 <span style="font-size:10px;color:var(--text-dim)">· 公开RSS + rss2json 代理 · 零配置</span></div>
+        <div style="font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span>源: Google Finance · Yahoo Finance · Reuters · 财联社 · 东方财富 · 华尔街见闻</span>
+          <span id="newsSrcStatus">● 启动中…</span>
         </div>
       </div>
     </div>
@@ -437,107 +433,116 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  API Keys (localStorage 持久化)
+//  零 Key 真实新闻抓取 (公开 RSS → rss2json 代理)
 // ═══════════════════════════════════════════════════
-let API_KEYS = { finnhub: '', newsapi: '' };
 let realNewsAvailable = false;
 let realNewsSourceName = '';
 
-function loadApiKeys(){
-  try {
-    const saved = localStorage.getItem('fund_api_keys');
-    if(saved) API_KEYS = {...API_KEYS, ...JSON.parse(saved)};
-  } catch(e){}
-  document.getElementById('keyFinnhub').value = API_KEYS.finnhub || '';
-  document.getElementById('keyNewsapi').value = API_KEYS.newsapi || '';
-}
-function saveApiKeys(){
-  API_KEYS.finnhub = document.getElementById('keyFinnhub').value.trim();
-  API_KEYS.newsapi = document.getElementById('keyNewsapi').value.trim();
-  localStorage.setItem('fund_api_keys', JSON.stringify(API_KEYS));
-  document.getElementById('newsSrcStatus').textContent = '已保存，下次拉取生效';
-  setTimeout(()=>{ document.getElementById('newsSrcStatus').textContent = ''; }, 3000);
+const FREE_RSS_FEEDS = [
+  {
+    name: 'Google Finance 中文',
+    rss: 'https://news.google.com/rss/search?q=finance+stock+market+A股&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+  },
+  {
+    name: 'Google Finance 英文',
+    rss: 'https://news.google.com/rss/search?q=finance+stock+market+economy&hl=en-US&gl=US&ceid=US:en',
+  },
+  {
+    name: 'Yahoo Finance',
+    rss: 'https://news.google.com/rss/search?q=site:finance.yahoo.com+market+stock&hl=en-US',
+  },
+  {
+    name: 'Reuters',
+    rss: 'https://news.google.com/rss/search?q=site:reuters.com+markets+china&hl=en-US',
+  },
+  {
+    name: '财联社主题',
+    rss: 'https://news.google.com/rss/search?q=site:cls.cn+财经+A股&hl=zh-CN',
+  },
+  {
+    name: '东方财富',
+    rss: 'https://news.google.com/rss/search?q=site:eastmoney.com+A股+基金&hl=zh-CN',
+  },
+  {
+    name: '证券时报',
+    rss: 'https://news.google.com/rss/search?q=site:stcn.com+财经+股市&hl=zh-CN',
+  },
+  {
+    name: '华尔街见闻',
+    rss: 'https://news.google.com/rss/search?q=site:wallstreetcn.com+市场+快讯&hl=zh-CN',
+  },
+];
+
+async function fetchRssFeed(feedConfig){
+  // rss2json: 免费 1000 req/month，无需注册
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedConfig.rss)}`;
+  try{
+    const resp = await fetch(apiUrl);
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if(data.status!=='ok' || !data.items) throw new Error('RSS 格式异常');
+    return data.items.map(item=>({
+      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
+      source: feedConfig.name.replace('Google ',''),
+      url: item.link||'',
+      content: (item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,200),
+      priority: classifyPriority((item.title||'')+' '+(item.description||'')),
+      sectors: classifySectors(item.title||''),
+      period: getPeriodFromDate(new Date(item.pubDate||Date.now())),
+      time: fmtTime(new Date(item.pubDate||Date.now())),
+      date: fmtDate(new Date(item.pubDate||Date.now())),
+      keywords: [],
+    }));
+  }catch(e){
+    return null;
+  }
 }
 
-// ═══════════════════════════════════════════════════
-//  真实新闻 API 抓取
-// ═══════════════════════════════════════════════════
 async function fetchRealNewsFromApis(){
   const results = [];
   const status = {};
 
-  // ── Finnhub ──
-  if(API_KEYS.finnhub){
-    try{
-      const url = `https://finnhub.io/api/v1/news?category=general&token=${API_KEYS.finnhub}`;
-      const resp = await fetch(url);
-      if(resp.ok){
-        const data = await resp.json();
-        if(Array.isArray(data) && data.length>0){
-          const items = data.slice(0,20).map(item=>({
-            title: item.headline||'',
-            source: item.source||'Finnhub',
-            url: item.url||'',
-            content: item.summary||'',
-            priority: classifyPriority((item.headline||'')+' '+(item.summary||'')),
-            sectors: classifySectors(item.headline||''),
-            period: getPeriodFromDate(new Date(item.datetime*1000)),
-            time: fmtTime(new Date(item.datetime*1000)),
-            date: fmtDate(new Date(item.datetime*1000)),
-            keywords: item.category?[item.category]:[],
-          }));
-          results.push(items);
-          status.finnhub = `✓ ${items.length}条`;
-        } else { status.finnhub = '✗ 无数据'; }
-      } else { status.finnhub = `✗ HTTP ${resp.status}`; }
-    }catch(e){ status.finnhub = `✗ ${e.message.slice(0,20)}`; }
-  }
+  // 并发抓取所有 RSS 源（取前 4 个提高速度）
+  const feedsToFetch = FREE_RSS_FEEDS.slice(0, 4);
+  const promises = feedsToFetch.map(async (feed) => {
+    const items = await fetchRssFeed(feed);
+    if(items && items.length>0){
+      results.push(items);
+      status[feed.name] = `✓ ${items.length}条`;
+    } else {
+      status[feed.name] = '✗ 不可用';
+    }
+  });
 
-  // ── NewsAPI ──
-  if(API_KEYS.newsapi){
-    try{
-      const url = `https://newsapi.org/v2/everything?q=finance+OR+stock+OR+market&language=zh&sortBy=publishedAt&pageSize=15&apiKey=${API_KEYS.newsapi}`;
-      const resp = await fetch(url);
-      if(resp.ok){
-        const data = await resp.json();
-        if(data.articles && data.articles.length>0){
-          const items = data.articles.slice(0,20).map(item=>({
-            title: item.title||'',
-            source: item.source?.name||'NewsAPI',
-            url: item.url||'',
-            content: item.description||'',
-            priority: classifyPriority((item.title||'')+' '+(item.description||'')),
-            sectors: classifySectors(item.title||''),
-            period: getPeriodFromDate(new Date(item.publishedAt)),
-            time: fmtTime(new Date(item.publishedAt)),
-            date: fmtDate(new Date(item.publishedAt)),
-            keywords: [],
-          }));
-          results.push(items);
-          status.newsapi = `✓ ${items.length}条`;
-        } else { status.newsapi = '✗ 无数据'; }
-      } else { status.newsapi = `✗ HTTP ${resp.status}`; }
-    }catch(e){ status.newsapi = `✗ ${e.message.slice(0,20)}`; }
-  }
+  // 8 秒超时
+  await Promise.race([
+    Promise.all(promises),
+    new Promise(r => setTimeout(r, 8000)),
+  ]);
 
-  // ── 合并去重 ──
+  // 合并去重
   if(results.length>0){
     const seen = new Set();
     const merged = [];
     for(const batch of results){
       for(const item of batch){
-        const key = item.title.slice(0,50);
+        const key = item.title.slice(0,60);
         if(!seen.has(key)){ seen.add(key); merged.push(item); }
       }
     }
-    merged.sort((a,b)=>b.priority.localeCompare(a.priority));
+    merged.sort((a,b)=>{
+      const p={high:0,medium:1,low:2};
+      return (p[a.priority]||2)-(p[b.priority]||2);
+    });
+
     realNewsAvailable = true;
-    realNewsSourceName = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join('+');
-    document.getElementById('newsSrcStatus').textContent = `真实数据: ${realNewsSourceName}`;
-    return {news: merged, status};
+    realNewsSourceName = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' · ');
+    document.getElementById('newsSrcStatus').innerHTML = `<span style="color:var(--green)">● 实时数据: ${realNewsSourceName}</span>`;
+    return {news: merged.slice(0, 30), status};
   }
+
   realNewsAvailable = false;
-  document.getElementById('newsSrcStatus').textContent = '无API Key → 使用模拟数据';
+  document.getElementById('newsSrcStatus').innerHTML = '<span style="color:var(--orange)">● 网络不通 · 使用模拟数据</span>';
   return null;
 }
 
@@ -1272,11 +1277,10 @@ setInterval(()=>{
 // init
 initFundData();
 initSectorData();
-loadApiKeys();
 buildSectorChips();
 newsCache = generateNews();
 renderSignals();
-// 异步拉取真实新闻（不阻塞页面）
+// 自动拉取真实新闻（零配置，公开 RSS）
 refreshNews();
 </script>
 </body>
