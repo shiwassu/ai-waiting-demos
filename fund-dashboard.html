@@ -237,15 +237,22 @@
 <div class="panel" id="panel-monitor">
   <div class="btn-row">
     <button class="btn primary" onclick="refreshMonitor()">🔄 刷新数据</button>
-    <span style="font-size:11px;color:var(--text-dim)">6 只基金 · 均线交叉检测 · 回撤监控</span>
+    <span style="margin:0 8px;color:var(--text-dim)">|</span>
+    <span class="chip period on" id="monViewFund" onclick="switchMonView('fund')">📈 ETF基金</span>
+    <span class="chip period" id="monViewSector" onclick="switchMonView('sector')">🔥 热点板块</span>
+    <span style="font-size:11px;color:var(--text-dim)">· 均线交叉 · 回撤监控 · 偏移检测</span>
   </div>
   <div id="fundCards"></div>
+  <div id="sectorCards" style="display:none"></div>
 </div>
 
 <!-- ═══════ SIGNALS ═══════ -->
 <div class="panel" id="panel-signals">
   <div class="btn-row">
     <button class="btn primary" onclick="generateAll()">🔍 生成交易信号</button>
+    <span style="margin:0 8px;color:var(--text-dim)">|</span>
+    <span class="chip period on" id="sigViewFund" onclick="switchSigView('fund')">📈 ETF基金</span>
+    <span class="chip period" id="sigViewSector" onclick="switchSigView('sector')">🔥 热点板块</span>
     <button class="btn" onclick="buyManual()">💰 模拟买入</button>
     <button class="btn" onclick="sellAll()">📤 清仓</button>
     <button class="btn" onclick="clearHistory()">🗑 清空历史</button>
@@ -309,6 +316,42 @@ function initFundData(){
   }
 }
 loadHistory();
+
+// ── 板块指数数据 ──
+const SECTOR_INDEX = {
+  "能源":{"base":2800,"vol":0.018,"desc":"煤炭石油电力光伏"},
+  "黄金":{"base":4200,"vol":0.014,"desc":"贵金属避险资产"},
+  "有色":{"base":3600,"vol":0.020,"desc":"铜铝稀土锂矿"},
+  "半导体":{"base":5800,"vol":0.025,"desc":"芯片设计制造封测"},
+  "光模块":{"base":7200,"vol":0.030,"desc":"CPO光通信800G"},
+  "机器人":{"base":4500,"vol":0.028,"desc":"具身智能自动化"},
+  "消费":{"base":3100,"vol":0.015,"desc":"白酒食品家电汽车"},
+  "医药":{"base":2600,"vol":0.019,"desc":"创新药CRO器械"},
+  "金融":{"base":3400,"vol":0.013,"desc":"银行券商保险地产"},
+  "AI":{"base":6500,"vol":0.032,"desc":"大模型算力GPU应用"},
+};
+let sectorData = {};
+
+function initSectorData(){
+  for(const [name, cfg] of Object.entries(SECTOR_INDEX)){
+    if(!sectorData[name]){
+      let price = cfg.base * 0.65;
+      const history = [];
+      for(let i=0;i<120;i++){
+        price += (Math.random()-0.48)*price*cfg.vol;
+        price = Math.max(100, price);
+        history.push(+price.toFixed(2));
+      }
+      sectorData[name] = {
+        nav: history[history.length-1],
+        peak: Math.max(...history),
+        history,
+        vol: cfg.vol,
+        desc: cfg.desc,
+      };
+    }
+  }
+}
 
 function rng(a,b){return Math.random()*(b-a)+a}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
@@ -664,8 +707,22 @@ function generateSummary(news){
 function toggleNews(i){ document.getElementById('newsCard'+i)?.classList.toggle('open'); }
 
 // ── monitor render ──
+let monView = 'fund';
+
+function switchMonView(view){
+  monView = view;
+  document.getElementById('monViewFund').classList.toggle('on', view==='fund');
+  document.getElementById('monViewSector').classList.toggle('on', view==='sector');
+  document.getElementById('fundCards').style.display = view==='fund'?'block':'none';
+  document.getElementById('sectorCards').style.display = view==='sector'?'block':'none';
+  if(view==='sector') renderSectorMonitor();
+}
+
 function renderMonitor(){
+  if(monView==='sector'){ renderSectorMonitor(); return; }
   const container = document.getElementById('fundCards');
+  container.style.display = 'block';
+  document.getElementById('sectorCards').style.display = 'none';
   let alertCount = 0;
   const cards = [];
 
@@ -684,7 +741,6 @@ function renderMonitor(){
     if(dd.over8pct) alertCount++;
     if(cross.type!=='none') alertCount++;
 
-    // mini chart bars (last 30 days)
     const last30 = series.slice(-30);
     const chartMin = Math.min(...last30);
     const chartRange = Math.max(...last30) - chartMin || 1;
@@ -737,11 +793,182 @@ function renderMonitor(){
   document.getElementById('dAlerts').textContent = alertCount;
 }
 
+// ── sector monitor render ──
+function renderSectorMonitor(){
+  const container = document.getElementById('sectorCards');
+  const cards = [];
+  let alertCount = 0;
+
+  for(const [name, d] of Object.entries(sectorData)){
+    const series = d.history;
+    const current = series[series.length-1];
+    const ma5 = sma(series,5);
+    const ma20 = sma(series,20);
+    const cross = detectCross(series,5,20);
+    const dd = drawdownInfo(series);
+    const devFrom20 = +((current-ma20)/ma20*100).toFixed(2);
+    const changeToday = +((current - series[series.length-2])/series[series.length-2]*100).toFixed(2);
+    const macd = computeMACD(series);
+
+    if(dd.over8pct) alertCount++;
+    if(cross.type!=='none') alertCount++;
+
+    const last30 = series.slice(-30);
+    const chartMin = Math.min(...last30);
+    const chartRange = Math.max(...last30) - chartMin || 1;
+    const bars = last30.map((v,i)=>{
+      const h = (v-chartMin)/chartRange*100;
+      const prev = i>0?last30[i-1]:v;
+      return `<div class="mini-bar ${v>=prev?'bar-up':'bar-down'}" style="height:${Math.max(4,h)}%"></div>`;
+    }).join('');
+
+    const crossBadge = cross.type==='golden'
+      ? `<span class="ma-cross cross-gold">金叉 ↑</span>`
+      : cross.type==='death'
+      ? `<span class="ma-cross cross-death">死叉 ↓</span>`
+      : '';
+
+    const sent = SECTOR_MAP[name]?.sentiment || 0.5;
+    const sentLabel = sent>=0.6?'偏多':sent<=0.4?'偏空':'中性';
+    const sentColor = sent>=0.6?'var(--green)':sent<=0.4?'var(--red)':'var(--orange)';
+
+    cards.push(`
+      <div class="fund-card" style="border-left:3px solid ${sent>=0.6?'var(--green)':sent<=0.4?'var(--red)':'var(--orange)'}">
+        <div class="fund-card-top">
+          <div>
+            <span style="font-weight:600;font-size:15px">🔥 ${name}</span>
+            <span style="font-size:10px;color:${sentColor};margin-left:6px">${sentLabel}</span>
+            <span style="font-size:10px;color:var(--text-dim);margin-left:4px">${d.desc}</span>
+            ${crossBadge}
+          </div>
+          <div style="text-align:right">
+            <span style="font-size:18px;font-weight:700">${current.toFixed(2)}</span>
+            <span style="font-size:12px;color:${changeToday>=0?'var(--green)':'var(--red)'};margin-left:6px">${changeToday>=0?'+':''}${changeToday}%</span>
+          </div>
+        </div>
+        <div class="mini-chart">${bars}</div>
+        <div class="ma-row">
+          <span>MA5: <b style="color:var(--primary)">${ma5.toFixed(2)}</b></span>
+          <span>MA20: <b style="color:var(--purple)">${ma20.toFixed(2)}</b></span>
+          <span>偏离20MA: <b style="color:${devFrom20>0?'var(--green)':'var(--red)'}">${devFrom20>=0?'+':''}${devFrom20}%</b></span>
+          <span>MACD: <b style="color:${macd.histogram>0?'var(--green)':'var(--red)'}">${macd.histogram.toFixed(2)}</b></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-dim)">
+          <span>最高回撤: <b style="color:var(--red)">${dd.maxDD}%</b></span>
+          <span>当前回撤: <b style="color:${dd.over8pct?'var(--red)':'var(--orange)'}">${dd.ddFromPeak}%</b>${dd.over8pct?' ⚠ 超8%':''}</span>
+          <span>最高点: ${dd.peak.toFixed(2)}</span>
+        </div>
+        <div class="drawdown-bar">
+          <div class="drawdown-fill" style="width:${Math.min(100,dd.ddFromPeak*5)}%;background:${dd.over8pct?'var(--red)':'var(--orange)'}"></div>
+        </div>
+      </div>
+    `);
+  }
+
+  container.innerHTML = cards.join('');
+  document.getElementById('alertBadge').textContent = alertCount;
+  document.getElementById('dAlerts').textContent = alertCount;
+}
+
 // ── signals render ──
+let sigView = 'fund';
+
+function switchSigView(view){
+  sigView = view;
+  document.getElementById('sigViewFund').classList.toggle('on', view==='fund');
+  document.getElementById('sigViewSector').classList.toggle('on', view==='sector');
+  renderSignals();
+}
+
+// ── sector signal generation ──
+function generateSectorSignals(){
+  const signals = [];
+  for(const [name, d] of Object.entries(sectorData)){
+    const series = d.history;
+    const current = series[series.length-1];
+    const ma5 = sma(series,5);
+    const ma20 = sma(series,20);
+    const cross = detectCross(series,5,20);
+    const dd = drawdownInfo(series);
+    const devFrom20 = +((current-ma20)/ma20*100).toFixed(2);
+    const macd = computeMACD(series);
+    const macdDiv = checkMACDDivergence(series);
+
+    let score = 50;
+    const reasons = [];
+    if(current > ma20){ score+=8; reasons.push(`价格>MA20 (+${devFrom20}%)`); }
+    else { score-=8; reasons.push(`价格<MA20 (${devFrom20}%)`); }
+    if(cross.type==='golden'){ score+=15; reasons.push('5/20金叉 ✨'); }
+    if(cross.type==='death'){ score-=15; reasons.push('5/20死叉 ⚠'); }
+    if(dd.over8pct){ score-=12; reasons.push(`回撤${dd.ddFromPeak}%≥8%`); }
+    else if(dd.ddFromPeak>5){ score-=6; reasons.push(`回撤${dd.ddFromPeak}%`); }
+    if(macdDiv){ score+=12; reasons.push('MACD底背离'); }
+    if(devFrom20>10){ score-=5; reasons.push('偏离MA20过大'); }
+    if(devFrom20<-10){ score+=5; reasons.push('超跌偏离'); }
+    const vix = getVIX();
+    if(vix>60){ score+=8; reasons.push('恐慌高位→逆向机会'); }
+    if(vix<15){ score-=5; reasons.push('极度乐观→谨慎'); }
+    score = Math.max(5, Math.min(95, Math.round(score*10)/10));
+
+    let type='hold', cls='hold';
+    if(score>=65){ type='entry'; cls='entry'; }
+    else if(score<45){ type='exit'; cls='exit'; }
+
+    signals.push({
+      code:name, name, type, cls, score,
+      reasons, ma5, ma20, devFrom20, cross:cross.type,
+      ddFromPeak:dd.ddFromPeak, maxDD:dd.maxDD, over8pct:dd.over8pct,
+      macdDiv, current:+current.toFixed(2),
+    });
+  }
+  signals.sort((a,b)=>b.score-a.score);
+  return signals;
+}
+
 function renderSignals(){
+  // ── sector mode ──
+  if(sigView==='sector'){
+    const sectorSignals = generateSectorSignals();
+    currentSignals = sectorSignals;
+    const entryCount = sectorSignals.filter(s=>s.type==='entry').length;
+    const exitCount = sectorSignals.filter(s=>s.type==='exit').length;
+
+    document.getElementById('sigList').innerHTML = sectorSignals.map(s=>`
+      <div class="signal-row ${s.cls}">
+        <span class="signal-type">${s.type==='entry'?'🟢':s.type==='exit'?'🔴':'⚪'}</span>
+        <div class="signal-detail">
+          <div style="font-weight:600">🔥 ${s.name} ${s.type==='entry'?'入场':'出场'}信号 <span style="font-size:10px;color:var(--text-dim)">${SECTOR_INDEX[s.name]?.desc||''}</span></div>
+          <div style="color:var(--text-dim);font-size:11px">${s.reasons.join(' · ')}</div>
+        </div>
+        <div class="signal-score" style="color:${s.score>=65?'var(--green)':s.score>=45?'var(--text-dim)':'var(--red)'}">${s.score.toFixed(0)}</div>
+      </div>
+    `).join('') || '<div style="color:var(--text-dim)">无明确信号</div>';
+
+    document.getElementById('crossSummary').innerHTML = sectorSignals.map(s=>{
+      if(s.cross==='golden') return `<div style="color:var(--green);margin:3px 0">✨ ${s.name}: 5/20金叉</div>`;
+      if(s.cross==='death') return `<div style="color:var(--red);margin:3px 0">⚠ ${s.name}: 5/20死叉</div>`;
+      return '';
+    }).filter(Boolean).join('') || '近期无均线交叉信号';
+
+    document.getElementById('ddSummary').innerHTML = sectorSignals.map(s=>{
+      if(s.over8pct) return `<div style="color:var(--red);margin:3px 0">🔴 ${s.name}: 回撤${s.ddFromPeak}% ≥8%</div>`;
+      if(s.ddFromPeak>5) return `<div style="color:var(--orange);margin:3px 0">🟡 ${s.name}: 回撤${s.ddFromPeak}%</div>`;
+      return '';
+    }).filter(Boolean).join('') || '所有板块回撤在5%以内';
+
+    document.getElementById('dSigCount').textContent = sectorSignals.length;
+    document.getElementById('dEntryN').textContent = entryCount;
+    document.getElementById('dExitN').textContent = exitCount;
+
+    // save sector signals to history
+    for(const s of sectorSignals){ if(s.type!=='hold') saveSignal(s); }
+    renderSigHistoryTable();
+    return;
+  }
+
+  // ── fund mode (original) ──
   currentSignals = generateSignals();
 
-  // save to history
   for(const sig of currentSignals){
     if(sig.type!=='hold') saveSignal(sig);
   }
@@ -792,7 +1019,6 @@ function renderSignals(){
         const curNav = fundData[p.code]?.nav || p.avgCost;
         const curPL = (curNav-p.avgCost)*p.shares;
         const curPLPct = +((curNav-p.avgCost)/p.avgCost*100).toFixed(2);
-        // trailing stop: check if drawdown from profit peak
         const peakPL = p.peakPL || 0;
         const trailStop = peakPL>0 && curPL<peakPL*0.7 ? '⚠ 触发移动止盈' : '';
         return `<div class="fund-row" style="padding:10px 12px;margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;background:var(--surface2);border-radius:6px;border-left:3px solid ${curPL>=0?'var(--green)':'var(--red)'}">
@@ -808,13 +1034,7 @@ function renderSignals(){
   document.getElementById('posPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
 
   // history table
-  document.getElementById('sigHistory').innerHTML = signalHistory.slice(0,20).map(h=>`
-    <tr class="${h.type==='entry'?'entry-row':'exit-row'}">
-      <td style="font-size:10px">${h.time}</td><td>${h.name}</td>
-      <td>${h.type==='entry'?'入场':'出场'}</td><td>${h.score.toFixed(1)}</td>
-      <td style="font-size:10px">${h.reasons}</td>
-    </tr>
-  `).join('') || '<tr><td colspan="5" style="color:var(--text-dim)">暂无信号记录</td></tr>';
+  renderSigHistoryTable();
 
   // dashboard updates
   document.getElementById('dSigCount').textContent = currentSignals.length;
@@ -837,11 +1057,22 @@ function renderSignals(){
   `).join('');
 }
 
+function renderSigHistoryTable(){
+  document.getElementById('sigHistory').innerHTML = signalHistory.slice(0,20).map(h=>`
+    <tr class="${h.type==='entry'?'entry-row':'exit-row'}">
+      <td style="font-size:10px">${h.time}</td><td>${h.name}</td>
+      <td>${h.type==='entry'?'入场':'出场'}</td><td>${h.score.toFixed(1)}</td>
+      <td style="font-size:10px">${h.reasons}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--text-dim)">暂无信号记录</td></tr>';
+}
+
 // ── actions ──
 function refreshNews(){ newsCache=generateNews(); renderNews(); renderSignals(); }
 function refreshMonitor(){ renderMonitor(); }
 function refreshSignals(){ renderSignals(); }
 function generateAll(){
+  // tick funds
   for(const code of Object.keys(FUNDS)){
     const series = fundData[code].history;
     const current = series[series.length-1];
@@ -849,6 +1080,17 @@ function generateAll(){
     series.push(+(current+noise).toFixed(4));
     if(series.length>200) series.shift();
     fundData[code].nav = series[series.length-1];
+  }
+  // tick sectors
+  for(const [name, d] of Object.entries(sectorData)){
+    const series = d.history;
+    const current = series[series.length-1];
+    const cfg = SECTOR_INDEX[name];
+    const noise = (Math.random()-0.48)*current*cfg.vol;
+    series.push(+(current+noise).toFixed(2));
+    if(series.length>200) series.shift();
+    d.nav = series[series.length-1];
+    d.peak = Math.max(d.peak, series[series.length-1]);
   }
   renderSignals(); renderMonitor(); renderNews();
 }
@@ -916,6 +1158,7 @@ setInterval(()=>{
 
 // init
 initFundData();
+initSectorData();
 buildSectorChips();
 newsCache = generateNews();
 renderSignals();
