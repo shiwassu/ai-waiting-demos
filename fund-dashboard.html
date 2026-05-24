@@ -6,581 +6,917 @@
 <title>基金投资助手 · Dashboard</title>
 <style>
   :root {
-    --bg: #0f1419;
-    --surface: #1a1f28;
-    --surface2: #212836;
-    --border: #2a3040;
-    --primary: #4da6ff;
-    --green: #3fb950;
-    --red: #f85149;
-    --orange: #d2991d;
-    --purple: #a371f7;
-    --text: #c9d1d9;
-    --text-dim: #6e7681;
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2333;
+    --border: #21262d; --primary: #58a6ff; --green: #3fb950;
+    --red: #f85149; --orange: #d2991d; --purple: #a371f7;
+    --text: #c9d1d9; --text-dim: #6e7681; --text-bright: #e6edf3;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
   }
 
-  /* header */
   .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 28px;
-    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; align-items: center; gap: 14px;
+    position: sticky; top:0; z-index: 10;
   }
   .topbar .logo { font-size:18px; font-weight:700; color: var(--primary); }
-  .topbar .status { font-size:11px; color: var(--green); display:flex; align-items:center; gap:6px; }
-  .dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation: pulse 2s ease infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .topbar .motto { font-size:11px; color: var(--text-dim); border-left:1px solid var(--border); padding-left:14px; }
+  .dot-live { width:8px; height:8px; border-radius:50%; background:var(--green); animation: pulse 2s ease infinite; margin-right:4px; display:inline-block; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* tabs */
   .tabs {
-    display: flex; gap: 0;
-    background: var(--surface); border-bottom:1px solid var(--border);
-    padding: 0 28px;
+    display: flex; background: var(--surface); border-bottom:1px solid var(--border);
+    padding: 0 28px; position: sticky; top: 53px; z-index: 9;
   }
   .tab {
-    padding: 12px 22px; font-size:13px; font-weight:500;
-    cursor: pointer; color: var(--text-dim);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    padding: 12px 20px; font-size:13px; cursor: pointer;
+    color: var(--text-dim); border-bottom: 2px solid transparent; transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
   }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-badge { font-size:10px; padding:1px 7px; border-radius:8px; font-weight:600; }
+  .tb-red { background:rgba(248,81,73,0.2); color:var(--red); }
+  .tb-yellow { background:rgba(210,153,29,0.2); color:var(--orange); }
+  .tb-green { background:rgba(63,185,80,0.2); color:var(--green); }
 
-  /* panels */
-  .panel { display:none; padding:24px 28px; max-width:1200px; }
+  .panel { display:none; padding:22px 28px; max-width:1300px; }
   .panel.active { display:block; }
 
-  /* cards */
   .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
-  .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; }
+  .grid3 { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; }
+  .grid4 { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 18px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px;
   }
-  .card-header { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:12px; }
+  .card-header {
+    font-size:10px; color:var(--text-dim); text-transform:uppercase;
+    letter-spacing:1.2px; margin-bottom:12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-header .count { font-size:11px; color:var(--primary); }
 
-  /* news items */
-  .news-item {
-    padding: 12px 14px; border-radius: 8px;
-    background: var(--surface2); border-left: 3px solid var(--border);
-    margin-bottom: 8px; font-size:13px;
-    transition: all 0.2s;
+  /* ── chips ── */
+  .chip-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .chip {
+    padding:5px 12px; border-radius:14px; font-size:11px; cursor:pointer;
+    background: var(--surface2); color: var(--text-dim); border:1px solid var(--border);
+    transition: all 0.2s; user-select:none; white-space:nowrap;
   }
-  .news-item.high { border-left-color: var(--red); }
-  .news-item.medium { border-left-color: var(--orange); }
-  .news-item.low { border-left-color: var(--text-dim); }
-  .news-tag {
-    display:inline-block; padding:2px 8px; border-radius:4px;
-    font-size:10px; margin-right:6px; font-weight:600;
-  }
-  .tag-high { background:rgba(248,81,73,0.15); color:var(--red); }
-  .tag-medium { background:rgba(210,153,29,0.15); color:var(--orange); }
-  .tag-low { background:rgba(110,118,129,0.15); color:var(--text-dim); }
+  .chip:hover { border-color: var(--primary); color: var(--text); }
+  .chip.on { background: rgba(88,166,255,0.12); border-color: var(--primary); color: var(--primary); }
+  .chip.period { font-size:12px; font-weight:600; }
 
-  /* fund row */
-  .fund-row {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 16px; border-radius:8px;
-    background:var(--surface2); margin-bottom:6px;
-    font-size:13px;
+  /* ── news ── */
+  .news-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0; margin-bottom: 8px; overflow:hidden;
   }
-  .fund-name { font-weight:600; }
-  .fund-code { font-size:11px; color:var(--text-dim); }
-  .change-up { color: var(--green); }
-  .change-down { color: var(--red); }
-  .badge {
-    padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+  .news-card-header {
+    padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    transition: background 0.15s;
   }
-  .badge-buy { background:rgba(63,185,80,0.15); color:var(--green); }
-  .badge-hold { background:rgba(110,118,129,0.15); color:var(--text-dim); }
-  .badge-sell { background:rgba(248,81,73,0.15); color:var(--red); }
+  .news-card-header:hover { background: rgba(255,255,255,0.02); }
+  .news-priority-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dot-high { background: var(--red); }
+  .dot-medium { background: var(--orange); }
+  .dot-low { background: var(--text-dim); }
+  .news-title { flex:1; font-size:13px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .news-sector-tag { font-size:10px; padding:2px 8px; border-radius:4px; background:rgba(163,113,247,0.15); color:var(--purple); flex-shrink:0; }
+  .news-time-tag { font-size:10px; color:var(--text-dim); flex-shrink:0; }
+  .news-expand {
+    padding: 0 14px 12px; font-size:12px; color:var(--text-dim); line-height:1.7;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    display: none;
+  }
+  .news-card.open .news-expand { display:block; }
+  .news-summary { color: var(--text); margin-bottom: 6px; }
+  .news-impact { font-size:11px; padding:6px 10px; border-radius:6px; margin-top:6px; }
+  .impact-positive { background:rgba(63,185,80,0.08); color:var(--green); }
+  .impact-negative { background:rgba(248,81,73,0.08); color:var(--red); }
+  .impact-neutral { background:rgba(110,118,129,0.08); color:var(--text-dim); }
 
-  /* stat */
+  /* ── sector summary ── */
+  .sector-summary-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 8px;
+  }
+  .sector-header { font-size:13px; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .sector-sentiment { font-size:10px; padding:2px 8px; border-radius:4px; }
+  .sent-bull { background:rgba(63,185,80,0.15); color:var(--green); }
+  .sent-bear { background:rgba(248,81,73,0.15); color:var(--red); }
+  .sent-neutral { background:rgba(110,118,129,0.15); color:var(--text-dim); }
+
+  /* ── fund cards ── */
+  .fund-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 8px;
+  }
+  .fund-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+  .ma-row { display:flex; gap:16px; font-size:11px; color:var(--text-dim); margin-bottom:6px; }
+  .ma-cross { display:inline-block; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:600; margin-left:6px; }
+  .cross-gold { background:rgba(63,185,80,0.15); color:var(--green); }
+  .cross-death { background:rgba(248,81,73,0.15); color:var(--red); }
+
+  /* ── chart (pure CSS bar) ── */
+  .mini-chart { display:flex; align-items:flex-end; gap:2px; height:60px; margin:8px 0; }
+  .mini-bar { flex:1; border-radius:2px 2px 0 0; min-width:3px; transition:height 0.3s; }
+  .bar-up { background: var(--green); opacity:0.7; }
+  .bar-down { background: var(--red); opacity:0.7; }
+
+  .drawdown-bar { height:4px; background:var(--border); border-radius:2px; margin:4px 0; position:relative; }
+  .drawdown-fill { height:100%; background:var(--red); border-radius:2px; transition:width 0.5s; }
+  .dd-marker { position:absolute; top:-6px; width:2px; height:16px; background:var(--orange); }
+
+  /* ── signals ── */
+  .signal-row {
+    display:flex; align-items:center; gap:12px; padding:12px 14px;
+    border-radius:8px; background:var(--surface2); margin-bottom:6px;
+    border-left:3px solid var(--border);
+  }
+  .signal-row.entry { border-left-color: var(--green); }
+  .signal-row.exit  { border-left-color: var(--red); }
+  .signal-type { font-size:18px; flex-shrink:0; }
+  .signal-detail { flex:1; font-size:12px; }
+  .signal-score { font-size:20px; font-weight:700; flex-shrink:0; }
+
+  .gauge-container { text-align:center; padding:10px 0; }
+  .gauge-label { font-size:10px; color:var(--text-dim); margin-bottom:6px; }
+  .gauge-track { height:8px; background: linear-gradient(to right, var(--green) 0%, var(--orange) 50%, var(--red) 100%); border-radius:4px; position:relative; margin:0 20px; }
+  .gauge-needle { position:absolute; top:-4px; width:3px; height:16px; background:#fff; border-radius:2px; transform:translateX(-50%); transition:left 0.8s ease; }
+
+  /* ── stats ── */
   .stat-val { font-size:26px; font-weight:700; }
   .stat-label { font-size:11px; color:var(--text-dim); margin-top:2px; }
-  .stat-green { color:var(--green); }
-  .stat-red { color:var(--red); }
-  .stat-blue { color:var(--primary); }
+  .stat-green { color:var(--green); } .stat-red { color:var(--red); } .stat-blue { color:var(--primary); }
 
-  /* position bar */
-  .bar {
-    height:6px; background:var(--border); border-radius:3px;
-    margin-top:6px; overflow:hidden;
-  }
-  .bar-inner { height:100%; border-radius:3px; transition:width 0.5s; }
-
-  /* buttons */
   .btn {
-    padding:8px 18px; border-radius:8px; border:1px solid var(--border);
-    background:var(--surface2); color:var(--text); font-size:13px;
+    padding:7px 16px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface2); color:var(--text); font-size:12px;
     cursor:pointer; transition:all 0.15s; font-family:inherit;
   }
   .btn:hover { border-color:var(--primary); color:var(--primary); }
-  .btn.primary { background:rgba(77,166,255,0.12); border-color:var(--primary); color:var(--primary); }
+  .btn.primary { background:rgba(88,166,255,0.1); border-color:var(--primary); color:var(--primary); }
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
 
-  .ctrl-row { display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
-  .log-box {
-    background:var(--bg); border:1px solid var(--border); border-radius:8px;
-    padding:10px 14px; font-family: 'Cascadia Code', monospace;
-    font-size:11px; color:var(--text-dim); line-height:1.6;
-    max-height:140px; overflow-y:auto;
-  }
-
-  /* tab badge */
-  .tab-badge {
-    display:inline-block; padding:1px 7px; border-radius:8px; font-size:10px;
-    margin-left:4px; font-weight:600;
-  }
-  .tb-high { background:rgba(248,81,73,0.2); color:var(--red); }
-  .tb-warn { background:rgba(210,153,29,0.2); color:var(--orange); }
+  /* signal history table */
+  .sig-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .sig-table th { text-align:left; color:var(--text-dim); padding:8px 10px; font-weight:500; border-bottom:1px solid var(--border); font-size:10px; text-transform:uppercase; }
+  .sig-table td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.03); }
+  .sig-table .entry-row { color: var(--green); }
+  .sig-table .exit-row { color: var(--red); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <span class="logo">基金投资助手</span>
-  <span class="status"><span class="dot"></span> 系统运行中</span>
-  <span style="margin-left:auto;font-size:12px;color:var(--text-dim)" id="clock"></span>
+  <span class="motto">趋势跟踪 + 回撤控制 · 为小白简化，拒绝复杂短线</span>
+  <span style="margin-left:auto;font-size:11px;color:var(--text-dim)" id="clock"></span>
+  <span class="dot-live"></span>
 </div>
 
 <div class="tabs">
   <div class="tab active" data-panel="dashboard">仪表盘</div>
-  <div class="tab" data-panel="news">📰 新闻推送 <span class="tab-badge tb-high" id="newsBadge">0</span></div>
-  <div class="tab" data-panel="monitor">📊 资金监控 <span class="tab-badge tb-warn" id="alertBadge">0</span></div>
+  <div class="tab" data-panel="news">📰 新闻 <span class="tab-badge tb-red" id="newsBadge">0</span></div>
+  <div class="tab" data-panel="monitor">📊 技术指标 <span class="tab-badge tb-yellow" id="alertBadge">0</span></div>
   <div class="tab" data-panel="signals">📈 信号与持仓</div>
 </div>
 
-<!-- ═══ DASHBOARD ═══ -->
+<!-- ═══════ DASHBOARD ═══════ -->
 <div class="panel active" id="panel-dashboard">
-  <div class="grid3" style="margin-bottom:18px">
-    <div class="card">
-      <div class="card-header">今日新闻</div>
-      <div class="stat-val stat-blue" id="dNewsTotal">--</div>
-      <div class="stat-label">高优 <span id="dNewsHigh" style="color:var(--red)">0</span> · 中优 <span id="dNewsMed" style="color:var(--orange)">0</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header">监控告警</div>
-      <div class="stat-val" id="dAlerts" style="color:var(--orange)">--</div>
-      <div class="stat-label">条活跃告警</div>
-    </div>
-    <div class="card">
-      <div class="card-header">总盈亏</div>
-      <div class="stat-val" id="dPnL">--</div>
-      <div class="stat-label">仓位 <span id="dPosition" style="color:var(--primary)">0%</span></div>
-    </div>
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="card"><div class="card-header">市场情绪</div><div class="stat-val" id="dSentiment" style="color:var(--orange)">--</div><div class="stat-label" id="dSentLabel"></div></div>
+    <div class="card"><div class="card-header">今日信号</div><div class="stat-val stat-blue" id="dSigCount">0</div><div class="stat-label">入场 <span style="color:var(--green)" id="dEntryN">0</span> · 出场 <span style="color:var(--red)" id="dExitN">0</span></div></div>
+    <div class="card"><div class="card-header">活跃告警</div><div class="stat-val" id="dAlerts" style="color:var(--orange)">0</div><div class="stat-label">条</div></div>
+    <div class="card"><div class="card-header">总盈亏</div><div class="stat-val" id="dPnL">+0.00%</div><div class="stat-label">仓位 <span id="dPos">0%</span></div></div>
   </div>
-
   <div class="grid2">
-    <div class="card">
-      <div class="card-header">最新交易信号</div>
-      <div id="dSignals"></div>
-    </div>
-    <div class="card">
-      <div class="card-header">持仓概览</div>
-      <div id="dPositions"></div>
-    </div>
+    <div class="card"><div class="card-header">板块情绪速览 <span class="count" id="sectorDash"></span></div><div id="dSectors"></div></div>
+    <div class="card"><div class="card-header">最新信号记录</div><div id="dSignals"></div></div>
   </div>
 </div>
 
-<!-- ═══ NEWS ═══ -->
+<!-- ═══════ NEWS ═══════ -->
 <div class="panel" id="panel-news">
-  <div class="ctrl-row">
-    <button class="btn primary" onclick="refreshNews()">🔄 拉取新闻</button>
-    <span style="font-size:12px;color:var(--text-dim)">数据源: 财联社（模拟） · 关键词过滤已启用</span>
+  <div class="btn-row">
+    <button class="btn primary" onclick="refreshNews()">🔄 重新拉取</button>
+    <span style="margin:0 8px;color:var(--text-dim)">|</span>
+    <span style="font-size:11px;color:var(--text-dim)">时段:</span>
+    <span class="chip period on" data-period="all" onclick="filterNews('all')">全部</span>
+    <span class="chip period" data-period="morning" onclick="filterNews('morning')">早间 6:00-12:00</span>
+    <span class="chip period" data-period="noon" onclick="filterNews('noon')">午间 12:00-18:00</span>
+    <span class="chip period" data-period="night" onclick="filterNews('night')">晚间 18:00-次日</span>
   </div>
-  <div id="newsList"></div>
-</div>
-
-<!-- ═══ MONITOR ═══ -->
-<div class="panel" id="panel-monitor">
-  <div class="ctrl-row">
-    <button class="btn primary" onclick="refreshMonitor()">🔄 刷新数据</button>
-    <span style="font-size:12px;color:var(--text-dim)">6 只基金 · 4 条告警规则</span>
-  </div>
-  <div id="fundList"></div>
-  <div class="card" style="margin-top:16px">
-    <div class="card-header">告警日志</div>
-    <div class="log-box" id="alertLog"></div>
-  </div>
-</div>
-
-<!-- ═══ SIGNALS ═══ -->
-<div class="panel" id="panel-signals">
-  <div class="ctrl-row">
-    <button class="btn primary" onclick="refreshSignals()">🔍 生成信号</button>
-    <button class="btn" onclick="buyRandom()">💰 模拟买入</button>
-    <button class="btn" onclick="sellAll()">📤 清仓</button>
+  <div class="btn-row">
+    <span style="font-size:11px;color:var(--text-dim)">板块:</span>
+    <span class="chip on" data-sector="all" onclick="filterNewsSector('all')">全部</span>
+    <div id="sectorChips"></div>
   </div>
   <div class="grid2">
-    <div class="card">
-      <div class="card-header">交易信号</div>
-      <div id="sigList"></div>
+    <div style="max-height:600px;overflow-y:auto">
+      <div id="newsList"></div>
     </div>
-    <div class="card">
-      <div class="card-header">当前持仓</div>
-      <div id="posList"></div>
-      <div style="margin-top:12px;font-size:13px;color:var(--text-dim)">
-        已用仓位: <b id="posUsed" style="color:var(--primary)">0%</b> ·
-        总盈亏: <b id="posPnL">+0.00%</b>
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">AI 市场总结</div>
+        <div id="newsOverallSummary" style="font-size:12px;line-height:1.7;color:var(--text-dim)"></div>
       </div>
+      <div id="sectorSummaries"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MONITOR ═══════ -->
+<div class="panel" id="panel-monitor">
+  <div class="btn-row">
+    <button class="btn primary" onclick="refreshMonitor()">🔄 刷新数据</button>
+    <span style="font-size:11px;color:var(--text-dim)">6 只基金 · 均线交叉检测 · 回撤监控</span>
+  </div>
+  <div id="fundCards"></div>
+</div>
+
+<!-- ═══════ SIGNALS ═══════ -->
+<div class="panel" id="panel-signals">
+  <div class="btn-row">
+    <button class="btn primary" onclick="generateAll()">🔍 生成交易信号</button>
+    <button class="btn" onclick="buyManual()">💰 模拟买入</button>
+    <button class="btn" onclick="sellAll()">📤 清仓</button>
+    <button class="btn" onclick="clearHistory()">🗑 清空历史</button>
+  </div>
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="card"><div class="card-header">恐慌指数 (VIX 模拟)</div><div class="gauge-container"><div class="gauge-label" id="vixLabel">25 — 中度恐慌</div><div class="gauge-track"><div class="gauge-needle" id="vixNeedle" style="left:42%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin:4px 20px 0"><span>0 贪婪</span><span>50</span><span>100 恐慌</span></div></div></div>
+    <div class="card"><div class="card-header">均线交叉信号</div><div id="crossSummary" style="font-size:12px;color:var(--text-dim)"></div></div>
+    <div class="card"><div class="card-header">回撤监控</div><div id="ddSummary" style="font-size:12px;color:var(--text-dim)"></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="card-header">入场/出场信号</div><div id="sigList"></div></div>
+    <div class="card"><div class="card-header">持仓 & 移动止盈</div><div id="posList"></div><div style="margin-top:10px;font-size:12px;color:var(--text-dim)">已用仓位: <b id="posUsed" style="color:var(--primary)">0%</b> · 浮动盈亏: <b id="posPnL">+0.00%</b></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-header">信号历史数据库 (localStorage)</div>
+    <div style="max-height:200px;overflow-y:auto">
+      <table class="sig-table"><thead><tr><th>时间</th><th>基金</th><th>类型</th><th>评分</th><th>原因</th></tr></thead><tbody id="sigHistory"></tbody></table>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-//  DATA ENGINE (mirrors Python logic)
-// ═══════════════════════════════════════════
-const FUNDS = {
-  "510050":"上证50 ETF","510300":"沪深300 ETF","510500":"中证500 ETF",
-  "159915":"创业板 ETF","512880":"证券 ETF","512100":"中证1000 ETF"
+// ╔══════════════════════════════════════════════════════════╗
+// ║  DATA & CONFIG                                         ║
+// ╚══════════════════════════════════════════════════════════╝
+const FUNDS = {"510050":"上证50","510300":"沪深300","510500":"中证500","159915":"创业板","512880":"证券ETF","512100":"中证1000"};
+const SECTOR_MAP = {
+  "能源":{"keys":["能源","煤炭","石油","电力","光伏"],"sentiment":0.5},
+  "黄金":{"keys":["黄金","贵金属","金价","避险"],"sentiment":0.5},
+  "有色":{"keys":["有色","铜","铝","稀土","锂矿"],"sentiment":0.5},
+  "半导体":{"keys":["半导体","芯片","光刻","晶圆","封装"],"sentiment":0.5},
+  "光模块":{"keys":["光模块","CPO","光通信","800G","1.6T"],"sentiment":0.5},
+  "机器人":{"keys":["机器人","具身智能","人形","自动化","伺服"],"sentiment":0.5},
+  "消费":{"keys":["消费","白酒","食品","家电","汽车"],"sentiment":0.5},
+  "医药":{"keys":["医药","创新药","CRO","器械","生物"],"sentiment":0.5},
+  "金融":{"keys":["银行","券商","保险","金融","地产"],"sentiment":0.5},
+  "AI":{"keys":["AI","大模型","算力","GPU","应用"],"sentiment":0.5},
 };
-const SECTORS = ["半导体","新能源","医药","消费","券商","军工","AI","银行"];
-const ACTIONS = ["大涨","回调","震荡","反弹","走弱"];
-const POLICIES = ["完善监管制度","严查违规行为","推动长期资金入市","优化交易机制"];
+const SECTORS = Object.keys(SECTOR_MAP);
 
-function rng(min,max){return Math.random()*(max-min)+min}
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+let fundData = {}, newsCache = [], positionCache = {}, signalHistory = [];
+let activePeriod = 'all', activeSector = 'all';
+let currentSignals = [];
 
-// --- State ---
-let fundData = {};
-let newsCache = [];
-let positionCache = {};
-let alertCache = [];
-let totalCapital = 100000;
-
+// ── init ──
 function initFundData(){
   const bases = {510050:3.2, 510300:4.8, 510500:6.5, 159915:2.4, 512880:1.1, 512100:2.8};
-  for(const [code,name] of Object.entries(FUNDS)){
-    if(!fundData[code]){
-      fundData[code] = {
-        nav: bases[code] + rng(-0.3,0.3),
-        history: Array.from({length:120},(_,i)=>bases[code]+rng(-0.8,0.8)),
-      };
+  for(const [c,n] of Object.entries(FUNDS)){
+    if(!fundData[c]){
+      fundData[c] = {nav:bases[c]+rng(-0.2,0.2), peak:bases[c]+rng(-0.1,0.3), history:[]};
+      // generate 120 days of history
+      let price = bases[c]*0.7;
+      for(let i=0;i<120;i++){
+        price += (Math.random()-0.48)*price*0.03;
+        price = Math.max(0.3, price);
+        fundData[c].history.push(+price.toFixed(4));
+      }
+      fundData[c].nav = fundData[c].history[fundData[c].history.length-1];
+      fundData[c].peak = Math.max(...fundData[c].history);
     }
   }
 }
+loadHistory();
 
-function evolveFund(code){
-  const d = fundData[code];
-  const noise = (Math.random()-0.5)*0.03*d.nav;
-  const drift = (Math.random()-0.5)*0.005*d.nav;
-  d.nav = Math.max(0.5, d.nav+noise+drift);
-  d.nav = Math.round(d.nav*1e4)/1e4;
-  d.history.push(d.nav);
-  if(d.history.length>200) d.history = d.history.slice(-200);
+function rng(a,b){return Math.random()*(b-a)+a}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+
+// ╔══════════════════════════════════════════════════════════╗
+// ║  TECHNICAL ENGINE (SMA, MACD, Drawdown, Cross)         ║
+// ╚══════════════════════════════════════════════════════════╝
+function sma(series, period){
+  if(series.length < period) return series[series.length-1];
+  return +(series.slice(-period).reduce((a,b)=>a+b,0)/period).toFixed(4);
+}
+function ema(series, period){
+  if(series.length < 2) return series[series.length-1];
+  const k = 2/(period+1);
+  let emaVal = series[0];
+  for(let i=1;i<series.length;i++) emaVal = series[i]*k + emaVal*(1-k);
+  return +emaVal.toFixed(4);
 }
 
-function getSnapshot(code){
-  evolveFund(code);
-  const d = fundData[code];
-  const hist = d.history;
-  const prev = hist[hist.length-2]||d.nav;
-  const change = ((d.nav-prev)/prev*100)||0;
-  const capitalInflow = change*2+Math.round(rng(-3,3)*10)/10;
-  const vol = Math.round(rng(1e5,5e6));
-  // compute indicators
-  const sma=(series,p)=>series.length>=p?series.slice(-p).reduce((a,b)=>a+b,0)/p:series[series.length-1];
-  const ma5=sma(hist,5), ma20=sma(hist,20), ma60=sma(hist,60);
-  // RSI
-  const changes = hist.slice(1).map((v,i)=>v-hist[i]);
-  let rsi=50;
-  if(changes.length>=14){
-    const recent=changes.slice(-14);
-    const gains=recent.filter(c=>c>0).reduce((a,b)=>a+b,0);
-    const losses=recent.filter(c=>c<0).reduce((a,b)=>a+Math.abs(b),0);
-    rsi=losses===0?100:gains===0?0:Math.round(100-(100/(1+gains/losses))*10)/10;
+function computeMACD(series, fast=12, slow=26, signal=9){
+  const emaFast = ema(series, fast);
+  const emaSlow = ema(series, slow);
+  const dif = +(emaFast - emaSlow).toFixed(4);
+  // simplified signal line
+  const dea = +((dif + sma(series.slice(-signal), signal)) / 2).toFixed(4);
+  const histogram = +((dif - dea)*2).toFixed(4);
+  return {dif, dea, histogram};
+}
+
+function drawdownInfo(series){
+  let peak = series[0], maxDD = 0, ddFromPeak = 0, peakIdx = 0;
+  for(let i=0;i<series.length;i++){
+    if(series[i] > peak){ peak = series[i]; peakIdx = i; }
+    const dd = (peak - series[i]) / peak * 100;
+    if(dd > maxDD) maxDD = dd;
+    if(i === series.length-1) ddFromPeak = dd;
   }
-  // consecutive decline
-  let consDec=0;
-  for(let i=changes.length-1;i>=0;i--){if(changes[i]<0)consDec++;else break;}
-  return {code,name:FUNDS[code],nav:d.nav,change:Math.round(change*100)/100,
-    capitalInflow,volume:vol,ma5,ma20,ma60,rsi,consDec,};
+  const over8pct = ddFromPeak >= 8;
+  return {maxDD: +maxDD.toFixed(2), ddFromPeak: +ddFromPeak.toFixed(2), peak: +peak.toFixed(4), over8pct, peakIdx};
+}
+
+function detectCross(series, shortP=5, longP=20){
+  if(series.length < longP+2) return {type:'none', idx:-1};
+  const maS = [], maL = [];
+  for(let i=0;i<series.length;i++){
+    maS.push(sma(series.slice(0,i+1), shortP));
+    maL.push(sma(series.slice(0,i+1), longP));
+  }
+  // look for recent cross (last 5 bars)
+  let crossType = 'none', crossIdx = -1;
+  for(let i=series.length-5;i<series.length-1;i++){
+    if(i<longP) continue;
+    if(maS[i-1] <= maL[i-1] && maS[i] > maL[i]){
+      crossType = 'golden'; crossIdx = i;
+    }
+    if(maS[i-1] >= maL[i-1] && maS[i] < maL[i]){
+      crossType = 'death'; crossIdx = i;
+    }
+  }
+  return {type:crossType, idx:crossIdx, maShort:maS[maS.length-1], maLong:maL[maL.length-1]};
+}
+
+function checkMACDDivergence(series){
+  // Bottom divergence: price makes new low but MACD histogram makes higher low
+  if(series.length < 40) return false;
+  const recent = series.slice(-20);
+  const earlier = series.slice(-40, -20);
+  const recentLow = Math.min(...recent);
+  const earlierLow = Math.min(...earlier);
+  const recentMACD = computeMACD(recent);
+  // simplified check
+  return (recentLow < earlierLow) && (recentMACD.histogram > -0.01);
+}
+
+// ╔══════════════════════════════════════════════════════════╗
+// ║  NEWS ENGINE (sector + time classification)            ║
+// ╚══════════════════════════════════════════════════════════╝
+const NEWS_TEMPLATES = [
+  {t:()=>`央行开展${Math.floor(rng(1000,5000))}亿元MLF操作，利率${rng(2.4,3.6).toFixed(2)}%`,p:'high',s:['金融'],k:['MLF','货币政策']},
+  {t:()=>`北向资金净流入${rng(10,80).toFixed(1)}亿元，连续${Math.floor(rng(1,8))}日净买入`,p:'high',s:['金融'],k:['北向资金']},
+  {t:()=>`${pick(SECTORS)}板块集体走强，主力净流入超${Math.floor(rng(10,100))}亿`,p:'medium',s:[],k:['板块','主力']},
+  {t:()=>`${pick(SECTORS)}龙头发布${pick(['业绩预告','新品','战略合作','回购计划'])}，市场关注度高`,p:'medium',s:[],k:[]},
+  {t:()=>`国际金价${pick(['突破','回落'])}至$${rng(1900,2500).toFixed(0)}/盎司`,p:'medium',s:['黄金'],k:['黄金','金价']},
+  {t:()=>`OPEC+${pick(['增产','减产','维持'])}决议出炉，原油${pick(['大涨','下跌','震荡'])}`,p:'medium',s:['能源'],k:['原油','OPEC']},
+  {t:()=>`英伟达发布${pick(['B300','GB300','新一代GPU'])}，算力提升${Math.floor(rng(2,5))}倍`,p:'high',s:['半导体','AI'],k:['GPU','算力']},
+  {t:()=>`特斯拉Optimus机器人${pick(['进工厂实训','完成复杂装配','开启预售'])}`,p:'medium',s:['机器人'],k:['人形机器人']},
+  {t:()=>`CPO光模块需求爆发，${pick(['中际旭创','新易盛','天孚通信'])}订单饱和`,p:'high',s:['光模块'],k:['CPO','800G']},
+  {t:()=>`${pick(['通威','隆基','阳光电源'])}宣布电池效率突破${rng(26,33).toFixed(1)}%`,p:'medium',s:['能源'],k:['光伏']},
+  {t:()=>`消费电子${pick(['复苏','疲软'])}，${pick(['手机','PC','可穿戴'])}出货量同比${pick(['+','-'])}${Math.floor(rng(5,25))}%`,p:'low',s:['消费'],k:['消费电子']},
+  {t:()=>`创新药审批加速，${pick(['PD-1','ADC','GLP-1'])}新适应症获批`,p:'medium',s:['医药'],k:['创新药']},
+  {t:()=>`锂矿拍卖价${pick(['上涨','下跌'])}${Math.floor(rng(5,20))}%，碳酸锂期货${pick(['涨停','跌停','波动加大'])}`,p:'medium',s:['有色'],k:['锂矿']},
+  {t:()=>`A股成交额${pick(['突破','萎缩至'])}${Math.floor(rng(6000,12000))}亿，市场情绪${pick(['回暖','低迷','分化'])}`,p:'high',s:['金融'],k:['成交额']},
+  {t:()=>`工信部：${pick(['加快','推动','支持'])}${pick(SECTORS)}产业${pick(['高质量发展','核心技术攻关','规模化应用'])}`,p:'high',s:[],k:['政策']},
+  {t:()=>`美联${pick(['维持利率不变','降息25bp','鹰派表态'])}，人民币汇率${pick(['升值','贬值'])}${Math.floor(rng(200,600))}基点`,p:'high',s:['金融'],k:['美联储','汇率']},
+  {t:()=>`半导体光刻胶国产替代加速，${pick(['南大光电','上海新阳'])}取得突破`,p:'medium',s:['半导体'],k:['光刻胶','国产替代']},
+  {t:()=>`五部门联合发文推动${pick(['具身智能','低空经济','量子计算'])}产业落地`,p:'high',s:['机器人','AI'],k:['政策']},
+];
+
+function classifySector(title){
+  const matched = [];
+  for(const [sector, cfg] of Object.entries(SECTOR_MAP)){
+    for(const kw of cfg.keys){
+      if(title.includes(kw)){ matched.push(sector); break; }
+    }
+  }
+  return matched.length>0 ? matched : ['金融']; // default
 }
 
 function generateNews(){
-  const templates = [
-    ()=>`央行开展${Math.floor(rng(1000,5000))}亿元MLF操作，中标利率${rng(2.5,3.5).toFixed(2)}%，较上月${pick(["上调","下调"])}${Math.floor(rng(5,15))}个基点`,
-    ()=>`北向资金今日净流入${rng(10,80).toFixed(1)}亿元，连续${Math.floor(rng(1,8))}日净买入`,
-    ()=>`${pick(SECTORS)}板块集体走强，主力资金净流入超${Math.floor(rng(10,100))}亿元`,
-    ()=>`${pick(SECTORS)} ETF规模突破${Math.floor(rng(50,500))}亿元，创历史新高`,
-    ()=>`证监会：${pick(POLICIES)}，维护市场平稳运行`,
-    ()=>`LPR连续${Math.floor(rng(5,12))}个月持平，专家预计${pick(["二季度可能调整","后续仍有下行空间","短期内维持不变"])}`,
-  ];
-  const count = Math.floor(rng(5,12));
+  const count = Math.floor(rng(12,22));
   const news = [];
   for(let i=0;i<count;i++){
-    const title = pick(templates)();
-    const isHigh = /央行|证监会|LPR|北向|降息/.test(title);
-    const isMed = /板块|ETF|规模|基金/.test(title);
-    const priority = isHigh?'high':isMed?'medium':'low';
-    news.push({title,source:'财联社',priority,time:new Date(),tags:priority==='high'?['高优']:priority==='medium'?['中优']:[]});
+    const tmpl = pick(NEWS_TEMPLATES);
+    const title = tmpl.t();
+    let sectors = classifySector(title);
+    if(tmpl.s.length>0) sectors = [...new Set([...sectors, ...tmpl.s])];
+    const hour = Math.floor(rng(6, 23));
+    const minute = Math.floor(rng(0,59));
+    let period = 'morning';
+    if(hour>=12 && hour<18) period='noon';
+    else if(hour>=18 || hour<6) period='night';
+    news.push({
+      title, source:'财联社', priority:tmpl.p, sectors, period,
+      time: `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`,
+      keywords: tmpl.k || [],
+    });
   }
-  news.sort((a,b)=>(a.priority==='high'?-1:a.priority==='medium'?-1:1)-(b.priority==='high'?-1:b.priority==='medium'?-1:1));
+  // sort: high priority first, then by time
+  news.sort((a,b)=>{
+    const p={high:0,medium:1,low:2};
+    return p[a.priority]-p[b.priority] || a.time.localeCompare(b.time);
+  });
+  // update sector sentiments based on news
+  for(const [sec, cfg] of Object.entries(SECTOR_MAP)){
+    const secNews = news.filter(n=>n.sectors.includes(sec));
+    const bullish = secNews.filter(n=>n.priority==='high'&&/走强|突破|增长|净流入|复苏|加速/.test(n.title)).length;
+    const bearish = secNews.filter(n=>n.priority==='high'&&/下跌|疲软|流出|波动|贬值/.test(n.title)).length;
+    cfg.sentiment = secNews.length===0?0.5:+(0.5+(bullish-bearish)*0.1).toFixed(2);
+    cfg.newsCount = secNews.length;
+  }
   return news;
 }
 
-function generateSignal(snap){
-  // multi-factor scoring
-  let score=50;
-  // MA trend
-  if(snap.ma5>snap.ma20&&snap.ma20>snap.ma60) score+=12;
-  else if(snap.ma5<snap.ma20&&snap.ma20<snap.ma60) score-=12;
-  else if(snap.ma5>snap.ma20) score+=4;
-  else score-=4;
-  // RSI
-  if(snap.rsi<30) score+=(30-snap.rsi)*0.8;
-  else if(snap.rsi>70) score-=(snap.rsi-70)*0.6;
-  // Capital flow
-  score+=Math.max(-10,Math.min(10,snap.capitalInflow*1.5));
-  // Random noise
-  score+=rng(-5,5);
-  score=Math.max(5,Math.min(95,score));
-
-  let type='hold', badge='badge-hold';
-  if(score>=70){type='buy';badge='badge-buy'}
-  else if(score>=55){type='add';badge='badge-buy'}
-  else if(score>=40){type='hold';badge='badge-hold'}
-  else if(score>=25){type='reduce';badge='badge-sell'}
-  else {type='sell';badge='badge-sell'}
-
-  const reasons=[];
-  if(snap.ma5>snap.ma20) reasons.push(`短线多头排列`);
-  if(snap.rsi<30) reasons.push(`RSI超卖(${snap.rsi.toFixed(1)})`);
-  if(snap.rsi>70) reasons.push(`RSI超买(${snap.rsi.toFixed(1)})`);
-  if(snap.capitalInflow>3) reasons.push(`资金净流入${snap.capitalInflow.toFixed(1)}亿`);
-  if(snap.capitalInflow<-3) reasons.push(`资金净流出${Math.abs(snap.capitalInflow).toFixed(1)}亿`);
-  if(reasons.length===0) reasons.push('指标中性');
-
-  return {code:snap.code, name:snap.name, type, score:Math.round(score*10)/10,
-    badge, reasons, suggestPct:Math.round(score/100*25) };
+function getSectorNewsSummary(sector, news){
+  const secNews = news.filter(n=>n.sectors.includes(sector));
+  const hi = secNews.filter(n=>n.priority==='high').length;
+  const sent = SECTOR_MAP[sector].sentiment;
+  const sentLabel = sent>=0.6?'偏多':sent<=0.4?'偏空':'中性';
+  const sentCls = sent>=0.6?'sent-bull':sent<=0.4?'sent-bear':'sent-neutral';
+  return {sector, count:secNews.length, hi, sentiment:sent, sentLabel, sentCls, latest:secNews.slice(0,2)};
 }
 
-// --- Alert checks ---
-function checkAlerts(snaps){
-  const alerts=[];
-  for(const s of snaps){
-    if(Math.abs(s.change)>=2) alerts.push(`${s.name} 单日${s.change>=0?'大涨':'大跌'} ${s.change.toFixed(2)}%`);
-    if(s.consDec>=3) alerts.push(`${s.name} 连续下跌 ${s.consDec} 天`);
-    if(s.capitalInflow<=-5) alerts.push(`${s.name} 主力资金净流出 ${s.capitalInflow.toFixed(1)} 亿`);
-    if(s.rsi>=70) alerts.push(`${s.name} RSI=${s.rsi.toFixed(1)} 超买`);
-    if(s.rsi<=30) alerts.push(`${s.name} RSI=${s.rsi.toFixed(1)} 超卖`);
+function getOverallSummary(news){
+  const hi = news.filter(n=>n.priority==='high');
+  const bullCount = hi.filter(n=>/走强|突破|增长|净流入|复苏|加速|政策/.test(n.title)).length;
+  const bearCount = hi.filter(n=>/下跌|疲软|流出|波动|贬值|鹰派/.test(n.title)).length;
+  let mood, moodColor;
+  if(bullCount>bearCount+2){mood='偏乐观';moodColor='var(--green)';}
+  else if(bearCount>bullCount+2){mood='偏谨慎';moodColor='var(--red)';}
+  else {mood='中性震荡';moodColor='var(--orange)';}
+  return {total:news.length, hi:hi.length, bullCount, bearCount, mood, moodColor};
+}
+
+// ╔══════════════════════════════════════════════════════════╗
+// ║  SIGNAL ENGINE                                         ║
+// ╚══════════════════════════════════════════════════════════╝
+function generateSignals(){
+  const signals = [];
+  for(const code of Object.keys(FUNDS)){
+    const d = fundData[code];
+    const series = d.history;
+    const current = series[series.length-1];
+    const ma5 = sma(series, 5);
+    const ma20 = sma(series, 20);
+    const cross = detectCross(series, 5, 20);
+    const dd = drawdownInfo(series);
+    const devFrom20 = +((current - ma20)/ma20*100).toFixed(2);
+    const macd = computeMACD(series);
+    const macdDiv = checkMACDDivergence(series);
+
+    // ── score building ──
+    let score = 50;
+    const reasons = [];
+
+    // 1. Trend: price vs MA20
+    if(current > ma20){ score += 8; reasons.push(`价格>MA20 (+${devFrom20.toFixed(1)}%)`); }
+    else { score -= 8; reasons.push(`价格<MA20 (${devFrom20.toFixed(1)}%)`); }
+
+    // 2. SMA crossover
+    if(cross.type==='golden'){ score += 15; reasons.push('5/20日金叉 ✨'); }
+    if(cross.type==='death'){ score -= 15; reasons.push('5/20日死叉 ⚠'); }
+
+    // 3. Drawdown
+    if(dd.over8pct){ score -= 12; reasons.push(`从高点回撤${dd.ddFromPeak}% ≥8%`); }
+    else if(dd.ddFromPeak > 5){ score -= 6; reasons.push(`回撤${dd.ddFromPeak}%`); }
+
+    // 4. MACD divergence
+    if(macdDiv){ score += 12; reasons.push('MACD底背离'); }
+
+    // 5. Deviation extremes (market extremes often mean-revert slightly)
+    if(devFrom20 > 10){ score -= 5; reasons.push('偏离20MA过大(>10%)'); }
+    if(devFrom20 < -10){ score += 5; reasons.push('超跌偏离20MA(<-10%)'); }
+
+    // 6. Fear index effect
+    const vix = getVIX();
+    if(vix > 60){ score += 8; reasons.push('恐慌指数高位→逆向买入机会'); }
+    if(vix < 15){ score -= 5; reasons.push('恐慌指数低位→过度乐观'); }
+
+    score = Math.max(5, Math.min(95, Math.round(score*10)/10));
+
+    let type='hold', cls='entry';
+    if(score >= 65){ type='entry'; cls='entry'; }
+    else if(score >= 45){ type='hold'; cls='hold'; }
+    else { type='exit'; cls='exit'; }
+
+    signals.push({
+      code, name:FUNDS[code], type, cls, score,
+      reasons, ma5, ma20, devFrom20, cross:cross.type,
+      ddFromPeak:dd.ddFromPeak, maxDD:dd.maxDD, over8pct:dd.over8pct,
+      macdDiv, current: +current.toFixed(4),
+    });
   }
-  return alerts;
+  signals.sort((a,b)=>b.score-a.score);
+  return signals;
 }
 
-// ═══════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════
+function getVIX(){
+  // Simulated VIX based on recent volatility
+  let totalVol = 0, n = 0;
+  for(const d of Object.values(fundData)){
+    const hist = d.history;
+    if(hist.length<10) continue;
+    const returns = hist.slice(-10).map((v,i,a)=>i>0?(v-a[i-1])/a[i-1]:0).slice(1);
+    const vol = Math.sqrt(returns.reduce((s,r)=>s+r*r,0)/returns.length)*100;
+    totalVol += vol; n++;
+  }
+  const baseVix = n>0 ? totalVol/n*15 : 25;
+  return +Math.max(5, Math.min(95, baseVix + rng(-8,8))).toFixed(0);
+}
+
+// ── Signal DB (localStorage) ──
+function saveSignal(sig){
+  signalHistory.unshift({
+    time: new Date().toLocaleString('zh-CN'),
+    code: sig.code, name: sig.name,
+    type: sig.type, score: sig.score,
+    reasons: sig.reasons.join('、'),
+  });
+  if(signalHistory.length > 100) signalHistory = signalHistory.slice(0,100);
+  localStorage.setItem('fund_signal_history', JSON.stringify(signalHistory));
+}
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem('fund_signal_history');
+    if(raw) signalHistory = JSON.parse(raw);
+  }catch(e){ signalHistory = []; }
+}
+function clearHistory(){ signalHistory=[]; localStorage.removeItem('fund_signal_history'); renderSignals(); }
+
+// ╔══════════════════════════════════════════════════════════╗
+// ║  RENDER                                                ║
+// ╚══════════════════════════════════════════════════════════╝
+function buildSectorChips(){
+  const el = document.getElementById('sectorChips');
+  el.innerHTML = SECTORS.map(s=>`<span class="chip" data-sector="${s}" onclick="filterNewsSector('${s}')">${s}</span>`).join('');
+}
+
+function filterNews(period){
+  activePeriod = period;
+  document.querySelectorAll('[data-period]').forEach(c=>c.classList.toggle('on', c.dataset.period===period));
+  renderNews();
+}
+function filterNewsSector(sector){
+  activeSector = sector;
+  document.querySelectorAll('#sectorChips .chip, [data-sector="all"]').forEach(c=>c.classList.toggle('on', c.dataset.sector===sector));
+  if(sector==='all') document.querySelector('[data-sector="all"]').classList.add('on');
+  renderNews();
+}
+
+function getFilteredNews(){
+  let n = newsCache;
+  if(activePeriod!=='all') n = n.filter(x=>x.period===activePeriod);
+  if(activeSector!=='all') n = n.filter(x=>x.sectors.includes(activeSector));
+  return n;
+}
+
 function renderNews(){
-  const el = document.getElementById('newsList');
-  if(newsCache.length===0){
-    el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-dim)">点击"拉取新闻"获取最新财经资讯</div>';
-    return;
+  const filtered = getFilteredNews();
+  const listEl = document.getElementById('newsList');
+  const dotCls = {high:'dot-high',medium:'dot-medium',low:'dot-low'};
+
+  if(filtered.length===0){
+    listEl.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-dim)">无匹配新闻</div>';
+  } else {
+    listEl.innerHTML = filtered.map((n,i)=>`
+      <div class="news-card" id="newsCard${i}" onclick="toggleNews(${i})">
+        <div class="news-card-header">
+          <span class="news-priority-dot ${dotCls[n.priority]}"></span>
+          <span class="news-title" style="color:${n.priority==='high'?'var(--text-bright)':'var(--text)'}">${n.title}</span>
+          <span class="news-sector-tag">${n.sectors[0]||'综合'}</span>
+          <span class="news-time-tag">${n.time}</span>
+        </div>
+        <div class="news-expand">
+          <div class="news-summary">${generateSummary(n)}</div>
+          <div>板块: ${n.sectors.join(' · ')} | 关键词: ${n.keywords.join(' · ') || '无'} | 来源: ${n.source} ${n.time}</div>
+          <div class="news-impact ${n.priority==='high'?'impact-negative':'impact-neutral'}">
+            投资影响: ${n.priority==='high'?'该消息对市场有显著影响，建议关注相关板块动向':'常规信息，仅供参考'} · 相关板块: ${n.sectors.join('、')}
+          </div>
+        </div>
+      </div>
+    `).join('');
   }
-  el.innerHTML = newsCache.map(n=>{
-    const priLabel = {high:'高优',medium:'中优',low:'普通'}[n.priority];
-    const tagCls = {high:'tag-high',medium:'tag-medium',low:'tag-low'}[n.priority];
-    return `<div class="news-item ${n.priority}">
-      <span class="news-tag ${tagCls}">${priLabel}</span>
-      <span style="color:var(--text)">${n.title}</span>
-      <span style="font-size:10px;color:var(--text-dim);margin-left:8px">${n.source}</span>
+
+  // summaries
+  const overall = getOverallSummary(newsCache);
+  document.getElementById('newsOverallSummary').innerHTML = `
+    <div style="margin-bottom:8px;font-size:15px;color:${overall.moodColor}">市场情绪: ${overall.mood}</div>
+    共收集 <b style="color:var(--text-bright)">${overall.total}</b> 条新闻，其中高优先级 <b style="color:var(--red)">${overall.hi}</b> 条。
+    偏多信号 <b style="color:var(--green)">${overall.bullCount}</b> 条，偏空信号 <b style="color:var(--red)">${overall.bearCount}</b> 条。
+    ${overall.bullCount>overall.bearCount?'市场消息面偏暖，注意追高风险。':overall.bearCount>overall.bullCount?'消息面压力较大，关注回撤控制和防御性配置。':'消息面多空交织，震荡市以趋势跟踪为主。'}
+  `;
+
+  document.getElementById('sectorSummaries').innerHTML = SECTORS.map(s=>{
+    const sum = getSectorNewsSummary(s, newsCache);
+    if(sum.count===0) return '';
+    return `<div class="sector-summary-card">
+      <div class="sector-header">${s} <span class="sector-sentiment ${sum.sentCls}">${sum.sentLabel}</span> <span style="font-size:11px;color:var(--text-dim);font-weight:400">${sum.count}条新闻 · 高优${sum.hi}条</span></div>
+      ${sum.latest.map(n=>`<div style="font-size:11px;color:var(--text-dim);margin:3px 0">· ${n.title.slice(0,50)}…</div>`).join('')}
     </div>`;
+  }).filter(Boolean).join('');
+
+  document.getElementById('newsBadge').textContent = overall.hi;
+
+  // dashboard sector summary
+  document.getElementById('dSectors').innerHTML = SECTORS.map(s=>{
+    const cfg = SECTOR_MAP[s];
+    const sentCls = cfg.sentiment>=0.6?'sent-bull':cfg.sentiment<=0.4?'sent-bear':'sent-neutral';
+    const sentLabel = cfg.sentiment>=0.6?'偏多':cfg.sentiment<=0.4?'偏空':'中性';
+    return `<span style="display:inline-block;margin:3px 4px;font-size:11px">
+      ${s} <span class="sector-sentiment ${sentCls}">${sentLabel}</span>
+    </span>`;
   }).join('');
-  document.getElementById('newsBadge').textContent = newsCache.filter(n=>n.priority==='high').length;
+  document.getElementById('sectorDash').textContent = `共${SECTORS.length}个板块`;
 }
 
+function generateSummary(news){
+  const parts = [];
+  parts.push(`[${news.priority==='high'?'高优':news.priority==='medium'?'中优':'普通'}] ${news.title}`);
+  parts.push(`涉及板块: ${news.sectors.join('、')}`);
+  return parts.join(' · ');
+}
+
+function toggleNews(i){ document.getElementById('newsCard'+i)?.classList.toggle('open'); }
+
+// ── monitor render ──
 function renderMonitor(){
-  const snaps = [];
+  const container = document.getElementById('fundCards');
+  let alertCount = 0;
+  const cards = [];
+
   for(const code of Object.keys(FUNDS)){
-    evolveFund(code);
-    snaps.push(getSnapshot(code));
+    const d = fundData[code];
+    const series = d.history;
+    const current = series[series.length-1];
+    const ma5 = sma(series,5);
+    const ma20 = sma(series,20);
+    const cross = detectCross(series,5,20);
+    const dd = drawdownInfo(series);
+    const devFrom20 = +((current-ma20)/ma20*100).toFixed(2);
+    const changeToday = +((current - series[series.length-2])/series[series.length-2]*100).toFixed(2);
+    const macd = computeMACD(series);
+
+    if(dd.over8pct) alertCount++;
+    if(cross.type!=='none') alertCount++;
+
+    // mini chart bars (last 30 days)
+    const last30 = series.slice(-30);
+    const chartMin = Math.min(...last30);
+    const chartRange = Math.max(...last30) - chartMin || 1;
+    const bars = last30.map((v,i)=>{
+      const h = (v-chartMin)/chartRange*100;
+      const prev = i>0?last30[i-1]:v;
+      return `<div class="mini-bar ${v>=prev?'bar-up':'bar-down'}" style="height:${Math.max(4,h)}%"></div>`;
+    }).join('');
+
+    const crossBadge = cross.type==='golden'
+      ? `<span class="ma-cross cross-gold">金叉 ↑</span>`
+      : cross.type==='death'
+      ? `<span class="ma-cross cross-death">死叉 ↓</span>`
+      : '';
+
+    cards.push(`
+      <div class="fund-card">
+        <div class="fund-card-top">
+          <div>
+            <span style="font-weight:600;font-size:15px">${FUNDS[code]}</span>
+            <span style="font-size:11px;color:var(--text-dim);margin-left:6px">${code}</span>
+            ${crossBadge}
+          </div>
+          <div style="text-align:right">
+            <span style="font-size:18px;font-weight:700">${current.toFixed(4)}</span>
+            <span style="font-size:12px;color:${changeToday>=0?'var(--green)':'var(--red)'};margin-left:6px">${changeToday>=0?'+':''}${changeToday}%</span>
+          </div>
+        </div>
+        <div class="mini-chart">${bars}</div>
+        <div class="ma-row">
+          <span>MA5: <b style="color:var(--primary)">${ma5.toFixed(4)}</b></span>
+          <span>MA20: <b style="color:var(--purple)">${ma20.toFixed(4)}</b></span>
+          <span>偏离20MA: <b style="color:${devFrom20>0?'var(--green)':'var(--red)'}">${devFrom20>=0?'+':''}${devFrom20}%</b></span>
+          <span>MACD: <b style="color:${macd.histogram>0?'var(--green)':'var(--red)'}">${macd.histogram.toFixed(4)}</b></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-dim)">
+          <span>最高回撤: <b style="color:var(--red)">${dd.maxDD}%</b></span>
+          <span>当前回撤: <b style="color:${dd.over8pct?'var(--red)':'var(--orange)'}">${dd.ddFromPeak}%</b>${dd.over8pct?' ⚠ 超8%':''}</span>
+          <span>最高点: ${dd.peak.toFixed(4)}</span>
+        </div>
+        <div class="drawdown-bar">
+          <div class="drawdown-fill" style="width:${Math.min(100,dd.ddFromPeak*5)}%;background:${dd.over8pct?'var(--red)':'var(--orange)'}"></div>
+        </div>
+      </div>
+    `);
   }
-  alertCache = checkAlerts(snaps);
-  document.getElementById('alertBadge').textContent = alertCache.length;
 
-  // Fund list
-  const el = document.getElementById('fundList');
-  el.innerHTML = snaps.map(s=>{
-    const dirCls = s.change>=0?'change-up':'change-down';
-    const arrow = s.change>=0?'↑':'↓';
-    return `<div class="fund-row">
-      <div>
-        <div class="fund-name">${s.name} <span class="fund-code">${s.code}</span></div>
-        <div style="font-size:11px;color:var(--text-dim)">MA5:${s.ma5.toFixed(3)} MA20:${s.ma20.toFixed(3)} · RSI:${s.rsi.toFixed(1)} · 连跌${s.consDec}天</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-weight:600">${s.nav.toFixed(4)}</div>
-        <div class="${dirCls}">${arrow}${Math.abs(s.change).toFixed(2)}%</div>
-        <div style="font-size:10px;color:var(--text-dim)">资金${s.capitalInflow>=0?'+':''}${s.capitalInflow.toFixed(1)}亿</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Alert log
-  document.getElementById('alertLog').innerHTML = alertCache.length>0
-    ? alertCache.map(a=>`⚠ ${a}`).join('\n')
-    : '(暂无告警)';
+  container.innerHTML = cards.join('');
+  document.getElementById('alertBadge').textContent = alertCount;
+  document.getElementById('dAlerts').textContent = alertCount;
 }
 
+// ── signals render ──
 function renderSignals(){
-  const snaps = [];
-  for(const code of Object.keys(FUNDS)){
-    evolveFund(code);
-    snaps.push(getSnapshot(code));
+  currentSignals = generateSignals();
+
+  // save to history
+  for(const sig of currentSignals){
+    if(sig.type!=='hold') saveSignal(sig);
   }
-  const signals = snaps.map(getSignal).sort((a,b)=>b.score-a.score);
 
-  document.getElementById('sigList').innerHTML = signals.map(s=>`
-    <div class="fund-row" style="border-left:3px solid ${s.score>=55?'var(--green)':s.score>=40?'var(--text-dim)':'var(--red)'}">
-      <div>
-        <div class="fund-name">${s.name}</div>
-        <div style="font-size:11px;color:var(--text-dim)">${s.reasons.join(' · ')}</div>
+  const entryCount = currentSignals.filter(s=>s.type==='entry').length;
+  const exitCount = currentSignals.filter(s=>s.type==='exit').length;
+
+  document.getElementById('sigList').innerHTML = currentSignals.map(s=>`
+    <div class="signal-row ${s.cls}">
+      <span class="signal-type">${s.type==='entry'?'🟢':s.type==='exit'?'🔴':'⚪'}</span>
+      <div class="signal-detail">
+        <div style="font-weight:600">${s.name} ${s.type==='entry'?'入场':'出场'}信号</div>
+        <div style="color:var(--text-dim);font-size:11px">${s.reasons.join(' · ')}</div>
       </div>
-      <div style="text-align:right">
-        <div class="badge ${s.badge}">${s.type.toUpperCase()}</div>
-        <div style="font-size:11px;color:var(--text-dim)">评分 ${s.score.toFixed(1)} · 建议仓位 ${s.suggestPct}%</div>
-      </div>
+      <div class="signal-score" style="color:${s.score>=65?'var(--green)':s.score>=45?'var(--text-dim)':'var(--red)'}">${s.score.toFixed(0)}</div>
     </div>
-  `).join('');
+  `).join('') || '<div style="color:var(--text-dim)">无明确信号</div>';
 
-  // Positions
+  // VIX
+  const vix = getVIX();
+  document.getElementById('vixNeedle').style.left = vix+'%';
+  const vixLabel = vix<20?'贪婪':vix<40?'中性':vix<60?'中度恐慌':'极度恐慌';
+  document.getElementById('vixLabel').textContent = `${vix} — ${vixLabel}`;
+
+  // cross summary
+  document.getElementById('crossSummary').innerHTML = currentSignals.map(s=>{
+    if(s.cross==='golden') return `<div style="color:var(--green);margin:3px 0">✨ ${s.name}: 5/20日金叉</div>`;
+    if(s.cross==='death') return `<div style="color:var(--red);margin:3px 0">⚠ ${s.name}: 5/20日死叉</div>`;
+    return '';
+  }).filter(Boolean).join('') || '近期无均线交叉信号';
+
+  // drawdown summary
+  document.getElementById('ddSummary').innerHTML = currentSignals.map(s=>{
+    if(s.over8pct) return `<div style="color:var(--red);margin:3px 0">🔴 ${s.name}: 回撤 ${s.ddFromPeak}% ≥8%，注意风险！</div>`;
+    if(s.ddFromPeak>5) return `<div style="color:var(--orange);margin:3px 0">🟡 ${s.name}: 回撤 ${s.ddFromPeak}%</div>`;
+    return '';
+  }).filter(Boolean).join('') || '所有标的回撤均在5%以内';
+
+  // positions
   const posList = Object.values(positionCache);
-  const totalPL = posList.reduce((sum,p)=>sum+p.pl,0);
-  const totalCost = posList.reduce((sum,p)=>sum+p.cost,0);
-  const plPct = totalCost>0?Math.round(totalPL/totalCost*1e4)/100:0;
-  const usedPct = posList.reduce((sum,p)=>sum+p.pct,0);
+  const totalPL = posList.reduce((s,p)=>s+p.pl,0);
+  const totalCost = posList.reduce((s,p)=>s+p.cost,0);
+  const plPct = totalCost>0?+(totalPL/totalCost*100).toFixed(2):0;
+  const usedPct = posList.reduce((s,p)=>s+p.pct,0);
 
   document.getElementById('posList').innerHTML = posList.length>0
     ? posList.map(p=>{
-        const sign = p.pl>=0?'+':'';
-        return `<div class="fund-row">
-          <div><div class="fund-name">${p.name}</div><div class="fund-code">${p.code} · ${p.shares.toFixed(0)}份 @${p.avgCost.toFixed(4)}</div></div>
-          <div style="text-align:right">
-            <div style="color:${p.pl>=0?'var(--green)':'var(--red)'}">${sign}${p.pl.toFixed(2)} (${sign}${p.plPct.toFixed(2)}%)</div>
-            <div class="bar" style="width:80px;margin-left:auto"><div class="bar-inner" style="width:${p.pct*100}%;background:${p.pl>=0?'var(--green)':'var(--red)'}"></div></div>
-            <div style="font-size:10px;color:var(--text-dim)">仓位 ${(p.pct*100).toFixed(1)}%</div>
-          </div>
+        const curNav = fundData[p.code]?.nav || p.avgCost;
+        const curPL = (curNav-p.avgCost)*p.shares;
+        const curPLPct = +((curNav-p.avgCost)/p.avgCost*100).toFixed(2);
+        // trailing stop: check if drawdown from profit peak
+        const peakPL = p.peakPL || 0;
+        const trailStop = peakPL>0 && curPL<peakPL*0.7 ? '⚠ 触发移动止盈' : '';
+        return `<div class="fund-row" style="padding:10px 12px;margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;background:var(--surface2);border-radius:6px;border-left:3px solid ${curPL>=0?'var(--green)':'var(--red)'}">
+          <div><b>${p.name}</b> <span style="color:var(--text-dim)">${p.code}</span></div>
+          <div>${p.shares.toFixed(0)}份 @${p.avgCost.toFixed(4)}</div>
+          <div style="color:${curPL>=0?'var(--green)':'var(--red)'}">${curPL>=0?'+':''}${curPLPct}%</div>
+          <div style="color:var(--orange)">${trailStop}</div>
         </div>`;
       }).join('')
-    : '<div style="padding:20px;text-align:center;color:var(--text-dim)">（空仓）</div>';
+    : '<div style="color:var(--text-dim);padding:20px;text-align:center">空仓 · 等待入场信号</div>';
 
-  document.getElementById('posUsed').textContent = usedPct.toFixed(1)+'%';
+  document.getElementById('posUsed').textContent = (usedPct*100).toFixed(1)+'%';
   document.getElementById('posPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
 
-  // Update dashboard
-  const hiNews = newsCache.filter(n=>n.priority==='high').length;
-  const medNews = newsCache.filter(n=>n.priority==='medium').length;
-  document.getElementById('dNewsTotal').textContent = newsCache.length;
-  document.getElementById('dNewsHigh').textContent = hiNews;
-  document.getElementById('dNewsMed').textContent = medNews;
-  document.getElementById('dAlerts').textContent = alertCache.length;
+  // history table
+  document.getElementById('sigHistory').innerHTML = signalHistory.slice(0,20).map(h=>`
+    <tr class="${h.type==='entry'?'entry-row':'exit-row'}">
+      <td style="font-size:10px">${h.time}</td><td>${h.name}</td>
+      <td>${h.type==='entry'?'入场':'出场'}</td><td>${h.score.toFixed(1)}</td>
+      <td style="font-size:10px">${h.reasons}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--text-dim)">暂无信号记录</td></tr>';
+
+  // dashboard updates
+  document.getElementById('dSigCount').textContent = currentSignals.length;
+  document.getElementById('dEntryN').textContent = entryCount;
+  document.getElementById('dExitN').textContent = exitCount;
   document.getElementById('dPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
   document.getElementById('dPnL').className = 'stat-val '+(plPct>=0?'stat-green':'stat-red');
-  document.getElementById('dPosition').textContent = usedPct.toFixed(1)+'%';
+  document.getElementById('dPos').textContent = (usedPct*100).toFixed(1)+'%';
+  const sent = getOverallSummary(newsCache);
+  document.getElementById('dSentiment').textContent = sent.mood;
+  document.getElementById('dSentiment').style.color = sent.moodColor;
+  document.getElementById('dSentLabel').textContent = `偏多${sent.bullCount}条 · 偏空${sent.bearCount}条`;
 
-  document.getElementById('dSignals').innerHTML = signals.slice(0,3).map(s=>`
-    <div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+  const topSig = currentSignals.slice(0,4);
+  document.getElementById('dSignals').innerHTML = topSig.map(s=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
       <span>${s.name}</span>
-      <span class="badge ${s.badge}">${s.type.toUpperCase()} ${s.score.toFixed(0)}分</span>
+      <span style="color:${s.score>=65?'var(--green)':s.score<45?'var(--red)':'var(--text-dim)'}">${s.type==='entry'?'入场':s.type==='exit'?'出场':'持有'} ${s.score.toFixed(0)}分</span>
     </div>
-  `).join('') || '<div style="color:var(--text-dim)">暂无信号</div>';
-
-  document.getElementById('dPositions').innerHTML = posList.length>0
-    ? posList.map(p=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
-        <span>${p.name}</span>
-        <span style="color:${p.pl>=0?'var(--green)':'var(--red)'}">${p.pl>=0?'+':''}${p.plPct.toFixed(2)}%</span>
-      </div>`).join('')
-    : '<div style="color:var(--text-dim);font-size:12px">（空仓）</div>';
+  `).join('');
 }
 
-function getSignal(snap){
-  return generateSignal(snap);
-}
-
-// ═══════════════════════════════════════════
-//  ACTIONS
-// ═══════════════════════════════════════════
+// ── actions ──
 function refreshNews(){ newsCache=generateNews(); renderNews(); renderSignals(); }
-function refreshMonitor(){ renderMonitor(); renderSignals(); }
+function refreshMonitor(){ renderMonitor(); }
 function refreshSignals(){ renderSignals(); }
-function refreshAll(){ refreshNews(); renderMonitor(); renderSignals(); }
+function generateAll(){
+  for(const code of Object.keys(FUNDS)){
+    const series = fundData[code].history;
+    const current = series[series.length-1];
+    const noise = (Math.random()-0.5)*current*0.02;
+    series.push(+(current+noise).toFixed(4));
+    if(series.length>200) series.shift();
+    fundData[code].nav = series[series.length-1];
+  }
+  renderSignals(); renderMonitor(); renderNews();
+}
 
-function buyRandom(){
+function buyManual(){
   const codes = Object.keys(FUNDS);
   const code = pick(codes);
-  const nav = fundData[code].nav;
-  const amount = rng(3000,15000);
+  const nav = fundData[code].history[fundData[code].history.length-1];
+  const amount = rng(5000,20000);
   const name = FUNDS[code];
   const shares = amount/nav;
   const cost = shares*nav;
-  const pct = cost/totalCapital;
-
+  const pct = cost/100000;
   if(positionCache[code]){
-    const p = positionCache[code];
-    const newShares = p.shares+shares;
-    const newCost = p.cost+cost;
-    p.shares = newShares;
-    p.avgCost = newCost/newShares;
-    p.cost = newCost;
-    p.pl = newShares*nav - p.cost;
-    p.plPct = (nav-p.avgCost)/p.avgCost*100;
-    p.pct = newShares*nav/totalCapital;
-  } else {
-    positionCache[code] = {code, name, shares, avgCost:nav, cost, pl:0, plPct:0, pct};
+    const p=positionCache[code]; p.shares+=shares; p.cost+=cost;
+    p.avgCost=p.cost/p.shares; p.pl=p.shares*nav-p.cost;
+    p.plPct=(nav-p.avgCost)/p.avgCost*100; p.pct=p.shares*nav/100000;
+  }else{
+    positionCache[code]={code,name,shares,avgCost:nav,cost,pl:0,plPct:0,pct,peakPL:0};
   }
   renderSignals();
 }
+function sellAll(){ positionCache={}; renderSignals(); }
 
-function sellAll(){
-  positionCache = {};
-  renderSignals();
-}
+// update peak PL for trailing stop
+setInterval(()=>{
+  for(const p of Object.values(positionCache)){
+    const curNav = fundData[p.code]?.nav || p.avgCost;
+    const curPL = (curNav-p.avgCost)*p.shares;
+    if(curPL > (p.peakPL||0)) p.peakPL = curPL;
+  }
+}, 5000);
 
-// ═══════════════════════════════════════════
-//  TABS & CLOCK
-// ═══════════════════════════════════════════
+// ╔══════════════════════════════════════════════════════════╗
+// ║  UI BOOTSTRAP                                          ║
+// ╚══════════════════════════════════════════════════════════╝
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click',function(){
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     this.classList.add('active');
-    document.getElementById('panel-'+this.dataset.panel).classList.add('active');
+    const panelId = 'panel-'+this.dataset.panel;
+    document.getElementById(panelId).classList.add('active');
     if(this.dataset.panel==='news') renderNews();
     if(this.dataset.panel==='monitor') renderMonitor();
     if(this.dataset.panel==='signals') renderSignals();
-    if(this.dataset.panel==='dashboard') renderSignals();
+    if(this.dataset.panel==='dashboard'){ renderNews(); renderSignals(); }
   });
 });
 
 function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleString('zh-CN');
+  document.getElementById('clock').textContent = new Date().toLocaleString('zh-CN');
 }
-setInterval(updateClock,1000);
-updateClock();
+setInterval(updateClock, 1000); updateClock();
 
-// auto refresh
+// auto periodic refresh
 setInterval(()=>{
   const activePanel = document.querySelector('.panel.active');
   if(!activePanel) return;
   const id = activePanel.id;
   if(id==='panel-monitor') renderMonitor();
-  if(id==='panel-signals'||id==='panel-dashboard') renderSignals();
-}, 15000);
+  if(id==='panel-signals'){ generateAll(); }
+  if(id==='panel-dashboard'){ renderNews(); renderSignals(); }
+}, 30000);
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
+// init
 initFundData();
+buildSectorChips();
 newsCache = generateNews();
 renderSignals();
 </script>
