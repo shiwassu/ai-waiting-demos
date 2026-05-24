@@ -435,58 +435,95 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  真实新闻抓取 — 全部通过 rss2json CORS 代理
-//  新浪财经 API 会因 CORS 被浏览器拦截，改用 RSS
+//  真实新闻抓取 — CORS 代理 + 浏览器端 RSS 解析
+//  api.rss2json.com 不返回 CORS 头，所以改用:
+//  1. corsproxy.io 代理请求 (设置 Access-Control-Allow-Origin: *)
+//  2. 直接抓 Google News RSS XML，浏览器端 DOMParser 解析
 // ═══════════════════════════════════════════════════
 let realNewsAvailable = false;
 let realNewsSourceName = '';
 
-const FREE_RSS_FEEDS = [
+// 多个 CORS 代理，自动切换
+const CORS_PROXIES = [
+  'https://corsproxy.io/?',
+  'https://api.allorigins.win/raw?url=',
+];
+
+const RSS_SOURCES = [
   {
-    name: 'Google财经·中国',
-    rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    name: 'Google财经·CN',
+    url: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   },
   {
-    name: 'Google财经·全球',
-    rss: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en',
-  },
-  {
-    name: '新浪财经RSS',
-    rss: 'https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=20&page=1',
+    name: 'Google财经·US',
+    url: 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en',
   },
 ];
 
-async function fetchRssFeed(feedConfig){
-  const rssUrl = feedConfig.rss;
-  // rss2json 代理: 自动处理 RSS/JSON 两种格式
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-  try{
-    const resp = await fetch(apiUrl);
-    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    if(!data.items || data.items.length===0) throw new Error('无数据');
-    return data.items.map(item=>({
-      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: item.author || feedConfig.name,
-      url: item.link||'',
-      content: (item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,200),
-      priority: classifyPriority((item.title||'')+' '+(item.description||'')),
-      sectors: classifySectors(item.title||''),
-      period: getPeriodFromDate(new Date(item.pubDate||Date.now())),
-      time: fmtTime(new Date(item.pubDate||Date.now())),
-      date: fmtDate(new Date(item.pubDate||Date.now())),
+// 浏览器端 RSS XML 解析
+function parseRSSXML(xmlText, sourceName){
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlText, 'text/xml');
+  const items = doc.querySelectorAll('item');
+  const result = [];
+  items.forEach(item=>{
+    const title = item.querySelector('title')?.textContent?.trim()||'';
+    const link = item.querySelector('link')?.textContent?.trim()||'';
+    const desc = item.querySelector('description')?.textContent?.replace(/<[^>]*>/g,'').trim()||'';
+    const pubDate = item.querySelector('pubDate')?.textContent||'';
+    // 从 title 中提取实际来源 (Google News 格式: "标题 - 来源")
+    let source = sourceName;
+    let cleanTitle = title;
+    const sep = title.lastIndexOf(' - ');
+    if(sep>0){
+      cleanTitle = title.slice(0,sep).trim();
+      source = title.slice(sep+3).trim();
+    }
+    result.push({
+      title: cleanTitle,
+      source: source,
+      url: link,
+      content: desc.slice(0,200),
+      priority: classifyPriority(cleanTitle+' '+desc),
+      sectors: classifySectors(cleanTitle),
+      period: getPeriodFromDate(new Date(pubDate||Date.now())),
+      time: fmtTime(new Date(pubDate||Date.now())),
+      date: fmtDate(new Date(pubDate||Date.now())),
       keywords: [],
-    }));
-  }catch(e){
-    return null;
+    });
+  });
+  return result;
+}
+
+async function fetchWithProxy(rssUrl, proxyUrl){
+  const fullUrl = proxyUrl + encodeURIComponent(rssUrl);
+  const resp = await fetch(fullUrl);
+  if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return await resp.text();
+}
+
+async function fetchRssFeed(feedConfig){
+  const rssUrl = feedConfig.url;
+  // 依次尝试 CORS 代理
+  for(const proxy of CORS_PROXIES){
+    try{
+      const xmlText = await fetchWithProxy(rssUrl, proxy);
+      if(xmlText && xmlText.includes('<rss') || xmlText.includes('<feed')){
+        const items = parseRSSXML(xmlText, feedConfig.name);
+        if(items.length>0) return items;
+      }
+    }catch(e){
+      continue; // 试下一个代理
+    }
   }
+  return null;
 }
 
 async function fetchRealNewsFromApis(){
   const results = [];
   const status = {};
 
-  const promises = FREE_RSS_FEEDS.map(async (feed) => {
+  const promises = RSS_SOURCES.map(async (feed) => {
     const items = await fetchRssFeed(feed);
     if(items?.length){
       results.push(items);
@@ -496,8 +533,7 @@ async function fetchRealNewsFromApis(){
     }
   });
 
-  // 10 秒超时
-  await Promise.race([Promise.all(promises), new Promise(r=>setTimeout(r,10000))]);
+  await Promise.race([Promise.all(promises), new Promise(r=>setTimeout(r,12000))]);
 
   if(results.length>0){
     const seen = new Set();
