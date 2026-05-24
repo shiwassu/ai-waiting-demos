@@ -436,130 +436,30 @@ function checkMACDDivergence(series){
 // ║  NEWS ENGINE (sector + time classification)            ║
 // ╚══════════════════════════════════════════════════════════╝
 // ═══════════════════════════════════════════════════
-//  真实新闻抓取 — JSONP 绕开 CORS (零 Key)
-//  JSONP: 用 <script> 标签加载数据, 不受同源策略限制
-//  Sina + Google News via rss2json
+//  新闻加载 — 同域静态 JSON (零跨域, 零 API Key)
+//  news-data.json 由 Python 脚本定时抓取并部署
 // ═══════════════════════════════════════════════════
 let realNewsAvailable = false;
-let realNewsSourceName = '';
-
-// ── JSONP 抓取 (CORS 杀手) ──
-function fetchJSONP(url, timeout=8000){
-  return new Promise((resolve, reject) => {
-    const callbackName = '_jsonp_' + Math.random().toString(36).slice(2);
-    const timer = setTimeout(()=>{ cleanup(); reject(new Error('timeout')); }, timeout);
-
-    window[callbackName] = function(data){
-      clearTimeout(timer);
-      cleanup();
-      resolve(data);
-    };
-
-    const sep = url.includes('?') ? '&' : '?';
-    const script = document.createElement('script');
-    script.src = url + sep + 'callback=' + callbackName;
-    script.onerror = ()=>{ clearTimeout(timer); cleanup(); reject(new Error('network')); };
-    document.head.appendChild(script);
-
-    function cleanup(){
-      delete window[callbackName];
-      if(script.parentNode) script.parentNode.removeChild(script);
-    }
-  });
-}
-
-// ── 新浪财经 (JSONP, 国内最快, 零 CORS 问题) ──
-async function fetchSinaNews(){
-  try{
-    const url = `https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2509&k=&num=30&page=1&r=${Date.now()}`;
-    const data = await fetchJSONP(url, 8000);
-    if(!data?.result?.data) return null;
-    return data.result.data.map(item=>({
-      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: item.media_name||'新浪财经',
-      url: item.url||item.wapurl||'',
-      content: (item.intro||'').slice(0,200),
-      priority: classifyPriority((item.title||'')+' '+(item.intro||'')),
-      sectors: classifySectors(item.title||''),
-      period: getPeriodFromDate(new Date(item.ctime*1000||Date.now())),
-      time: fmtTime(new Date(item.ctime*1000||Date.now())),
-      date: fmtDate(new Date(item.ctime*1000||Date.now())),
-      keywords: item.keywords?.split?.(',')||[],
-    }));
-  }catch(e){ return null; }
-}
-
-// ── Google News via rss2json (JSONP 备用) ──
-async function fetchGoogleNewsRSS(){
-  try{
-    const rssUrl = 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=zh-CN&gl=CN&ceid=CN:zh-Hans';
-    // rss2json 也支持 JSONP
-    const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-    const data = await fetchJSONP(url, 8000);
-    if(!data?.items) return null;
-    return data.items.map(item=>({
-      title: (item.title||'').replace(/<[^>]*>/g,'').trim(),
-      source: item.author||'Google News',
-      url: item.link||'',
-      content: (item.description||'').replace(/<[^>]*>/g,'').trim().slice(0,200),
-      priority: classifyPriority((item.title||'')+' '+(item.description||'')),
-      sectors: classifySectors(item.title||''),
-      period: getPeriodFromDate(new Date(item.pubDate||Date.now())),
-      time: fmtTime(new Date(item.pubDate||Date.now())),
-      date: fmtDate(new Date(item.pubDate||Date.now())),
-      keywords: [],
-    }));
-  }catch(e){ return null; }
-}
 
 async function fetchRealNewsFromApis(){
-  const results = [];
-  const status = {};
   const stEl = document.getElementById('newsSrcStatus');
+  if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在加载…</span>';
 
-  // 第1优先: 新浪财经 JSONP (国内最快，零 CORS 问题)
-  if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接新浪财经…</span>';
-  const sinaItems = await fetchSinaNews();
-  if(sinaItems?.length){
-    results.push(sinaItems);
-    status['新浪财经'] = `✓ ${sinaItems.length}条`;
-  } else {
-    status['新浪财经'] = '✗';
-  }
+  try{
+    const resp = await fetch('news-data.json');
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if(!data.items?.length) throw new Error('无数据');
 
-  // 第2优先: Google News RSS (JSONP)
-  if(stEl) stEl.innerHTML = '<span style="color:var(--orange)">● 正在连接 Google News…</span>';
-  const gItems = await fetchGoogleNewsRSS();
-  if(gItems?.length){
-    results.push(gItems);
-    status['Google News'] = `✓ ${gItems.length}条`;
-  } else {
-    status['Google News'] = '✗';
-  }
-
-  if(results.length>0){
-    const seen = new Set();
-    const merged = [];
-    for(const batch of results){
-      for(const item of batch){
-        const key = item.title.slice(0,50);
-        if(!seen.has(key)){ seen.add(key); merged.push(item); }
-      }
-    }
-    merged.sort((a,b)=>{
-      const p={high:0,medium:1,low:2};
-      return (p[a.priority]||2)-(p[b.priority]||2);
-    });
-
+    const updated = data.updated?.slice(0,16) || '--';
     realNewsAvailable = true;
-    const okSrc = Object.entries(status).filter(([,v])=>v.startsWith('✓')).map(([k])=>k).join(' + ');
-    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| ${okSrc} | 共 ${merged.length} 条 | ${new Date().toLocaleTimeString('zh-CN')}</span>`;
-    return {news: merged.slice(0, 30), status};
+    if(stEl) stEl.innerHTML = `<span style="color:var(--green);font-weight:600">● 真实数据</span> <span style="color:var(--text)">| 新浪财经 | ${data.total}条 | 更新 ${updated}</span>`;
+    return {news: data.items, status: {'news-data.json': `✓ ${data.total}条`}};
+  }catch(e){
+    realNewsAvailable = false;
+    if(stEl) stEl.innerHTML = `<span style="color:var(--red);font-weight:600">● ${e.message}</span>`;
+    return null;
   }
-
-  realNewsAvailable = false;
-  if(stEl) stEl.innerHTML = '<span style="color:var(--red);font-weight:600">● 抓取失败</span> <span style="color:var(--text-dim)">| 网络异常，请点击"重新拉取"重试</span>';
-  return null;
 }
 
 function fmtTime(d){ return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
