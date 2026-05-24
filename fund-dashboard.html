@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基金投资助手 · Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a1f28;
+    --surface2: #212836;
+    --border: #2a3040;
+    --primary: #4da6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d2991d;
+    --purple: #a371f7;
+    --text: #c9d1d9;
+    --text-dim: #6e7681;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* header */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .topbar .logo { font-size:18px; font-weight:700; color: var(--primary); }
+  .topbar .status { font-size:11px; color: var(--green); display:flex; align-items:center; gap:6px; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* tabs */
+  .tabs {
+    display: flex; gap: 0;
+    background: var(--surface); border-bottom:1px solid var(--border);
+    padding: 0 28px;
+  }
+  .tab {
+    padding: 12px 22px; font-size:13px; font-weight:500;
+    cursor: pointer; color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* panels */
+  .panel { display:none; padding:24px 28px; max-width:1200px; }
+  .panel.active { display:block; }
+
+  /* cards */
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .card-header { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:12px; }
+
+  /* news items */
+  .news-item {
+    padding: 12px 14px; border-radius: 8px;
+    background: var(--surface2); border-left: 3px solid var(--border);
+    margin-bottom: 8px; font-size:13px;
+    transition: all 0.2s;
+  }
+  .news-item.high { border-left-color: var(--red); }
+  .news-item.medium { border-left-color: var(--orange); }
+  .news-item.low { border-left-color: var(--text-dim); }
+  .news-tag {
+    display:inline-block; padding:2px 8px; border-radius:4px;
+    font-size:10px; margin-right:6px; font-weight:600;
+  }
+  .tag-high { background:rgba(248,81,73,0.15); color:var(--red); }
+  .tag-medium { background:rgba(210,153,29,0.15); color:var(--orange); }
+  .tag-low { background:rgba(110,118,129,0.15); color:var(--text-dim); }
+
+  /* fund row */
+  .fund-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; border-radius:8px;
+    background:var(--surface2); margin-bottom:6px;
+    font-size:13px;
+  }
+  .fund-name { font-weight:600; }
+  .fund-code { font-size:11px; color:var(--text-dim); }
+  .change-up { color: var(--green); }
+  .change-down { color: var(--red); }
+  .badge {
+    padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+  }
+  .badge-buy { background:rgba(63,185,80,0.15); color:var(--green); }
+  .badge-hold { background:rgba(110,118,129,0.15); color:var(--text-dim); }
+  .badge-sell { background:rgba(248,81,73,0.15); color:var(--red); }
+
+  /* stat */
+  .stat-val { font-size:26px; font-weight:700; }
+  .stat-label { font-size:11px; color:var(--text-dim); margin-top:2px; }
+  .stat-green { color:var(--green); }
+  .stat-red { color:var(--red); }
+  .stat-blue { color:var(--primary); }
+
+  /* position bar */
+  .bar {
+    height:6px; background:var(--border); border-radius:3px;
+    margin-top:6px; overflow:hidden;
+  }
+  .bar-inner { height:100%; border-radius:3px; transition:width 0.5s; }
+
+  /* buttons */
+  .btn {
+    padding:8px 18px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface2); color:var(--text); font-size:13px;
+    cursor:pointer; transition:all 0.15s; font-family:inherit;
+  }
+  .btn:hover { border-color:var(--primary); color:var(--primary); }
+  .btn.primary { background:rgba(77,166,255,0.12); border-color:var(--primary); color:var(--primary); }
+
+  .ctrl-row { display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+  .log-box {
+    background:var(--bg); border:1px solid var(--border); border-radius:8px;
+    padding:10px 14px; font-family: 'Cascadia Code', monospace;
+    font-size:11px; color:var(--text-dim); line-height:1.6;
+    max-height:140px; overflow-y:auto;
+  }
+
+  /* tab badge */
+  .tab-badge {
+    display:inline-block; padding:1px 7px; border-radius:8px; font-size:10px;
+    margin-left:4px; font-weight:600;
+  }
+  .tb-high { background:rgba(248,81,73,0.2); color:var(--red); }
+  .tb-warn { background:rgba(210,153,29,0.2); color:var(--orange); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="logo">基金投资助手</span>
+  <span class="status"><span class="dot"></span> 系统运行中</span>
+  <span style="margin-left:auto;font-size:12px;color:var(--text-dim)" id="clock"></span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-panel="dashboard">仪表盘</div>
+  <div class="tab" data-panel="news">📰 新闻推送 <span class="tab-badge tb-high" id="newsBadge">0</span></div>
+  <div class="tab" data-panel="monitor">📊 资金监控 <span class="tab-badge tb-warn" id="alertBadge">0</span></div>
+  <div class="tab" data-panel="signals">📈 信号与持仓</div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="panel active" id="panel-dashboard">
+  <div class="grid3" style="margin-bottom:18px">
+    <div class="card">
+      <div class="card-header">今日新闻</div>
+      <div class="stat-val stat-blue" id="dNewsTotal">--</div>
+      <div class="stat-label">高优 <span id="dNewsHigh" style="color:var(--red)">0</span> · 中优 <span id="dNewsMed" style="color:var(--orange)">0</span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">监控告警</div>
+      <div class="stat-val" id="dAlerts" style="color:var(--orange)">--</div>
+      <div class="stat-label">条活跃告警</div>
+    </div>
+    <div class="card">
+      <div class="card-header">总盈亏</div>
+      <div class="stat-val" id="dPnL">--</div>
+      <div class="stat-label">仓位 <span id="dPosition" style="color:var(--primary)">0%</span></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header">最新交易信号</div>
+      <div id="dSignals"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">持仓概览</div>
+      <div id="dPositions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NEWS ═══ -->
+<div class="panel" id="panel-news">
+  <div class="ctrl-row">
+    <button class="btn primary" onclick="refreshNews()">🔄 拉取新闻</button>
+    <span style="font-size:12px;color:var(--text-dim)">数据源: 财联社（模拟） · 关键词过滤已启用</span>
+  </div>
+  <div id="newsList"></div>
+</div>
+
+<!-- ═══ MONITOR ═══ -->
+<div class="panel" id="panel-monitor">
+  <div class="ctrl-row">
+    <button class="btn primary" onclick="refreshMonitor()">🔄 刷新数据</button>
+    <span style="font-size:12px;color:var(--text-dim)">6 只基金 · 4 条告警规则</span>
+  </div>
+  <div id="fundList"></div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-header">告警日志</div>
+    <div class="log-box" id="alertLog"></div>
+  </div>
+</div>
+
+<!-- ═══ SIGNALS ═══ -->
+<div class="panel" id="panel-signals">
+  <div class="ctrl-row">
+    <button class="btn primary" onclick="refreshSignals()">🔍 生成信号</button>
+    <button class="btn" onclick="buyRandom()">💰 模拟买入</button>
+    <button class="btn" onclick="sellAll()">📤 清仓</button>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header">交易信号</div>
+      <div id="sigList"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">当前持仓</div>
+      <div id="posList"></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--text-dim)">
+        已用仓位: <b id="posUsed" style="color:var(--primary)">0%</b> ·
+        总盈亏: <b id="posPnL">+0.00%</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA ENGINE (mirrors Python logic)
+// ═══════════════════════════════════════════
+const FUNDS = {
+  "510050":"上证50 ETF","510300":"沪深300 ETF","510500":"中证500 ETF",
+  "159915":"创业板 ETF","512880":"证券 ETF","512100":"中证1000 ETF"
+};
+const SECTORS = ["半导体","新能源","医药","消费","券商","军工","AI","银行"];
+const ACTIONS = ["大涨","回调","震荡","反弹","走弱"];
+const POLICIES = ["完善监管制度","严查违规行为","推动长期资金入市","优化交易机制"];
+
+function rng(min,max){return Math.random()*(max-min)+min}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+// --- State ---
+let fundData = {};
+let newsCache = [];
+let positionCache = {};
+let alertCache = [];
+let totalCapital = 100000;
+
+function initFundData(){
+  const bases = {510050:3.2, 510300:4.8, 510500:6.5, 159915:2.4, 512880:1.1, 512100:2.8};
+  for(const [code,name] of Object.entries(FUNDS)){
+    if(!fundData[code]){
+      fundData[code] = {
+        nav: bases[code] + rng(-0.3,0.3),
+        history: Array.from({length:120},(_,i)=>bases[code]+rng(-0.8,0.8)),
+      };
+    }
+  }
+}
+
+function evolveFund(code){
+  const d = fundData[code];
+  const noise = (Math.random()-0.5)*0.03*d.nav;
+  const drift = (Math.random()-0.5)*0.005*d.nav;
+  d.nav = Math.max(0.5, d.nav+noise+drift);
+  d.nav = Math.round(d.nav*1e4)/1e4;
+  d.history.push(d.nav);
+  if(d.history.length>200) d.history = d.history.slice(-200);
+}
+
+function getSnapshot(code){
+  evolveFund(code);
+  const d = fundData[code];
+  const hist = d.history;
+  const prev = hist[hist.length-2]||d.nav;
+  const change = ((d.nav-prev)/prev*100)||0;
+  const capitalInflow = change*2+Math.round(rng(-3,3)*10)/10;
+  const vol = Math.round(rng(1e5,5e6));
+  // compute indicators
+  const sma=(series,p)=>series.length>=p?series.slice(-p).reduce((a,b)=>a+b,0)/p:series[series.length-1];
+  const ma5=sma(hist,5), ma20=sma(hist,20), ma60=sma(hist,60);
+  // RSI
+  const changes = hist.slice(1).map((v,i)=>v-hist[i]);
+  let rsi=50;
+  if(changes.length>=14){
+    const recent=changes.slice(-14);
+    const gains=recent.filter(c=>c>0).reduce((a,b)=>a+b,0);
+    const losses=recent.filter(c=>c<0).reduce((a,b)=>a+Math.abs(b),0);
+    rsi=losses===0?100:gains===0?0:Math.round(100-(100/(1+gains/losses))*10)/10;
+  }
+  // consecutive decline
+  let consDec=0;
+  for(let i=changes.length-1;i>=0;i--){if(changes[i]<0)consDec++;else break;}
+  return {code,name:FUNDS[code],nav:d.nav,change:Math.round(change*100)/100,
+    capitalInflow,volume:vol,ma5,ma20,ma60,rsi,consDec,};
+}
+
+function generateNews(){
+  const templates = [
+    ()=>`央行开展${Math.floor(rng(1000,5000))}亿元MLF操作，中标利率${rng(2.5,3.5).toFixed(2)}%，较上月${pick(["上调","下调"])}${Math.floor(rng(5,15))}个基点`,
+    ()=>`北向资金今日净流入${rng(10,80).toFixed(1)}亿元，连续${Math.floor(rng(1,8))}日净买入`,
+    ()=>`${pick(SECTORS)}板块集体走强，主力资金净流入超${Math.floor(rng(10,100))}亿元`,
+    ()=>`${pick(SECTORS)} ETF规模突破${Math.floor(rng(50,500))}亿元，创历史新高`,
+    ()=>`证监会：${pick(POLICIES)}，维护市场平稳运行`,
+    ()=>`LPR连续${Math.floor(rng(5,12))}个月持平，专家预计${pick(["二季度可能调整","后续仍有下行空间","短期内维持不变"])}`,
+  ];
+  const count = Math.floor(rng(5,12));
+  const news = [];
+  for(let i=0;i<count;i++){
+    const title = pick(templates)();
+    const isHigh = /央行|证监会|LPR|北向|降息/.test(title);
+    const isMed = /板块|ETF|规模|基金/.test(title);
+    const priority = isHigh?'high':isMed?'medium':'low';
+    news.push({title,source:'财联社',priority,time:new Date(),tags:priority==='high'?['高优']:priority==='medium'?['中优']:[]});
+  }
+  news.sort((a,b)=>(a.priority==='high'?-1:a.priority==='medium'?-1:1)-(b.priority==='high'?-1:b.priority==='medium'?-1:1));
+  return news;
+}
+
+function generateSignal(snap){
+  // multi-factor scoring
+  let score=50;
+  // MA trend
+  if(snap.ma5>snap.ma20&&snap.ma20>snap.ma60) score+=12;
+  else if(snap.ma5<snap.ma20&&snap.ma20<snap.ma60) score-=12;
+  else if(snap.ma5>snap.ma20) score+=4;
+  else score-=4;
+  // RSI
+  if(snap.rsi<30) score+=(30-snap.rsi)*0.8;
+  else if(snap.rsi>70) score-=(snap.rsi-70)*0.6;
+  // Capital flow
+  score+=Math.max(-10,Math.min(10,snap.capitalInflow*1.5));
+  // Random noise
+  score+=rng(-5,5);
+  score=Math.max(5,Math.min(95,score));
+
+  let type='hold', badge='badge-hold';
+  if(score>=70){type='buy';badge='badge-buy'}
+  else if(score>=55){type='add';badge='badge-buy'}
+  else if(score>=40){type='hold';badge='badge-hold'}
+  else if(score>=25){type='reduce';badge='badge-sell'}
+  else {type='sell';badge='badge-sell'}
+
+  const reasons=[];
+  if(snap.ma5>snap.ma20) reasons.push(`短线多头排列`);
+  if(snap.rsi<30) reasons.push(`RSI超卖(${snap.rsi.toFixed(1)})`);
+  if(snap.rsi>70) reasons.push(`RSI超买(${snap.rsi.toFixed(1)})`);
+  if(snap.capitalInflow>3) reasons.push(`资金净流入${snap.capitalInflow.toFixed(1)}亿`);
+  if(snap.capitalInflow<-3) reasons.push(`资金净流出${Math.abs(snap.capitalInflow).toFixed(1)}亿`);
+  if(reasons.length===0) reasons.push('指标中性');
+
+  return {code:snap.code, name:snap.name, type, score:Math.round(score*10)/10,
+    badge, reasons, suggestPct:Math.round(score/100*25) };
+}
+
+// --- Alert checks ---
+function checkAlerts(snaps){
+  const alerts=[];
+  for(const s of snaps){
+    if(Math.abs(s.change)>=2) alerts.push(`${s.name} 单日${s.change>=0?'大涨':'大跌'} ${s.change.toFixed(2)}%`);
+    if(s.consDec>=3) alerts.push(`${s.name} 连续下跌 ${s.consDec} 天`);
+    if(s.capitalInflow<=-5) alerts.push(`${s.name} 主力资金净流出 ${s.capitalInflow.toFixed(1)} 亿`);
+    if(s.rsi>=70) alerts.push(`${s.name} RSI=${s.rsi.toFixed(1)} 超买`);
+    if(s.rsi<=30) alerts.push(`${s.name} RSI=${s.rsi.toFixed(1)} 超卖`);
+  }
+  return alerts;
+}
+
+// ═══════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════
+function renderNews(){
+  const el = document.getElementById('newsList');
+  if(newsCache.length===0){
+    el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-dim)">点击"拉取新闻"获取最新财经资讯</div>';
+    return;
+  }
+  el.innerHTML = newsCache.map(n=>{
+    const priLabel = {high:'高优',medium:'中优',low:'普通'}[n.priority];
+    const tagCls = {high:'tag-high',medium:'tag-medium',low:'tag-low'}[n.priority];
+    return `<div class="news-item ${n.priority}">
+      <span class="news-tag ${tagCls}">${priLabel}</span>
+      <span style="color:var(--text)">${n.title}</span>
+      <span style="font-size:10px;color:var(--text-dim);margin-left:8px">${n.source}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('newsBadge').textContent = newsCache.filter(n=>n.priority==='high').length;
+}
+
+function renderMonitor(){
+  const snaps = [];
+  for(const code of Object.keys(FUNDS)){
+    evolveFund(code);
+    snaps.push(getSnapshot(code));
+  }
+  alertCache = checkAlerts(snaps);
+  document.getElementById('alertBadge').textContent = alertCache.length;
+
+  // Fund list
+  const el = document.getElementById('fundList');
+  el.innerHTML = snaps.map(s=>{
+    const dirCls = s.change>=0?'change-up':'change-down';
+    const arrow = s.change>=0?'↑':'↓';
+    return `<div class="fund-row">
+      <div>
+        <div class="fund-name">${s.name} <span class="fund-code">${s.code}</span></div>
+        <div style="font-size:11px;color:var(--text-dim)">MA5:${s.ma5.toFixed(3)} MA20:${s.ma20.toFixed(3)} · RSI:${s.rsi.toFixed(1)} · 连跌${s.consDec}天</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:600">${s.nav.toFixed(4)}</div>
+        <div class="${dirCls}">${arrow}${Math.abs(s.change).toFixed(2)}%</div>
+        <div style="font-size:10px;color:var(--text-dim)">资金${s.capitalInflow>=0?'+':''}${s.capitalInflow.toFixed(1)}亿</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Alert log
+  document.getElementById('alertLog').innerHTML = alertCache.length>0
+    ? alertCache.map(a=>`⚠ ${a}`).join('\n')
+    : '(暂无告警)';
+}
+
+function renderSignals(){
+  const snaps = [];
+  for(const code of Object.keys(FUNDS)){
+    evolveFund(code);
+    snaps.push(getSnapshot(code));
+  }
+  const signals = snaps.map(getSignal).sort((a,b)=>b.score-a.score);
+
+  document.getElementById('sigList').innerHTML = signals.map(s=>`
+    <div class="fund-row" style="border-left:3px solid ${s.score>=55?'var(--green)':s.score>=40?'var(--text-dim)':'var(--red)'}">
+      <div>
+        <div class="fund-name">${s.name}</div>
+        <div style="font-size:11px;color:var(--text-dim)">${s.reasons.join(' · ')}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="badge ${s.badge}">${s.type.toUpperCase()}</div>
+        <div style="font-size:11px;color:var(--text-dim)">评分 ${s.score.toFixed(1)} · 建议仓位 ${s.suggestPct}%</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Positions
+  const posList = Object.values(positionCache);
+  const totalPL = posList.reduce((sum,p)=>sum+p.pl,0);
+  const totalCost = posList.reduce((sum,p)=>sum+p.cost,0);
+  const plPct = totalCost>0?Math.round(totalPL/totalCost*1e4)/100:0;
+  const usedPct = posList.reduce((sum,p)=>sum+p.pct,0);
+
+  document.getElementById('posList').innerHTML = posList.length>0
+    ? posList.map(p=>{
+        const sign = p.pl>=0?'+':'';
+        return `<div class="fund-row">
+          <div><div class="fund-name">${p.name}</div><div class="fund-code">${p.code} · ${p.shares.toFixed(0)}份 @${p.avgCost.toFixed(4)}</div></div>
+          <div style="text-align:right">
+            <div style="color:${p.pl>=0?'var(--green)':'var(--red)'}">${sign}${p.pl.toFixed(2)} (${sign}${p.plPct.toFixed(2)}%)</div>
+            <div class="bar" style="width:80px;margin-left:auto"><div class="bar-inner" style="width:${p.pct*100}%;background:${p.pl>=0?'var(--green)':'var(--red)'}"></div></div>
+            <div style="font-size:10px;color:var(--text-dim)">仓位 ${(p.pct*100).toFixed(1)}%</div>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div style="padding:20px;text-align:center;color:var(--text-dim)">（空仓）</div>';
+
+  document.getElementById('posUsed').textContent = usedPct.toFixed(1)+'%';
+  document.getElementById('posPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
+
+  // Update dashboard
+  const hiNews = newsCache.filter(n=>n.priority==='high').length;
+  const medNews = newsCache.filter(n=>n.priority==='medium').length;
+  document.getElementById('dNewsTotal').textContent = newsCache.length;
+  document.getElementById('dNewsHigh').textContent = hiNews;
+  document.getElementById('dNewsMed').textContent = medNews;
+  document.getElementById('dAlerts').textContent = alertCache.length;
+  document.getElementById('dPnL').textContent = (plPct>=0?'+':'')+plPct+'%';
+  document.getElementById('dPnL').className = 'stat-val '+(plPct>=0?'stat-green':'stat-red');
+  document.getElementById('dPosition').textContent = usedPct.toFixed(1)+'%';
+
+  document.getElementById('dSignals').innerHTML = signals.slice(0,3).map(s=>`
+    <div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+      <span>${s.name}</span>
+      <span class="badge ${s.badge}">${s.type.toUpperCase()} ${s.score.toFixed(0)}分</span>
+    </div>
+  `).join('') || '<div style="color:var(--text-dim)">暂无信号</div>';
+
+  document.getElementById('dPositions').innerHTML = posList.length>0
+    ? posList.map(p=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+        <span>${p.name}</span>
+        <span style="color:${p.pl>=0?'var(--green)':'var(--red)'}">${p.pl>=0?'+':''}${p.plPct.toFixed(2)}%</span>
+      </div>`).join('')
+    : '<div style="color:var(--text-dim);font-size:12px">（空仓）</div>';
+}
+
+function getSignal(snap){
+  return generateSignal(snap);
+}
+
+// ═══════════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════════
+function refreshNews(){ newsCache=generateNews(); renderNews(); renderSignals(); }
+function refreshMonitor(){ renderMonitor(); renderSignals(); }
+function refreshSignals(){ renderSignals(); }
+function refreshAll(){ refreshNews(); renderMonitor(); renderSignals(); }
+
+function buyRandom(){
+  const codes = Object.keys(FUNDS);
+  const code = pick(codes);
+  const nav = fundData[code].nav;
+  const amount = rng(3000,15000);
+  const name = FUNDS[code];
+  const shares = amount/nav;
+  const cost = shares*nav;
+  const pct = cost/totalCapital;
+
+  if(positionCache[code]){
+    const p = positionCache[code];
+    const newShares = p.shares+shares;
+    const newCost = p.cost+cost;
+    p.shares = newShares;
+    p.avgCost = newCost/newShares;
+    p.cost = newCost;
+    p.pl = newShares*nav - p.cost;
+    p.plPct = (nav-p.avgCost)/p.avgCost*100;
+    p.pct = newShares*nav/totalCapital;
+  } else {
+    positionCache[code] = {code, name, shares, avgCost:nav, cost, pl:0, plPct:0, pct};
+  }
+  renderSignals();
+}
+
+function sellAll(){
+  positionCache = {};
+  renderSignals();
+}
+
+// ═══════════════════════════════════════════
+//  TABS & CLOCK
+// ═══════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('panel-'+this.dataset.panel).classList.add('active');
+    if(this.dataset.panel==='news') renderNews();
+    if(this.dataset.panel==='monitor') renderMonitor();
+    if(this.dataset.panel==='signals') renderSignals();
+    if(this.dataset.panel==='dashboard') renderSignals();
+  });
+});
+
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleString('zh-CN');
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// auto refresh
+setInterval(()=>{
+  const activePanel = document.querySelector('.panel.active');
+  if(!activePanel) return;
+  const id = activePanel.id;
+  if(id==='panel-monitor') renderMonitor();
+  if(id==='panel-signals'||id==='panel-dashboard') renderSignals();
+}, 15000);
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+initFundData();
+newsCache = generateNews();
+renderSignals();
+</script>
+</body>
+</html>
